@@ -1,5 +1,5 @@
 /* ═══════════════════════════════════════════════════════════════════════════
- * HOMIE DASHBOARD CONFIGURATION v4.2.0
+ * HOMIE DASHBOARD CONFIGURATION v4.2.1
  * ═══════════════════════════════════════════════════════════════════════════
  * This is the main configuration file. Edit the sections below to customise the dashboard for your home.
  * Both homie-dashboard.html and config.js must be in the same folder.
@@ -30,8 +30,9 @@ const BASE = WS_URL
 
 
 /* ─── ALARMO CONFIGURATION ────────────────────────────────────────────────────────
- * ALARM_CODE - Your Alarmo PIN code — sent silently with every arm/disarm command.
- * Leave as empty string ("") if your Alarmo panel has no code configured.
+ * ALARM_CODE - PIN sent silently with every arm/disarm command.
+ * Leave as "" to be prompted for the PIN when disarming.
+ * A panel with no PIN: leave "" and confirm the prompt empty.
  * ALARM_ENTITY — entity ID of your Alarmo alarm panel.
  * ─────────────────────────────────────────────────────────────────────────── */
 const ALARM_CODE = "";

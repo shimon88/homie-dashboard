@@ -26,7 +26,7 @@
 <head>
 <meta charset="UTF-8">
 <!-- DASHBOARD VERSION — update this when releasing a new version -->
-<script>const DASHBOARD_VERSION = "4.2.0";</script>
+<script>const DASHBOARD_VERSION = "4.2.1";</script>
 <!-- GITHUB REPO — used only to check for the latest tagged release in Settings -->
 <script>const GITHUB_REPO = "Big-Edge2297/homie-dashboard";</script>
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
@@ -1069,6 +1069,47 @@
   }
   .alarm-feedback.error { color: #f28a92; }
   .alarm-feedback.success { color: var(--accent-hi); }
+
+  #alarm-pin-overlay { z-index: 500; }
+  .popup--alarm-pin { max-width: 280px; width: min(280px, 88vw); padding: 1.4rem 1.2rem 1.1rem; }
+  .alarm-pin-dots {
+    min-height: 28px;
+    margin: 4px 0 14px;
+    text-align: center;
+    letter-spacing: 0.45em;
+    font-size: 22px;
+    color: var(--accent-hi);
+  }
+  .alarm-pin-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+  }
+  .alarm-pin-key {
+    height: 52px;
+    border-radius: 12px;
+    border: 1px solid rgba(255,255,255,0.1);
+    background: #111;
+    color: #fff;
+    font-size: 18px;
+    letter-spacing: 0.04em;
+    cursor: pointer;
+  }
+  .alarm-pin-key:active { transform: scale(0.97); }
+  .alarm-pin-key--ok { color: var(--accent-hi); border-color: var(--ac-4); font-size: 13px; letter-spacing: 0.16em; }
+  .alarm-pin-cancel {
+    display: block;
+    width: 100%;
+    margin-top: 10px;
+    padding: 10px;
+    background: transparent;
+    border: none;
+    color: rgba(255,255,255,0.45);
+    letter-spacing: 0.2em;
+    font-size: 11px;
+    text-transform: uppercase;
+    cursor: pointer;
+  }
 
   /* Security button shield icon colour synced to alarm state */
   .topbar-security-btn.armed-home svg { stroke: var(--accent-hi); }
@@ -9007,11 +9048,11 @@
             <!-- Page 1: arm modes + siren -->
             <div class="ov3-sec-panel">
               <div class="ov3-sec-btns" style="margin-top:5px">
-                <button class="ov3-sec-btn" id="ov3-alarm-btn-home" onclick="alarmAction('arm_night');_ov3SecFeedback('Sending…','')">
+                <button class="ov3-sec-btn" id="ov3-alarm-btn-home" onclick="alarmAction('arm_night')">
                   <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9.5L12 3l9 6.5V20a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V9.5z"/><path d="M9 21V12h6v9"/></svg>
                   <span>Arm Night</span>
                 </button>
-                <button class="ov3-sec-btn" id="ov3-alarm-btn-away" onclick="alarmAction('arm_away');_ov3SecFeedback('Sending…','')">
+                <button class="ov3-sec-btn" id="ov3-alarm-btn-away" onclick="alarmAction('arm_away')">
                   <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L3 7v6c0 5.25 3.75 10.15 9 11.25C17.25 23.15 21 18.25 21 13V7L12 2z"/><circle cx="12" cy="11" r="2"/></svg>
                   <span>Arm Away</span>
                 </button>

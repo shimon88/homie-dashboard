@@ -198,6 +198,9 @@ Remember to clear the cache/hard refresh so the new file changes apply in the br
 <details>
 <summary>View version history</summary>
 
+New in v4.2.1
+- Security buttons arm Night instead of Home for Alarmo panels without Home mode
+
 New in v4.2.0
 - New Dashboards design
 - Favorites panel
