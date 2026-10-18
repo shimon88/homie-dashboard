@@ -1,0 +1,2 @@
+# Local Home Assistant config. Contains the long-lived access token.
+dist/config.local.js

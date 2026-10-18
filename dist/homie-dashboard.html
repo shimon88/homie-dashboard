@@ -26,7 +26,7 @@
 <head>
 <meta charset="UTF-8">
 <!-- DASHBOARD VERSION — update this when releasing a new version -->
-<script>const DASHBOARD_VERSION = "4.2.2";</script>
+<script>const DASHBOARD_VERSION = "4.2.3";</script>
 <!-- GITHUB REPO — used only to check for the latest tagged release in Settings -->
 <script>const GITHUB_REPO = "shimon88/homie-dashboard";</script>
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
@@ -1007,6 +1007,40 @@
   .alarm-badge--triggered { background: rgba(230,57,70,0.35);  color: #ff4d57;                 border: 1px solid rgba(230,57,70,0.7); animation: alarm-pulse 0.7s infinite alternate; }
   @keyframes alarm-pulse { from { opacity:1; } to { opacity:0.5; } }
 
+  .alarm-open-sensors {
+    margin-bottom: 14px;
+    padding: 8px 10px;
+    border-radius: 10px;
+    background: rgba(242,207,65,0.08);
+    border: 1px solid rgba(242,207,65,0.28);
+  }
+  .alarm-open-sensors[hidden] { display: none; }
+  .alarm-open-sensors-label {
+    font-size: 8px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: #f2cf41;
+    margin-bottom: 6px;
+  }
+  .alarm-open-sensors-list {
+    max-height: 96px;
+    overflow-y: auto;
+  }
+  .alarm-open-sensor {
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+    font-size: 12px;
+    line-height: 1.45;
+    color: rgba(255,255,255,0.88);
+  }
+  .alarm-open-sensor-state {
+    flex: none;
+    font-size: 8px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: #f2cf41;
+  }
   .alarm-mode-row {
     display: grid;
     grid-template-columns: 1fr 1fr 1fr;
@@ -9217,6 +9251,8 @@
       <span id="alarm-status-badge" class="alarm-badge alarm-badge--disarmed">DISARMED</span>
     </div>
 
+    <div id="alarm-open-sensors" class="alarm-open-sensors" hidden></div>
+
     <!-- Arm mode buttons -->
     <div class="alarm-mode-row">
       <button class="alarm-mode-btn" id="alarm-btn-home" onclick="alarmAction('arm_night')">
@@ -14081,6 +14117,50 @@ function alarmStateBadgeClass(state) {
   return "alarm-badge--disarmed";
 }
 
+function _alarmOpenSensorEntries(attrs) {
+  const raw = attrs?.open_sensors;
+  if (!raw) return [];
+  if (Array.isArray(raw)) return raw.filter(Boolean).map(id => [String(id), "open"]);
+  if (typeof raw === "object") return Object.entries(raw).filter(([id]) => id);
+  return [];
+}
+
+function _alarmSensorLabel(entityId) {
+  const name = haGetCached(entityId)?.attributes?.friendly_name;
+  if (name) return name;
+  const slug = String(entityId).split(".").pop() || entityId;
+  return slug.replace(/_/g, " ");
+}
+
+function renderAlarmOpenSensors() {
+  const el = document.getElementById("alarm-open-sensors");
+  if (!el) return;
+  const entries = _alarmOpenSensorEntries(haGetCached(CONFIG.alarmEntity)?.attributes);
+  if (!entries.length) {
+    el.hidden = true;
+    el.replaceChildren();
+    return;
+  }
+  const label = document.createElement("div");
+  label.className = "alarm-open-sensors-label";
+  label.textContent = "Blocks arming";
+  const list = document.createElement("div");
+  list.className = "alarm-open-sensors-list";
+  entries.forEach(([id, status]) => {
+    const row = document.createElement("div");
+    row.className = "alarm-open-sensor";
+    const name = document.createElement("span");
+    name.textContent = _alarmSensorLabel(id);
+    const state = document.createElement("span");
+    state.className = "alarm-open-sensor-state";
+    state.textContent = String(status || "open");
+    row.append(name, state);
+    list.append(row);
+  });
+  el.replaceChildren(label, list);
+  el.hidden = false;
+}
+
 function refreshAlarmUI(state) {
   const badge = document.getElementById("alarm-status-badge");
   const secBtn = document.getElementById("security-btn");
@@ -14122,6 +14202,7 @@ function refreshAlarmUI(state) {
   if (state === "armed_night") document.getElementById("ov3-alarm-btn-home")?.classList.add("active");
   if (state === "armed_away") document.getElementById("ov3-alarm-btn-away")?.classList.add("active");
   if (state === "disarmed")   document.getElementById("ov3-alarm-btn-disarm")?.classList.add("active");
+  renderAlarmOpenSensors();
 }
 
 async function openSecurity() {
@@ -14129,6 +14210,10 @@ async function openSecurity() {
   setAlarmFeedback("", "");
   const data = await haGet(CONFIG.alarmEntity);
   if (data) {
+    const missing = _alarmOpenSensorEntries(data.attributes)
+      .map(([id]) => id)
+      .filter(id => !haGetCached(id));
+    if (missing.length) await Promise.all(missing.map(id => haGet(id)));
     refreshAlarmUI(data.state);
   } else {
     // Entity not found — show a clear message rather than fetching all states.

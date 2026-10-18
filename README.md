@@ -198,6 +198,10 @@ Remember to clear the cache/hard refresh so the new file changes apply in the br
 <details>
 <summary>View version history</summary>
 
+New in v4.2.3
+- Security dialog lists open sensors that block arming
+- Disarm asks for a code when no PIN is configured
+
 New in v4.2.2
 - Update check uses shimon88/homie-dashboard
 
