@@ -9263,6 +9263,28 @@
   </div>
 </div>
 
+<div class="popup-overlay" id="alarm-pin-overlay" onclick="closeAlarmPin(event)">
+  <div class="popup popup--alarm-pin">
+    <div class="popup-title">ENTER CODE</div>
+    <div class="alarm-pin-dots" id="alarm-pin-dots" aria-live="polite"></div>
+    <div class="alarm-pin-grid">
+      <button type="button" class="alarm-pin-key" onclick="alarmPinKey('1')">1</button>
+      <button type="button" class="alarm-pin-key" onclick="alarmPinKey('2')">2</button>
+      <button type="button" class="alarm-pin-key" onclick="alarmPinKey('3')">3</button>
+      <button type="button" class="alarm-pin-key" onclick="alarmPinKey('4')">4</button>
+      <button type="button" class="alarm-pin-key" onclick="alarmPinKey('5')">5</button>
+      <button type="button" class="alarm-pin-key" onclick="alarmPinKey('6')">6</button>
+      <button type="button" class="alarm-pin-key" onclick="alarmPinKey('7')">7</button>
+      <button type="button" class="alarm-pin-key" onclick="alarmPinKey('8')">8</button>
+      <button type="button" class="alarm-pin-key" onclick="alarmPinKey('9')">9</button>
+      <button type="button" class="alarm-pin-key" onclick="alarmPinKey('back')">⌫</button>
+      <button type="button" class="alarm-pin-key" onclick="alarmPinKey('0')">0</button>
+      <button type="button" class="alarm-pin-key alarm-pin-key--ok" onclick="alarmPinKey('ok')">OK</button>
+    </div>
+    <button type="button" class="alarm-pin-cancel" onclick="closeAlarmPin()">Cancel</button>
+  </div>
+</div>
+
 <div class="popup-overlay" id="pet-overlay" onclick="closePetStats(event)">
   <div class="popup popup--pet">
     <div class="popup-title">Pet Status</div>
@@ -14001,9 +14023,9 @@ async function toggleRoomAccordion(roomId, ctrlIdx, startIdx, count) {
 
 
 /**
- * triggerPopupScene — fires a scene automation from the overview Scenes popup.
+ * triggerPopupScene — fires a scene, script, or automation from the overview Scenes popup.
  * Plays a flash animation on the bubble for tactile feedback.
- * @param {string} entity   — the automation entity_id to trigger
+ * @param {string} entity   — scene.*, script.*, or automation.* entity_id
  * @param {string} bubbleId — the DOM id of the bubble element for animation
  */
 async function triggerPopupScene(entity, bubbleId) {
@@ -14015,7 +14037,12 @@ async function triggerPopupScene(entity, bubbleId) {
     bubble.classList.add("fired");
     setTimeout(() => bubble.classList.remove("fired"), 700);
   }
-  await haService("automation", "trigger", { entity_id: entity });
+  const domain = (entity || "").split(".")[0];
+  if (domain === "script" || domain === "scene") {
+    await haService(domain, "turn_on", { entity_id: entity });
+  } else {
+    await haService("automation", "trigger", { entity_id: entity });
+  }
 }
 
 /**
@@ -14128,7 +14155,56 @@ function closeSecurityOverlay(e) {
 let _alarmWsHandler  = null;
 let _alarmWsTimeout  = null;
 
-function alarmAction(service) {
+let _alarmPinService = null;
+let _alarmPinBuffer = "";
+
+function _alarmCodeConfigured() {
+  return typeof ALARM_CODE === "string" && ALARM_CODE.trim().length > 0;
+}
+
+function _renderAlarmPinDots() {
+  const el = document.getElementById("alarm-pin-dots");
+  if (el) el.textContent = _alarmPinBuffer ? "•".repeat(_alarmPinBuffer.length) : "";
+}
+
+function openAlarmPin(service) {
+  haptic("light");
+  _alarmPinService = service;
+  _alarmPinBuffer = "";
+  _renderAlarmPinDots();
+  document.getElementById("alarm-pin-overlay")?.classList.add("open");
+}
+
+function closeAlarmPin(e) {
+  if (e && e.target !== document.getElementById("alarm-pin-overlay")) return;
+  haptic("light");
+  _alarmPinService = null;
+  _alarmPinBuffer = "";
+  document.getElementById("alarm-pin-overlay")?.classList.remove("open");
+}
+
+function alarmPinKey(key) {
+  if (key === "ok") {
+    const service = _alarmPinService;
+    const code = _alarmPinBuffer;
+    _alarmPinService = null;
+    _alarmPinBuffer = "";
+    document.getElementById("alarm-pin-overlay")?.classList.remove("open");
+    if (service) alarmAction(service, code);
+    return;
+  }
+  haptic("light");
+  if (key === "back") _alarmPinBuffer = _alarmPinBuffer.slice(0, -1);
+  else if (_alarmPinBuffer.length < 12) _alarmPinBuffer += key;
+  _renderAlarmPinDots();
+}
+
+function alarmAction(service, codeOverride) {
+  // No PIN in config: ask on disarm. Typed code is codeOverride ("" = no code).
+  if (service === "disarm" && codeOverride === undefined && !_alarmCodeConfigured()) {
+    openAlarmPin(service);
+    return;
+  }
   haptic("medium");
   setAlarmFeedback("Sending…", "");
   if (!_ws || _ws.readyState !== WebSocket.OPEN) {
@@ -14147,7 +14223,8 @@ function alarmAction(service) {
   }
 
   const serviceData = { entity_id: CONFIG.alarmEntity };
-  if (ALARM_CODE) serviceData.code = ALARM_CODE;
+  const code = codeOverride !== undefined ? codeOverride : ALARM_CODE;
+  if (code) serviceData.code = code;
   const msgId = _wsNextId();
   // HA 2024.8+ renamed services: arm_home → alarm_arm_home etc.
   const serviceMap = {
@@ -14181,7 +14258,7 @@ function alarmAction(service) {
       // Give the user a clear hint: wrong PIN vs connection/config problem
       const isCodeError = /code|invalid|incorrect/i.test(raw);
       const friendlyMsg = isCodeError
-        ? "Wrong PIN — check ALARM_CODE in config.js"
+        ? (_alarmCodeConfigured() ? "Wrong PIN — check ALARM_CODE in config.js" : "Wrong PIN")
         : "Connection error — check WebSocket status";
       setAlarmFeedback(friendlyMsg, "error");
       console.error("[Alarm] WS error:", msg.error);
@@ -17387,7 +17464,12 @@ _applyTimeOfDayTheme(); // override with time-of-day theme if configured
 // Escape key closes any open overlay — history panels, popup, daily view,
 // now playing, photo frame, media browser, and all fullscreen overlays.
 document.addEventListener('keydown', e => {
+  const pinOpen = document.getElementById("alarm-pin-overlay")?.classList.contains("open");
+  if (pinOpen && /^[0-9]$/.test(e.key)) { alarmPinKey(e.key); return; }
+  if (pinOpen && e.key === "Backspace") { e.preventDefault(); alarmPinKey("back"); return; }
+  if (pinOpen && e.key === "Enter") { alarmPinKey("ok"); return; }
   if (e.key !== 'Escape') return;
+  if (pinOpen) { closeAlarmPin(); return; }
   // Close history panels
   closeHabitHistory();
   closeMoodHistory();
