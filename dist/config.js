@@ -1,5 +1,5 @@
 /* ═══════════════════════════════════════════════════════════════════════════
- * HOMIE DASHBOARD CONFIGURATION v4.2.3
+ * HOMIE DASHBOARD CONFIGURATION v4.2.4
  * ═══════════════════════════════════════════════════════════════════════════
  * This is the main configuration file. Edit the sections below to customise the dashboard for your home.
  * Both homie-dashboard.html and config.js must be in the same folder.
@@ -211,6 +211,11 @@ const CONFIG = {
    * floorSensors — side-by-side floor panels, each with any number of readings.
    * Add/remove entire { label, sensors } blocks to add/remove panels.
    * Add/remove sensor lines within a panel to add/remove readings.
+   *
+   * tempBands — optional on a reading. Colors that reading by its value:
+   *   below cold → blue, below warm → orange, warm and above → red.
+   *   cold and warm are temperatures in the sensor's own unit.
+   *   Example: tempBands: { cold: 40, warm: 55 }
    * ─────────────────────────────────────────────────────────────────────────── */
   floorSensors: [
    {

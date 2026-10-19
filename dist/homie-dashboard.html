@@ -26,7 +26,7 @@
 <head>
 <meta charset="UTF-8">
 <!-- DASHBOARD VERSION — update this when releasing a new version -->
-<script>const DASHBOARD_VERSION = "4.2.3";</script>
+<script>const DASHBOARD_VERSION = "4.2.4";</script>
 <!-- GITHUB REPO — used only to check for the latest tagged release in Settings -->
 <script>const GITHUB_REPO = "shimon88/homie-dashboard";</script>
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
@@ -656,6 +656,19 @@
     letter-spacing: 0.04em;
     white-space: nowrap;
   }
+  /* tempBands on a floor sensor: blue / orange / red. JS sets the class. */
+  .floor-reading.temp-cold .floor-reading-val,
+  .ov2-floor-reading.temp-cold .ov2-floor-reading-val { color: #60a5fa; }
+  .floor-reading.temp-warm .floor-reading-val,
+  .ov2-floor-reading.temp-warm .ov2-floor-reading-val { color: #f0a040; }
+  .floor-reading.temp-hot .floor-reading-val,
+  .ov2-floor-reading.temp-hot .ov2-floor-reading-val { color: #ff5c5c; }
+  .floor-reading.temp-cold .floor-reading-icon,
+  .floor-reading.temp-warm .floor-reading-icon,
+  .floor-reading.temp-hot .floor-reading-icon,
+  .ov2-floor-reading.temp-cold .ov2-floor-reading-icon,
+  .ov2-floor-reading.temp-warm .ov2-floor-reading-icon,
+  .ov2-floor-reading.temp-hot .ov2-floor-reading-icon { opacity: 1; }
   .floor-reading-sep {
     width: 1px;
     height: 10px;
@@ -11733,6 +11746,40 @@ function refreshHomeStats() {
 }
 
 /**
+ * sensorTempBand — cold / warm / hot from a sensor's tempBands config.
+ * Blue below cold, orange below warm, red at warm and above.
+ * Returns "" when the sensor has no bands or the value is not a number.
+ */
+function sensorTempBand(sensor, raw) {
+  const bands = sensor && sensor.tempBands;
+  if (!bands || bands.cold == null || bands.warm == null) return "";
+  const n = parseFloat(raw);
+  const cold = Number(bands.cold);
+  const warm = Number(bands.warm);
+  if (isNaN(n) || isNaN(cold) || isNaN(warm)) return "";
+  if (n < cold) return "cold";
+  if (n < warm) return "warm";
+  return "hot";
+}
+
+const SENSOR_TEMP_STROKE = { cold: "#60a5fa", warm: "#f0a040", hot: "#ff5c5c" };
+
+/** paintSensorTemp — color a floor-sensor value (and its icon) from tempBands. */
+function paintSensorTemp(valEl, sensor, raw) {
+  if (!valEl) return;
+  const band = sensorTempBand(sensor, raw);
+  const reading = valEl.parentElement;
+  if (reading) {
+    reading.classList.remove("temp-cold", "temp-warm", "temp-hot");
+    if (band) reading.classList.add("temp-" + band);
+  }
+  const icon = valEl.previousElementSibling;
+  if (!icon || !/reading-icon$/.test(icon.className || "")) return;
+  const svg = icon.querySelector("svg");
+  if (svg) svg.style.stroke = band ? SENSOR_TEMP_STROKE[band] : "var(--accent)";
+}
+
+/**
  * refreshSensors — updates the bottom sensor pill bar values from cache.
  * Skipped when not on the overview (sensor-row is not in the DOM).
  */
@@ -11754,10 +11801,10 @@ function refreshSensors() {
       const el = document.getElementById(`fl-${floorIdx}-${sIdx}`);
       if (!el) return;
 
+      const d = haGetCached(s.entity);
+      const raw = d ? parseFloat(d.state) : NaN;
       if (s.type === 'export') {
         // Dynamic arrow: right arrow = exporting surplus, left arrow = importing from grid
-        const d = haGetCached(s.entity);
-        const raw = d ? parseFloat(d.state) : NaN;
         const absVal = isNaN(raw) ? "—" : (s.decimal ? Math.abs(raw).toFixed(1) : Math.round(Math.abs(raw)));
         el.textContent = absVal + (s.unit ? " " + s.unit : "");
         const iconEl = document.getElementById(`fl-${floorIdx}-${sIdx}-icon`);
@@ -11765,6 +11812,7 @@ function refreshSensors() {
       } else {
         el.textContent = fmt(s.entity, s.decimal) + (s.unit ? " " + s.unit : "");
       }
+      paintSensorTemp(el, s, raw);
     });
   });
 }
@@ -18829,7 +18877,10 @@ function _refreshOv2() {
     (floor.sensors || []).forEach((s, si) => {
       const el = document.getElementById(`ov2-fl-${fi}-${si}`);
       if (!el) return;
+      const d = haGetCached(s.entity);
+      const raw = d ? parseFloat(d.state) : NaN;
       el.textContent = fmt(s.entity, s.decimal) + (s.unit ? " " + s.unit : "");
+      paintSensorTemp(el, s, raw);
     });
   });
 
