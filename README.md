@@ -198,6 +198,9 @@ Remember to clear the cache/hard refresh so the new file changes apply in the br
 <details>
 <summary>View version history</summary>
 
+New in v4.2.5
+- Fully Kiosk returns to fullscreen after the screen wakes, with no tap
+
 New in v4.2.4
 - Floor sensor readings color blue, orange, or red from optional tempBands
 

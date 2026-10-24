@@ -26,7 +26,7 @@
 <head>
 <meta charset="UTF-8">
 <!-- DASHBOARD VERSION — update this when releasing a new version -->
-<script>const DASHBOARD_VERSION = "4.2.4";</script>
+<script>const DASHBOARD_VERSION = "4.2.5";</script>
 <!-- GITHUB REPO — used only to check for the latest tagged release in Settings -->
 <script>const GITHUB_REPO = "shimon88/homie-dashboard";</script>
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
@@ -15250,12 +15250,41 @@ function init() {
 }
 
 /**
- * requestFullscreen — enters browser fullscreen mode on first tap.
- * Useful for wall-mounted tablet installations.
+ * requestFullscreen — enter browser fullscreen.
+ * Fully Kiosk drops this when the screen turns off. Call again on wake.
  */
 function requestFullscreen() {
   const el = document.documentElement;
-  if (el.requestFullscreen) el.requestFullscreen();
+  if (document.fullscreenElement || document.webkitFullscreenElement) return;
+  const req = el.requestFullscreen || el.webkitRequestFullscreen;
+  if (!req) return;
+  try {
+    const pending = req.call(el);
+    if (pending && typeof pending.catch === "function") pending.catch(() => {});
+  } catch (_) {}
+}
+
+/**
+ * restoreKioskFullscreen — re-enter fullscreen after Fully wakes the screen.
+ * Also re-hides Fully toolbars. The Fullscreen API often rejects a call that
+ * has no tap; toolbar flags apply with no tap when the JS interface is on.
+ * fully.bind evaluates this name in page scope.
+ */
+function restoreKioskFullscreen() {
+  requestFullscreen();
+  try {
+    if (typeof fully === "undefined" || typeof fully.setBooleanSetting !== "function") return;
+    ["showActionBar", "showAddressBar", "showStatusBar", "showNavigationBar", "showProgressBar"].forEach((key) => {
+      try { fully.setBooleanSetting(key, false); } catch (_) {}
+    });
+  } catch (_) {}
+}
+
+function _scheduleKioskRestore() {
+  // WebView is not ready on the same turn the screen turns on.
+  setTimeout(restoreKioskFullscreen, 50);
+  setTimeout(restoreKioskFullscreen, 400);
+  setTimeout(restoreKioskFullscreen, 1200);
 }
 
 /* ─── NOW PLAYING FULLSCREEN ───────────────────────────────────────────────
@@ -18408,12 +18437,28 @@ function _closeLauncherOutside(e) {
 // (which can take 1–2 s on some tablets) cannot swallow the first gestures.
 let _swipeReady = false;
 
+document.addEventListener("visibilitychange", () => {
+  if (document.visibilityState === "visible") _scheduleKioskRestore();
+});
+window.addEventListener("pageshow", _scheduleKioskRestore);
+
+function _bindFullyWake() {
+  if (typeof fully === "undefined" || typeof fully.bind !== "function") return false;
+  try {
+    // Last bind for an event wins. These two are the wake paths.
+    fully.bind("screenOn", "restoreKioskFullscreen();");
+    fully.bind("onScreensaverStop", "restoreKioskFullscreen();");
+  } catch (_) {}
+  return true;
+}
+if (!_bindFullyWake()) window.addEventListener("load", _bindFullyWake);
+// Fully injects its own script on load and can replace the bind. Re-apply after that.
+setTimeout(_bindFullyWake, 800);
+
 document.addEventListener("touchend", function _pfsTrigger() {
   document.removeEventListener("touchend", _pfsTrigger);
-  // Request fullscreen, then mark swipe as ready once the transition settles.
-  // fullscreenchange fires when the transition is complete; fall back to a
-  // short timeout on browsers that don't fire the event at all.
-  setTimeout(requestFullscreen, 50);
+  // A tap still counts. Some WebViews reject fullscreen with no user gesture.
+  _scheduleKioskRestore();
   const _onFsChange = () => {
     document.removeEventListener("fullscreenchange", _onFsChange);
     document.removeEventListener("webkitfullscreenchange", _onFsChange);
@@ -18425,6 +18470,8 @@ document.addEventListener("touchend", function _pfsTrigger() {
   // enable swipe after 1.5 s regardless.
   setTimeout(() => { _swipeReady = true; }, 1500);
 }, { passive: true });
+
+_scheduleKioskRestore();
 
 /* ─── OVERVIEW SCREEN 2 — JS ────────────────────────────────────────────────
  * switchOverview(idx) — toggles between screen 1 (classic) and screen 2
