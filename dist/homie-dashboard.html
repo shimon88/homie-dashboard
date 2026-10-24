@@ -26,7 +26,7 @@
 <head>
 <meta charset="UTF-8">
 <!-- DASHBOARD VERSION — update this when releasing a new version -->
-<script>const DASHBOARD_VERSION = "4.2.5";</script>
+<script>const DASHBOARD_VERSION = "4.3.0";</script>
 <!-- GITHUB REPO — used only to check for the latest tagged release in Settings -->
 <script>const GITHUB_REPO = "shimon88/homie-dashboard";</script>
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
@@ -458,9 +458,9 @@
   .stat {
     padding: 0.6rem 0.6rem;
     text-align: center;
-    border-left: 1px solid var(--ac-4);
+    border-inline-start: 1px solid var(--ac-4);
   }
-  .stat:nth-child(5n+1) { border-left: none; }
+  .stat:nth-child(5n+1) { border-inline-start: none; }
   .stat:nth-child(n+6) {
     border-top: 1px solid var(--ac-4);
     padding-top: 0.8rem;
@@ -489,8 +489,8 @@
     grid-template-columns: repeat(6, 1fr);
     max-width: 47.5rem;
   }
-  .aqi-kpi-row .stat:nth-child(5n+1) { border-left: 1px solid var(--ac-4); }
-  .aqi-kpi-row .stat:nth-child(6n+1) { border-left: none; }
+  .aqi-kpi-row .stat:nth-child(5n+1) { border-inline-start: 1px solid var(--ac-4); }
+  .aqi-kpi-row .stat:nth-child(6n+1) { border-inline-start: none; }
   .aqi-kpi-row .stat:nth-child(n+6) { border-top: none; padding-top: 0.6rem; }
 
   /* ─── BOTTOM AREA ─── */
@@ -1438,7 +1438,7 @@
   }
   .popup-room-badge.visible { opacity: 1; }
   /* Badge used inline within an expandable row label — needs a small left gap */
-  .popup-room-badge--inline { margin-left: 8px; }
+  .popup-room-badge--inline { margin-inline-start: 8px; }
   .popup-room-chevron {
     font-size: 12px;
     color: rgba(255,255,255,0.35);
@@ -3020,7 +3020,7 @@
     padding: 1.4rem 1.6rem 1rem;
     min-height: 0;
   }
-  .daily-col + .daily-col { border-left: 1px solid var(--ac-12); }
+  .daily-col + .daily-col { border-inline-start: 1px solid var(--ac-12); }
   .daily-col-title {
     font-size: 9px;
     letter-spacing: 0.35em;
@@ -8502,6 +8502,24 @@
   .sfs-node-active { animation: sfs-node-pulse 2s ease-in-out infinite; }
 
 </style>
+<style id="homie-rtl">
+html[dir="rtl"] * { letter-spacing: 0 !important; }
+html[dir="rtl"] .aqi-chart-canvas,
+html[dir="rtl"] .sfs-chart-scroll,
+html[dir="rtl"] .ov3-wx-hourly-chart,
+html[dir="rtl"] .wfs-hourly-chart-card,
+html[dir="rtl"] .litter-chart-bars,
+html[dir="rtl"] .top-clock,
+html[dir="rtl"] .weather-temp,
+html[dir="rtl"] .stat-value { direction: ltr; unicode-bidi: isolate; }
+html[dir="rtl"] #favorites-popover { transform-origin: left center; }
+html[dir="rtl"] #favorites-popover::before {
+  border-right: none;
+  border-top: none;
+  border-left: 1px solid rgba(255,255,255,0.1);
+  border-bottom: 1px solid rgba(255,255,255,0.1);
+}
+</style>
 </head>
 <body>
 
@@ -8535,7 +8553,7 @@
     <!-- Row 1: Favorites · Security -->
     <div class="topbar-row">
       <div class="fav-wrap" id="fav-wrap">
-        <button class="topbar-btn" id="fav-btn" onclick="toggleFavoritesPopover()" title="Favorites">
+        <button class="topbar-btn" id="fav-btn" onclick="toggleFavoritesPopover()" title="Favorites" data-i18n-title="Favorites">
           <div class="fav-dots">
             <span style="background:#e8834f"></span>
             <span style="background:#7f8fa6"></span>
@@ -8545,7 +8563,7 @@
         </button>
         <div id="favorites-popover"></div>
       </div>
-      <button class="topbar-btn topbar-security-btn" id="security-btn" onclick="openSecurity()" title="Security">
+      <button class="topbar-btn topbar-security-btn" id="security-btn" onclick="openSecurity()" title="Security" data-i18n-title="Security">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L3 7v6c0 5.25 3.75 10.15 9 11.25C17.25 23.15 21 18.25 21 13V7L12 2z"/></svg>
       </button>
     </div>
@@ -8554,57 +8572,57 @@
       <div class="mode-launcher" id="mode-launcher">
         <!-- Accordion drawer (expands left) -->
         <div class="mode-launcher-drawer" id="mode-launcher-drawer">
-          <button class="topbar-btn" id="pet-btn" onclick="openPetStats()" title="Pet Stats">
+          <button class="topbar-btn" id="pet-btn" onclick="openPetStats()" title="Pet Stats" data-i18n-title="Pet Stats">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="7" cy="4" r="1.5"/><circle cx="17" cy="4" r="1.5"/><circle cx="3.5" cy="10" r="1.5"/><circle cx="20.5" cy="10" r="1.5"/><path d="M12 22c-4 0-7-2.5-7-6 0-2 1-3.5 2.5-4.5S10 10 12 10s3.5.5 4.5 1.5S19 14 19 16c0 3.5-3 6-7 6z"/></svg>
-            <span class="launcher-label" data-label>Pet Stats</span>
+            <span class="launcher-label" data-label data-i18n="Pet Stats">Pet Stats</span>
           </button>
-          <button class="topbar-btn np-fs-open-btn" id="np-fs-open-btn" onclick="openNowPlayingFS()" title="Now Playing">
+          <button class="topbar-btn np-fs-open-btn" id="np-fs-open-btn" onclick="openNowPlayingFS()" title="Now Playing" data-i18n-title="Now Playing">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polygon points="10 8 16 12 10 16 10 8" fill="currentColor" stroke="none"/></svg>
-            <span class="launcher-label" data-label>Now Playing</span>
+            <span class="launcher-label" data-label data-i18n="Now Playing">Now Playing</span>
           </button>
-          <button class="topbar-btn" id="daily-open-btn" onclick="openDailyView()" title="My Day">
+          <button class="topbar-btn" id="daily-open-btn" onclick="openDailyView()" title="My Day" data-i18n-title="My Day">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/><line x1="8" y1="14" x2="16" y2="14"/><line x1="8" y1="18" x2="12" y2="18"/></svg>
-            <span class="launcher-label" data-label>My Day</span>
+            <span class="launcher-label" data-label data-i18n="My Day">My Day</span>
           </button>
-          <button class="topbar-btn" id="photoframe-open-btn" onclick="openPhotoFrame()" title="Memories">
+          <button class="topbar-btn" id="photoframe-open-btn" onclick="openPhotoFrame()" title="Memories" data-i18n-title="Memories">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
-            <span class="launcher-label" data-label>Memories</span>
+            <span class="launcher-label" data-label data-i18n="Memories">Memories</span>
           </button>
-          <button class="topbar-btn" id="cameras-open-btn" onclick="openCameras()" title="Cameras">
+          <button class="topbar-btn" id="cameras-open-btn" onclick="openCameras()" title="Cameras" data-i18n-title="Cameras">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M23 7l-7 5 7 5V7z"/><rect x="1" y="5" width="15" height="14" rx="2"/></svg>
-            <span class="launcher-label" data-label>Cameras</span>
+            <span class="launcher-label" data-label data-i18n="Cameras">Cameras</span>
           </button>
-          <button class="topbar-btn" id="thermostat-open-btn" onclick="openThermostat()" title="Thermostat">
+          <button class="topbar-btn" id="thermostat-open-btn" onclick="openThermostat()" title="Thermostat" data-i18n-title="Thermostat">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 14.76V3.5a2.5 2.5 0 0 0-5 0v11.26a4.5 4.5 0 1 0 5 0z"/></svg>
-            <span class="launcher-label" data-label>Thermostat</span>
+            <span class="launcher-label" data-label data-i18n="Thermostat">Thermostat</span>
           </button>
-          <button class="topbar-btn" id="clock-open-btn" onclick="openClock()" title="Clock">
+          <button class="topbar-btn" id="clock-open-btn" onclick="openClock()" title="Clock" data-i18n-title="Clock">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-            <span class="launcher-label" data-label>Clock</span>
+            <span class="launcher-label" data-label data-i18n="Clock">Clock</span>
           </button>
-          <button class="topbar-btn" id="weather-fs-open-btn" onclick="openWeatherFS()" title="Weather">
+          <button class="topbar-btn" id="weather-fs-open-btn" onclick="openWeatherFS()" title="Weather" data-i18n-title="Weather">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M18 10h-1.26A8 8 0 1 0 9 20h9a5 5 0 0 0 0-10z"/></svg>
-            <span class="launcher-label" data-label>Weather</span>
+            <span class="launcher-label" data-label data-i18n="Weather">Weather</span>
           </button>
-          <button class="topbar-btn" id="solar-fs-open-btn" onclick="openSolarFS()" title="Solar">
+          <button class="topbar-btn" id="solar-fs-open-btn" onclick="openSolarFS()" title="Solar" data-i18n-title="Solar">
             <svg width="16" height="16" viewBox="-14 -15 28 28" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="-13" y="-14" width="26" height="20" rx="2"/><line x1="-4" y1="-14" x2="-4" y2="6"/><line x1="4" y1="-14" x2="4" y2="6"/><line x1="-13" y1="-5" x2="13" y2="-5"/><line x1="-13" y1="2" x2="13" y2="2"/><line x1="0" y1="6" x2="0" y2="12"/><line x1="-6" y1="12" x2="6" y2="12"/></svg>
-            <span class="launcher-label" data-label>Solar</span>
+            <span class="launcher-label" data-label data-i18n="Solar">Solar</span>
           </button>
-          <button class="topbar-btn" id="presence-open-btn" onclick="openPresenceTimeline()" title="Indoor Presence">
+          <button class="topbar-btn" id="presence-open-btn" onclick="openPresenceTimeline()" title="Indoor Presence" data-i18n-title="Indoor Presence">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="4.5" r="2"/><path d="M12 6.5v5.5l-3.2 7.2M12 12l3.2 7.2M8.7 10 5 12.4M15.3 10 19 12.4"/></svg>
-            <span class="launcher-label" data-label>Presence</span>
+            <span class="launcher-label" data-label data-i18n="Presence">Presence</span>
           </button>
-          <button class="topbar-btn" id="aqi-fs-open-btn" onclick="openIndoorAQI()" title="Indoor AQI">
+          <button class="topbar-btn" id="aqi-fs-open-btn" onclick="openIndoorAQI()" title="Indoor AQI" data-i18n-title="Indoor AQI">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9.59 4.59A2 2 0 1 1 11 8H2"/><path d="M12.59 19.41A2 2 0 1 0 14 16H2"/><path d="M17.73 7.73A2.5 2.5 0 1 1 19.5 12H2"/></svg>
-            <span class="launcher-label" data-label>Indoor AQI</span>
+            <span class="launcher-label" data-label data-i18n="Indoor AQI">Indoor AQI</span>
           </button>
-          <button class="topbar-btn" id="system-open-btn" onclick="openSystemStats()" title="Insights">
+          <button class="topbar-btn" id="system-open-btn" onclick="openSystemStats()" title="Insights" data-i18n-title="Insights">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 2v4M12 18v4M4.9 4.9l2.8 2.8M16.3 16.3l2.8 2.8M2 12h4M18 12h4M4.9 19.1l2.8-2.8M16.3 7.7l2.8-2.8"/><circle cx="12" cy="12" r="3.5"/></svg>
-            <span class="launcher-label" data-label>Insights</span>
+            <span class="launcher-label" data-label data-i18n="Insights">Insights</span>
           </button>
         </div>
         <!-- Toggle button -->
-        <button class="mode-launcher-btn" id="mode-launcher-toggle" onclick="openDashboardsHub()" title="Dashboards">
+        <button class="mode-launcher-btn" id="mode-launcher-toggle" onclick="openDashboardsHub()" title="Dashboards" data-i18n-title="Dashboards">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
             <rect x="3" y="3" width="7" height="7" rx="1.5"/>
             <rect x="14" y="3" width="7" height="7" rx="1.5"/>
@@ -8613,7 +8631,7 @@
           </svg>
         </button>
       </div>
-      <button class="topbar-btn" id="settings-btn" onclick="openSettings()" title="Settings">
+      <button class="topbar-btn" id="settings-btn" onclick="openSettings()" title="Settings" data-i18n-title="Settings">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
       </button>
     </div>
@@ -8635,7 +8653,7 @@
 <div id="waze-bubble-bar" class="timer-bubble-bar"></div>
 <div id="connection-lost-bar" class="connection-lost-bar">
   <div class="connection-lost-dot"></div>
-  <span>Connection lost — retrying…</span>
+  <span data-i18n="Connection lost — retrying…">Connection lost — retrying…</span>
 </div>
 
 <div id="music-player-bar" class="music-player-bar">
@@ -8649,20 +8667,20 @@
       <!-- Source selector pill — positioned left, mirrors vol on the right -->
       <div class="np-src-side">
         <div style="position:relative;">
-          <button class="np-source-pill" id="np-source-pill" onclick="openSourceDropdown('np-src-dropdown')" title="Select source" style="display:none"></button>
+          <button class="np-source-pill" id="np-source-pill" onclick="openSourceDropdown('np-src-dropdown')" title="Select source" data-i18n-title="Select source" style="display:none"></button>
           <div class="np-src-dropdown np-src-dropdown--above" id="np-src-dropdown"></div>
         </div>
       </div>
       <div class="np-controls">
       <!-- Skip Previous: vertical bar + filled triangle pointing left -->
-      <button class="np-btn" id="np-prev" onclick="mediaCommand('media_previous_track')" title="Previous">
+      <button class="np-btn" id="np-prev" onclick="mediaCommand('media_previous_track')" title="Previous" data-i18n-title="Previous">
         <svg width="24" height="24" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
           <rect x="2" y="3" width="2.5" height="12" rx="1" style="fill:var(--accent)"/>
           <path d="M15 3.8 L6.5 9 L15 14.2 Z" style="fill:var(--accent)"/>
         </svg>
       </button>
       <!-- Play / Pause: toggled by JS -->
-      <button class="np-btn np-play-pause" id="np-playpause" onclick="mediaCommand('media_play_pause')" title="Play / Pause">
+      <button class="np-btn np-play-pause" id="np-playpause" onclick="mediaCommand('media_play_pause')" title="Play / Pause" data-i18n-title="Play / Pause">
         <svg id="np-icon-play" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
           <path d="M5 2.8 L13 8 L5 13.2 Z" style="fill:var(--accent)"/>
         </svg>
@@ -8672,7 +8690,7 @@
         </svg>
       </button>
       <!-- Skip Next: filled triangle pointing right + vertical bar -->
-      <button class="np-btn" id="np-next" onclick="mediaCommand('media_next_track')" title="Next">
+      <button class="np-btn" id="np-next" onclick="mediaCommand('media_next_track')" title="Next" data-i18n-title="Next">
         <svg width="24" height="24" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
           <path d="M3 3.8 L11.5 9 L3 14.2 Z" style="fill:var(--accent)"/>
           <rect x="13.5" y="3" width="2.5" height="12" rx="1" style="fill:var(--accent)"/>
@@ -8689,7 +8707,7 @@
               <path id="np-vol-wave2" d="M15.54 8.46a5 5 0 0 1 0 7.07"/>
             </svg>
           </button>
-          <span class="np-vol-tip">Phone volume only</span>
+          <span class="np-vol-tip" data-i18n="Phone volume only">Phone volume only</span>
           <div class="np-vol-popup" id="np-vol-popup">
             <input class="np-vol-slider" id="np-vol-slider" type="range" min="0" max="100" value="50"
               oninput="onVolSliderInput('np-vol-slider','np-vol-label')"
@@ -8697,7 +8715,7 @@
             <span class="np-vol-val" id="np-vol-label">50</span>
           </div>
         </div>
-        <button class="np-btn np-vol-btn" onclick="openNowPlayingFS()" title="Open Music Dashboard" style="margin-left:4px;">
+        <button class="np-btn np-vol-btn" onclick="openNowPlayingFS()" title="Open Music Dashboard" data-i18n-title="Open Music Dashboard" style="margin-left:4px;">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <polyline points="15 3 21 3 21 9"/>
             <polyline points="9 21 3 21 3 15"/>
@@ -8745,7 +8763,7 @@
         <div class="hero-grain"></div>
       </div>
       <div class="ov2-hero-content">
-        <h1 class="ov2-hero-title" id="ov2-hero-title">WELCOME</h1>
+        <h1 class="ov2-hero-title" id="ov2-hero-title" data-i18n="WELCOME">WELCOME</h1>
         <div class="ov2-stats hero-stats" id="ov2-stats"></div>
       </div>
     </div>
@@ -8769,7 +8787,7 @@
   <div class="ov3-sidebar">
 
     <!-- Settings -->
-    <button class="ov3-sb-btn" id="ov3-settings-btn" onclick="_ov3OpenSettings()" title="Settings">
+    <button class="ov3-sb-btn" id="ov3-settings-btn" onclick="_ov3OpenSettings()" title="Settings" data-i18n-title="Settings">
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
         <circle cx="12" cy="12" r="3"/>
         <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/>
@@ -8832,7 +8850,7 @@
       <!-- Weather card (left column, full height) -->
       <div class="ov3-weather-card" id="ov3-weather-card">
         <!-- Launch icon — top right -->
-        <button class="ov3-wx-launch-btn" onclick="openWeatherFS()" title="Open Weather Dashboard">
+        <button class="ov3-wx-launch-btn" onclick="openWeatherFS()" title="Open Weather Dashboard" data-i18n-title="Open Weather Dashboard">
           <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.85)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <polyline points="15 3 21 3 21 9"/>
             <polyline points="9 21 3 21 3 15"/>
@@ -8891,11 +8909,11 @@
         <!-- Swipeable forecast area: panel 1 = 5-day, panel 2 = hourly chart -->
         <div class="ov3-wx-scroll" id="ov3-wx-scroll">
           <div class="ov3-wx-scroll-panel">
-            <div class="ov3-wx-forecast-title">5-DAY FORECAST</div>
+            <div class="ov3-wx-forecast-title" data-i18n="5-DAY FORECAST">5-DAY FORECAST</div>
             <div class="ov3-wx-forecast-row" id="ov3-wx-forecast"></div>
           </div>
           <div class="ov3-wx-scroll-panel">
-            <div class="ov3-wx-forecast-title">HOURLY FORECAST</div>
+            <div class="ov3-wx-forecast-title" data-i18n="HOURLY FORECAST">HOURLY FORECAST</div>
             <div class="ov3-wx-hourly-chart" id="ov3-wx-hourly"></div>
           </div>
         </div>
@@ -8946,7 +8964,7 @@
 
       <!-- Energy card (col 1, row 5) -->
       <div class="ov3-energy-card" id="ov3-energy-card">
-        <button class="ov3-energy-launch-btn" onclick="openSolarFS()" title="Solar Dashboard" aria-label="Open Solar Dashboard">
+        <button class="ov3-energy-launch-btn" onclick="openSolarFS()" title="Solar Dashboard" data-i18n-title="Solar Dashboard" aria-label="Open Solar Dashboard" data-i18n-aria="Open Solar Dashboard">
           <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.85)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <polyline points="15 3 21 3 21 9"/>
             <polyline points="9 21 3 21 3 15"/>
@@ -8960,15 +8978,15 @@
         </div>
         <div class="ov3-energy-stat-row">
           <div class="ov3-energy-stat-item">
-            <div class="ov3-energy-stat-label">Today</div>
+            <div class="ov3-energy-stat-label" data-i18n="Today">Today</div>
             <div class="ov3-energy-stat-value" id="ov3-energy-today">—</div>
           </div>
           <div class="ov3-energy-stat-item">
-            <div class="ov3-energy-stat-label">Solar</div>
+            <div class="ov3-energy-stat-label" data-i18n="Solar">Solar</div>
             <div class="ov3-energy-stat-value" id="ov3-energy-solar">—</div>
           </div>
           <div class="ov3-energy-stat-item">
-            <div class="ov3-energy-stat-label" id="ov3-energy-grid-label">Grid</div>
+            <div class="ov3-energy-stat-label" id="ov3-energy-grid-label" data-i18n="Grid">Grid</div>
             <div class="ov3-energy-stat-value" id="ov3-energy-grid">—</div>
           </div>
         </div>
@@ -8982,12 +9000,12 @@
           <div class="ov3-music-top">
             <div class="ov3-music-fs-btn" style="visibility:hidden" aria-hidden="true"></div>
             <div class="ov3-music-meta" id="ov3-music-meta">
-              <div class="ov3-music-idle" id="ov3-music-idle">Nothing Playing</div>
+              <div class="ov3-music-idle" id="ov3-music-idle" data-i18n="Nothing Playing">Nothing Playing</div>
               <div class="ov3-music-artist" id="ov3-music-artist" style="display:none">—</div>
               <span class="ov3-music-sep" id="ov3-music-sep" style="display:none">·</span>
               <div class="ov3-music-track"  id="ov3-music-track"  style="display:none">—</div>
             </div>
-            <button class="ov3-music-fs-btn" onclick="openNowPlayingFS()" title="Open Music Dashboard">
+            <button class="ov3-music-fs-btn" onclick="openNowPlayingFS()" title="Open Music Dashboard" data-i18n-title="Open Music Dashboard">
               <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.85)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                 <polyline points="15 3 21 3 21 9"/>
                 <polyline points="9 21 3 21 3 15"/>
@@ -9001,19 +9019,19 @@
             <!-- Source selector -->
             <div class="ov3-music-src-side">
               <div style="position:relative;">
-                <button class="np-source-pill" id="ov3-music-src-pill" onclick="openSourceDropdown('ov3-music-src-dropdown')" title="Select source" style="display:none"></button>
+                <button class="np-source-pill" id="ov3-music-src-pill" onclick="openSourceDropdown('ov3-music-src-dropdown')" title="Select source" data-i18n-title="Select source" style="display:none"></button>
                 <div class="np-src-dropdown np-src-dropdown--above" id="ov3-music-src-dropdown"></div>
               </div>
             </div>
             <!-- Playback controls -->
             <div class="ov3-music-controls">
-              <button class="ov3-music-btn" onclick="mediaCommand('media_previous_track')" title="Previous">
+              <button class="ov3-music-btn" onclick="mediaCommand('media_previous_track')" title="Previous" data-i18n-title="Previous">
                 <svg width="20" height="20" viewBox="0 0 18 18" fill="none">
                   <rect x="2" y="3" width="2.5" height="12" rx="1" fill="var(--accent)"/>
                   <path d="M15 3.8 L6.5 9 L15 14.2 Z" fill="var(--accent)"/>
                 </svg>
               </button>
-              <button class="ov3-music-btn" onclick="mediaCommand('media_play_pause')" title="Play / Pause">
+              <button class="ov3-music-btn" onclick="mediaCommand('media_play_pause')" title="Play / Pause" data-i18n-title="Play / Pause">
                 <svg id="ov3-music-icon-play" width="14" height="14" viewBox="0 0 16 16" fill="none">
                   <path d="M5 2.8 L13 8 L5 13.2 Z" fill="var(--accent)"/>
                 </svg>
@@ -9022,7 +9040,7 @@
                   <rect x="9.5" y="2.5" width="3" height="11" rx="1" fill="var(--accent)"/>
                 </svg>
               </button>
-              <button class="ov3-music-btn" onclick="mediaCommand('media_next_track')" title="Next">
+              <button class="ov3-music-btn" onclick="mediaCommand('media_next_track')" title="Next" data-i18n-title="Next">
                 <svg width="20" height="20" viewBox="0 0 18 18" fill="none">
                   <path d="M3 3.8 L11.5 9 L3 14.2 Z" fill="var(--accent)"/>
                   <rect x="13.5" y="3" width="2.5" height="12" rx="1" fill="var(--accent)"/>
@@ -9097,41 +9115,41 @@
               <div class="ov3-sec-btns" style="margin-top:5px">
                 <button class="ov3-sec-btn" id="ov3-alarm-btn-home" onclick="alarmAction('arm_night')">
                   <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9.5L12 3l9 6.5V20a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V9.5z"/><path d="M9 21V12h6v9"/></svg>
-                  <span>Arm Night</span>
+                  <span data-i18n="Arm Night">Arm Night</span>
                 </button>
                 <button class="ov3-sec-btn" id="ov3-alarm-btn-away" onclick="alarmAction('arm_away')">
                   <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L3 7v6c0 5.25 3.75 10.15 9 11.25C17.25 23.15 21 18.25 21 13V7L12 2z"/><circle cx="12" cy="11" r="2"/></svg>
-                  <span>Arm Away</span>
+                  <span data-i18n="Arm Away">Arm Away</span>
                 </button>
                 <button class="ov3-sec-btn ov3-sec-btn--disarm" id="ov3-alarm-btn-disarm" onclick="alarmAction('disarm');_ov3SecFeedback('Sending…','')">
                   <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/><line x1="12" y1="15" x2="12" y2="17"/></svg>
-                  <span>Disarm</span>
+                  <span data-i18n="Disarm">Disarm</span>
                 </button>
               </div>
               <!-- Siren controls -->
               <div class="ov3-sec-btns" style="grid-template-columns:1fr 1fr;margin-top:5px">
                 <button class="ov3-sec-btn alarm-mode-btn--siren-on" onclick="securityAction('siren','turn_on')">
                   <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/></svg>
-                  <span>Siren On</span>
+                  <span data-i18n="Siren On">Siren On</span>
                 </button>
                 <button class="ov3-sec-btn alarm-mode-btn--siren-off" onclick="securityAction('siren','turn_off')">
                   <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><line x1="23" y1="9" x2="17" y2="15"/><line x1="17" y1="9" x2="23" y2="15"/></svg>
-                  <span>Siren Off</span>
+                  <span data-i18n="Siren Off">Siren Off</span>
                 </button>
               </div>
             </div>
 
             <!-- Page 2: garage / gate -->
             <div class="ov3-sec-panel">
-              <div class="alarm-action-section-label" style="margin-top:0">GARAGE / GATE</div>
+              <div class="alarm-action-section-label" style="margin-top:0" data-i18n="GARAGE / GATE">GARAGE / GATE</div>
               <div class="ov3-sec-btns" style="grid-template-columns:1fr 1fr;margin-top:0">
                 <button class="ov3-sec-btn alarm-mode-btn--garage-open" onclick="securityAction('cover','open_cover')">
                   <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="13" width="20" height="8" rx="1"/><polyline points="12 3 12 13"/><polyline points="8 7 12 3 16 7"/></svg>
-                  <span>Open</span>
+                  <span data-i18n="Open">Open</span>
                 </button>
                 <button class="ov3-sec-btn alarm-mode-btn--garage-close" onclick="securityAction('cover','close_cover')">
                   <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="8" rx="1"/><polyline points="12 21 12 11"/><polyline points="8 17 12 21 16 17"/></svg>
-                  <span>Close</span>
+                  <span data-i18n="Close">Close</span>
                 </button>
               </div>
             </div>
@@ -9175,7 +9193,7 @@
       <!-- Calendar card (col 2, rows 3–4) -->
       <div class="ov3-events-card" id="ov3-events-card">
         <div class="ov3-events-header">
-          <button class="ov3-events-open-btn" onclick="openDailyView()" title="Open My Day" style="margin-left:auto">
+          <button class="ov3-events-open-btn" onclick="openDailyView()" title="Open My Day" data-i18n-title="Open My Day" style="margin-left:auto">
             <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.85)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
               <polyline points="15 3 21 3 21 9"/>
               <polyline points="9 21 3 21 3 15"/>
@@ -9205,7 +9223,7 @@
 <!-- ─── WEATHER POPUP ─── -->
 <div class="popup-overlay" id="weather-overlay" onclick="closeWeatherPopup(event)">
   <div class="popup popup--weather">
-    <div class="popup-title popup-title--spaced">WEATHER</div>
+    <div class="popup-title popup-title--spaced" data-i18n="WEATHER">WEATHER</div>
     <div class="wx-popup-header">
       <div class="wx-popup-icon" id="wx-popup-icon"></div>
       <div>
@@ -9251,7 +9269,7 @@
         <span class="wx-stat-value" id="wx-popup-cloud">—</span>
       </div>
     </div>
-    <div class="wx-forecast-title">5-DAY FORECAST</div>
+    <div class="wx-forecast-title" data-i18n="5-DAY FORECAST">5-DAY FORECAST</div>
     <div class="wx-forecast-row" id="wx-popup-forecast"></div>
   </div>
 </div>
@@ -9260,7 +9278,7 @@
 <div class="popup-overlay" id="security-overlay" onclick="closeSecurityOverlay(event)">
   <div class="popup popup--security">
     <div class="popup-title popup-title--flex">
-      <span>SECURITY</span>
+      <span data-i18n="SECURITY">SECURITY</span>
       <span id="alarm-status-badge" class="alarm-badge alarm-badge--disarmed">DISARMED</span>
     </div>
 
@@ -9270,41 +9288,41 @@
     <div class="alarm-mode-row">
       <button class="alarm-mode-btn" id="alarm-btn-home" onclick="alarmAction('arm_night')">
         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9.5L12 3l9 6.5V20a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V9.5z"/><path d="M9 21V12h6v9"/></svg>
-        <span>ARM NIGHT</span>
+        <span data-i18n="ARM NIGHT">ARM NIGHT</span>
       </button>
       <button class="alarm-mode-btn" id="alarm-btn-away" onclick="alarmAction('arm_away')">
         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L3 7v6c0 5.25 3.75 10.15 9 11.25C17.25 23.15 21 18.25 21 13V7L12 2z"/><circle cx="12" cy="11" r="2"/></svg>
-        <span>ARM AWAY</span>
+        <span data-i18n="ARM AWAY">ARM AWAY</span>
       </button>
       <button class="alarm-mode-btn alarm-mode-btn--disarm" id="alarm-btn-disarm" onclick="alarmAction('disarm')">
         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/><line x1="12" y1="15" x2="12" y2="17"/></svg>
-        <span>DISARM</span>
+        <span data-i18n="DISARM">DISARM</span>
       </button>
     </div>
 
     <!-- Siren controls -->
-    <div class="alarm-action-section-label">SIREN</div>
+    <div class="alarm-action-section-label" data-i18n="SIREN">SIREN</div>
     <div class="alarm-action-row">
       <button class="alarm-mode-btn alarm-mode-btn--siren-on" onclick="securityAction('siren','turn_on')">
         <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/></svg>
-        <span>SIREN ON</span>
+        <span data-i18n="SIREN ON">SIREN ON</span>
       </button>
       <button class="alarm-mode-btn alarm-mode-btn--siren-off" onclick="securityAction('siren','turn_off')">
         <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><line x1="23" y1="9" x2="17" y2="15"/><line x1="17" y1="9" x2="23" y2="15"/></svg>
-        <span>SIREN OFF</span>
+        <span data-i18n="SIREN OFF">SIREN OFF</span>
       </button>
     </div>
 
     <!-- Garage / Gate controls -->
-    <div class="alarm-action-section-label">GARAGE / GATE</div>
+    <div class="alarm-action-section-label" data-i18n="GARAGE / GATE">GARAGE / GATE</div>
     <div class="alarm-action-row">
       <button class="alarm-mode-btn alarm-mode-btn--garage-open" onclick="securityAction('cover','open_cover')">
         <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="13" width="20" height="8" rx="1"/><polyline points="12 3 12 13"/><polyline points="8 7 12 3 16 7"/></svg>
-        <span>OPEN</span>
+        <span data-i18n="OPEN">OPEN</span>
       </button>
       <button class="alarm-mode-btn alarm-mode-btn--garage-close" onclick="securityAction('cover','close_cover')">
         <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="8" rx="1"/><polyline points="12 21 12 11"/><polyline points="8 17 12 21 16 17"/></svg>
-        <span>CLOSE</span>
+        <span data-i18n="CLOSE">CLOSE</span>
       </button>
     </div>
 
@@ -9314,7 +9332,7 @@
 
 <div class="popup-overlay" id="alarm-pin-overlay" onclick="closeAlarmPin(event)">
   <div class="popup popup--alarm-pin">
-    <div class="popup-title">ENTER CODE</div>
+    <div class="popup-title" data-i18n="ENTER CODE">ENTER CODE</div>
     <div class="alarm-pin-dots" id="alarm-pin-dots" aria-live="polite"></div>
     <div class="alarm-pin-grid">
       <button type="button" class="alarm-pin-key" onclick="alarmPinKey('1')">1</button>
@@ -9328,15 +9346,15 @@
       <button type="button" class="alarm-pin-key" onclick="alarmPinKey('9')">9</button>
       <button type="button" class="alarm-pin-key" onclick="alarmPinKey('back')">⌫</button>
       <button type="button" class="alarm-pin-key" onclick="alarmPinKey('0')">0</button>
-      <button type="button" class="alarm-pin-key alarm-pin-key--ok" onclick="alarmPinKey('ok')">OK</button>
+      <button type="button" class="alarm-pin-key alarm-pin-key--ok" onclick="alarmPinKey('ok')" data-i18n="OK">OK</button>
     </div>
-    <button type="button" class="alarm-pin-cancel" onclick="closeAlarmPin()">Cancel</button>
+    <button type="button" class="alarm-pin-cancel" onclick="closeAlarmPin()" data-i18n="Cancel">Cancel</button>
   </div>
 </div>
 
 <div class="popup-overlay" id="pet-overlay" onclick="closePetStats(event)">
   <div class="popup popup--pet">
-    <div class="popup-title">Pet Status</div>
+    <div class="popup-title" data-i18n="Pet Status">Pet Status</div>
     <!-- Litter Box Actions -->
     <div class="litter-action-row">
       <!-- Reset Counter -->
@@ -9347,7 +9365,7 @@
             <path d="M3 3v5h5"/>
           </svg>
         </div>
-        <div class="pet-card-text">Reset Counter</div>
+        <div class="pet-card-text" data-i18n="Reset Counter">Reset Counter</div>
       </button>
 
       <!-- Since Last Clean — number only -->
@@ -9355,7 +9373,7 @@
         <div class="pet-card-icon">
           <span id="litter-gauge-num" style="font-size:22px;font-weight:600;color:var(--accent);letter-spacing:0.05em;line-height:1;">—</span>
         </div>
-        <div class="pet-card-text">Since Last Clean</div>
+        <div class="pet-card-text" data-i18n="Since Last Clean">Since Last Clean</div>
       </div>
 
       <!-- Toggle Clean -->
@@ -9374,7 +9392,7 @@
             <path d="M10 14c-.5 1.5-1.5 3.5-4 4.5 1-2.5.5-4 .5-4"/>
           </svg>
         </div>
-        <div class="pet-card-text" id="litter-toggle-label">Toggle Clean</div>
+        <div class="pet-card-text" id="litter-toggle-label" data-i18n="Toggle Clean">Toggle Clean</div>
       </button>
     </div>
 
@@ -9442,7 +9460,7 @@
       </div>
     </div>
     <div class="litter-chart-section">
-      <div class="litter-chart-title">Litter Box — Last 5 Days</div>
+      <div class="litter-chart-title" data-i18n="Litter Box — Last 5 Days">Litter Box — Last 5 Days</div>
       <div class="litter-chart-bars" id="litter-chart-bars">
         <div class="litter-bar-col"><div class="litter-bar-val" id="lbc-v0"></div><div class="litter-bar-wrap"><div class="litter-bar" id="lbc-b0" style="height:3px;background:rgba(255,255,255,0.1)"></div></div><div class="litter-bar-label" id="lbc-l0">—</div></div>
         <div class="litter-bar-col"><div class="litter-bar-val" id="lbc-v1"></div><div class="litter-bar-wrap"><div class="litter-bar" id="lbc-b1" style="height:3px;background:rgba(255,255,255,0.1)"></div></div><div class="litter-bar-label" id="lbc-l1">—</div></div>
@@ -9539,20 +9557,390 @@ const _LOCALE_WORDS = {
   'ja': { today: '今日',         tomorrow: '明日',       day: '日',     allEvents: 'すべての予定',              on: 'オン',   off: 'オフ',   loading: '読み込み中…',   noEvents: 'イベントなし',       noTasks: 'タスクなし',           couldNotLoadMeals: '食事を読み込めませんでした',              allDay: '終日',        habitHistory: '習慣の履歴',         moodHistory: '気分の履歴',       habitTracker: '習慣トラッカー',    moodTracker: '気分トラッカー',   todaysMeals: '今日の食事',         toDo: 'やること', upcoming: '予定',       tempHigh: '高:', tempLow: '低:' },
   'zh': { today: '今天',         tomorrow: '明天',       day: '日',     allEvents: '所有活动',                  on: '开',     off: '关',     loading: '加载中…',       noEvents: '暂无活动',           noTasks: '暂无任务',             couldNotLoadMeals: '无法加载餐食',                            allDay: '全天',        habitHistory: '习惯记录',           moodHistory: '心情记录',         habitTracker: '习惯打卡',          moodTracker: '心情追踪',         todaysMeals: '今日餐食',           toDo: '待办',     upcoming: '日程',       tempHigh: '高:', tempLow: '低:' },
   'ar': { today: 'اليوم',       tomorrow: 'غداً',      day: 'اليوم',  allEvents: 'جميع الأحداث',             on: 'تشغيل', off: 'إيقاف', loading: 'جارٍ التحميل…', noEvents: 'لا توجد أحداث',    noTasks: 'لا توجد مهام',        couldNotLoadMeals: 'تعذّر تحميل الوجبات',                   allDay: 'طوال اليوم', habitHistory: 'سجل العادات',       moodHistory: 'سجل المزاج',      habitTracker: 'متتبع العادات',    moodTracker: 'متتبع المزاج',    todaysMeals: 'وجبات اليوم',       toDo: 'المهام',  upcoming: 'القادمة',    tempHigh: 'أ:', tempLow: 'د:' },
+  'he': { today: 'היום', tomorrow: 'מחר', day: 'יום', allEvents: 'כל האירועים', on: 'פעיל', off: 'כבוי', loading: 'טוען…', noEvents: 'אין אירועים היום', noTasks: 'אין משימות', couldNotLoadMeals: 'לא ניתן לטעון ארוחות', allDay: 'כל היום', habitHistory: 'היסטוריית הרגלים', moodHistory: 'היסטוריית מצב רוח', habitTracker: 'מעקב הרגלים', moodTracker: 'מעקב מצב רוח', todaysMeals: 'ארוחות היום', toDo: 'משימות', upcoming: 'קרובים', tempHigh: 'ג:', tempLow: 'נ:' },
 };
-function _localeWord(key) {
+const _I18N_EN = {
+  today: 'Today', tomorrow: 'Tomorrow', day: 'Day', allEvents: 'All Events',
+  on: 'On', off: 'Off', loading: 'Loading…', noEvents: 'No events today',
+  noTasks: 'No tasks', couldNotLoadMeals: 'Could not load meals',
+  allDay: 'All Day',
+  habitHistory: 'Habit History', moodHistory: 'Mood History',
+  habitTracker: 'Habit Tracker', moodTracker: 'Mood Tracker',
+  todaysMeals: "Today's Meals", toDo: 'To-Do', upcoming: 'Upcoming',
+  tempHigh: 'H:', tempLow: 'L:',
+};
+const _HE = {
+  "today": "היום",
+  "tomorrow": "מחר",
+  "day": "יום",
+  "allEvents": "כל האירועים",
+  "on": "פעיל",
+  "off": "כבוי",
+  "loading": "טוען…",
+  "noEvents": "אין אירועים היום",
+  "noTasks": "אין משימות",
+  "couldNotLoadMeals": "לא ניתן לטעון ארוחות",
+  "allDay": "כל היום",
+  "habitHistory": "היסטוריית הרגלים",
+  "moodHistory": "היסטוריית מצב רוח",
+  "habitTracker": "מעקב הרגלים",
+  "moodTracker": "מעקב מצב רוח",
+  "todaysMeals": "ארוחות היום",
+  "toDo": "משימות",
+  "upcoming": "קרובים",
+  "tempHigh": "ג:",
+  "tempLow": "נ:",
+  "Pet Stats": "חיות מחמד",
+  "Now Playing": "מתנגן כעת",
+  "My Day": "היום שלי",
+  "Memories": "זיכרונות",
+  "Cameras": "מצלמות",
+  "Thermostat": "תרמוסטט",
+  "Clock": "שעון",
+  "Weather": "מזג אוויר",
+  "Solar": "סולארי",
+  "Presence": "נוכחות",
+  "Indoor AQI": "איכות אוויר",
+  "Insights": "תובנות",
+  "Dashboards": "לוחות",
+  "Settings": "הגדרות",
+  "Favorites": "מועדפים",
+  "Security": "אבטחה",
+  "WELCOME": "ברוכים הבאים",
+  "Connection lost — retrying…": "החיבור אבד — מנסה שוב…",
+  "Artist": "אמן",
+  "Track": "רצועה",
+  "Phone volume only": "עוצמת טלפון בלבד",
+  "Humidity": "לחות",
+  "Wind": "רוח",
+  "Pressure": "לחץ",
+  "UV Index": "מדד UV",
+  "Cloud Cover": "עננות",
+  "5-DAY FORECAST": "תחזית ל-5 ימים",
+  "HOURLY FORECAST": "תחזית שעתית",
+  "Today": "היום",
+  "Grid": "רשת",
+  "Nothing Playing": "אין ניגון",
+  "Good Evening": "ערב טוב",
+  "Good Morning": "בוקר טוב",
+  "Good Afternoon": "צהריים טובים",
+  "Good Night": "לילה טוב",
+  "GOOD MORNING": "בוקר טוב",
+  "GOOD AFTERNOON": "צהריים טובים",
+  "GOOD EVENING": "ערב טוב",
+  "GOOD NIGHT": "לילה טוב",
+  "DISARMED": "מנוטרל",
+  "ARMED HOME": "דרוך בבית",
+  "ARMED AWAY": "דרוך בחוץ",
+  "ARMED NIGHT": "דרוך לילה",
+  "ARMING…": "דריכה…",
+  "PENDING…": "ממתין…",
+  "TRIGGERED": "הופעל",
+  "Arm Night": "דריכת לילה",
+  "Arm Away": "דריכת יציאה",
+  "Disarm": "נטרול",
+  "Siren On": "סירנה פעילה",
+  "Siren Off": "סירנה כבויה",
+  "GARAGE / GATE": "חניה / שער",
+  "Open": "פתיחה",
+  "Close": "סגירה",
+  "Loading…": "טוען…",
+  "WEATHER": "מזג אוויר",
+  "SECURITY": "אבטחה",
+  "ARM NIGHT": "דריכת לילה",
+  "ARM AWAY": "דריכת יציאה",
+  "DISARM": "נטרול",
+  "SIREN": "סירנה",
+  "SIREN ON": "סירנה פעילה",
+  "SIREN OFF": "סירנה כבויה",
+  "OPEN": "פתיחה",
+  "CLOSE": "סגירה",
+  "ENTER CODE": "הזנת קוד",
+  "OK": "אישור",
+  "Cancel": "ביטול",
+  "Pet Status": "מצב חיה",
+  "Reset Counter": "איפוס מונה",
+  "Since Last Clean": "מאז הניקוי האחרון",
+  "Toggle Clean": "סימון ניקוי",
+  "Visits Today:": "ביקורים היום:",
+  "Feeds:": "האכלות:",
+  "Desiccant:": "סופח לחות:",
+  "Purified:": "מטוהר:",
+  "Filter:": "מסנן:",
+  "Litter Box — Last 5 Days": "ארגז חול — 5 ימים אחרונים",
+  "Browse Media": "עיון במדיה",
+  "Unknown Track": "רצועה לא ידועה",
+  "Unknown Artist": "אמן לא ידוע",
+  "Upcoming": "קרובים",
+  "Day": "יום",
+  "All Events": "כל האירועים",
+  "Today's Meals": "ארוחות היום",
+  "To-Do": "משימות",
+  "Habit Tracker": "מעקב הרגלים",
+  "Mood Tracker": "מעקב מצב רוח",
+  "Motion Log": "יומן תנועה",
+  "Motion Events": "אירועי תנועה",
+  "Last 24 hours": "24 שעות אחרונות",
+  "No Photos": "אין תמונות",
+  "⇄ Shuffle": "⇄ ערבוב",
+  "SUNRISE": "זריחה",
+  "SUNSET": "שקיעה",
+  "Moon Phase": "מצב ירח",
+  "HUMIDITY": "לחות",
+  "WIND": "רוח",
+  "UV INDEX": "מדד UV",
+  "PRESSURE": "לחץ",
+  "CLOUD": "עננות",
+  "5-Day Forecast": "תחזית ל-5 ימים",
+  "Hourly Forecast": "תחזית שעתית",
+  "Target": "יעד",
+  "Off": "כבוי",
+  "Cool": "קירור",
+  "Heat": "חימום",
+  "Fan": "מאוורר",
+  "Dry": "ייבוש",
+  "Worst Air": "האוויר הגרוע ביותר",
+  "Avg Temp": "טמפ׳ ממוצעת",
+  "Avg Humidity": "לחות ממוצעת",
+  "Avg CO2": "CO2 ממוצע",
+  "Avg TVOC": "TVOC ממוצע",
+  "Avg PM2.5": "PM2.5 ממוצע",
+  "Dashboard preferences": "העדפות לוח",
+  "Appearance": "מראה",
+  "Layout": "פריסה",
+  "Screens": "מסכים",
+  "Behavior": "התנהגות",
+  "About": "אודות",
+  "Theme, background, fonts, and language": "ערכת נושא, רקע, גופנים ושפה",
+  "THEME": "ערכת נושא",
+  "BACKGROUND": "רקע",
+  "Themed": "ערכת נושא",
+  "Picture": "תמונה",
+  "TIME OF DAY THEME": "ערכת נושא לפי שעה",
+  "Automatically switch the accent colour at set times of day. Leave a slot as Default to keep the current theme.": "החלפת צבע הדגש לפי שעות היום. השאירו משבצת על ברירת מחדל כדי לשמור על הערכה הנוכחית.",
+  "BLOOM INTENSITY": "עוצמת הילה",
+  "Radiant": "זוהר",
+  "Vivid": "עז",
+  "Subtle": "עדין",
+  "FONTS": "גופנים",
+  "What shows on screen, and where": "מה מוצג על המסך, ואיפה",
+  "TOP-LEFT ELEMENTS": "רכיבים בפינה העליונה (התחלה)",
+  "CENTER ELEMENTS": "רכיבים במרכז",
+  "TOP-RIGHT ELEMENTS": "רכיבים בפינה העליונה (סוף)",
+  "SENSOR ROW": "שורת חיישנים",
+  "ELEMENTS": "רכיבים",
+  "Dashboard Name": "שם הלוח",
+  "Custom Name": "שם מותאם",
+  "Clock Format": "פורמט שעון",
+  "Checked for 12-hour (AM/PM), unchecked for 24-hour": "מסומן לשעון 12 שעות, לא מסומן ל-24 שעות",
+  "Personalised Name": "שם אישי",
+  "Indoor Presence": "נוכחות בבית",
+  "Toggle on for 12-hour (AM/PM), off for 24-hour": "פעיל לשעון 12 שעות, כבוי ל-24 שעות",
+  "Startup screen, overview pages, and screensaver": "מסך פתיחה, דפי סקירה ושומר מסך",
+  "STARTUP": "הפעלה",
+  "Overview 1": "סקירה 1",
+  "Overview 2": "סקירה 2",
+  "Overview 3": "סקירה 3",
+  "Clock (Analog)": "שעון (מחוגים)",
+  "Clock (Digital)": "שעון (ספרות)",
+  "OVERVIEW SCREENS": "מסכי סקירה",
+  "Choose which Overview screens are active. If only one is selected, swiping and the page dots are disabled and that screen is shown on its own.": "בחרו אילו מסכי סקירה פעילים. אם נבחר רק אחד, הגלילה ונקודות העמוד כבויות והמסך מוצג לבד.",
+  "SCREENSAVER": "שומר מסך",
+  "Enable Screensaver": "הפעלת שומר מסך",
+  "Start after (min)": "התחלה אחרי (דק׳)",
+  "Rotate after (min)": "החלפה אחרי (דק׳)",
+  "Rotate between": "החלפה בין",
+  "Gestures and language": "מחוות ושפה",
+  "LANGUAGE": "שפה",
+  "Auto (Browser)": "אוטומטי (דפדפן)",
+  "GESTURES": "מחוות",
+  "Choose how to exit a dashboard and return to the overview screen.": "בחרו איך יוצאים מלוח וחוזרים למסך הסקירה.",
+  "Scroll Down (from top)": "גלילה למטה (מהחלק העליון)",
+  "Scroll Up (from bottom)": "גלילה למעלה (מהחלק התחתון)",
+  "Pinch": "צביטה",
+  "PRESENCE": "נוכחות",
+  "Show detections from last (hrs)": "הצגת זיהויים מהשעות האחרונות",
+  "Version info and reset": "גרסה ואיפוס",
+  "Latest:": "אחרון:",
+  "Update available": "יש עדכון",
+  "Reset to defaults": "איפוס לברירת מחדל",
+  "Restores every setting on this page. Doesn't affect your rooms or devices.": "משחזר כל הגדרה בעמוד זה. לא משנה חדרים או מכשירים.",
+  "Reset": "איפוס",
+  "Tap again to confirm": "הקישו שוב לאישור",
+  "SOLAR ENERGY": "אנרגיה סולארית",
+  "SOLAR": "סולארי",
+  "BATTERY": "סוללה",
+  "HOME": "בית",
+  "GRID": "רשת",
+  "EXPORT": "ייצוא",
+  "CHARGE": "טעינה",
+  "Live Usage": "צריכה חיה",
+  "Today's Usage": "צריכת היום",
+  "Today's Cost": "עלות היום",
+  "Monthly Usage": "צריכה חודשית",
+  "Monthly Cost": "עלות חודשית",
+  "Production": "ייצור",
+  "Battery": "סוללה",
+  "Inverter Temp": "טמפ׳ ממיר",
+  "Outdoor Temp": "טמפ׳ חוץ",
+  "HOURLY ENERGY": "אנרגיה שעתית",
+  "Consumption": "צריכה",
+  "DAILY ENERGY": "אנרגיה יומית",
+  "★ Tap the star on any tile to pin it to Favorites": "★ הקישו על הכוכב באריח כדי להצמיד למועדפים",
+  "Home Assistant Insights": "תובנות Home Assistant",
+  "Camera offline": "מצלמה לא מקוונת",
+  "Comfort & Energy": "נוחות ואנרגיה",
+  "Security & Presence": "אבטחה ונוכחות",
+  "Home Life": "חיי הבית",
+  "Media": "מדיה",
+  "Other": "אחר",
+  "No dashboards available": "אין לוחות זמינים",
+  "No favorites yet. Open Dashboards and tap the star on anything you'd like pinned here.": "אין מועדפים עדיין. פתחו לוחות והקישו על הכוכב כדי להצמיד לכאן.",
+  "Classic Gold": "זהב קלאסי",
+  "Deep Copper": "נחושת עמוקה",
+  "Terracotta": "טרקוטה",
+  "Steel Blue": "כחול פלדה",
+  "Arctic Cyan": "ציאן ארקטי",
+  "Emerald Green": "ירוק אמרלד",
+  "Amethyst Purple": "סגול אמטיסט",
+  "Solar Yellow": "צהוב סולארי",
+  "Crimson Red": "אדום ארגמן",
+  "Default": "ברירת מחדל",
+  "Morning": "בוקר",
+  "Afternoon": "צהריים",
+  "Evening": "ערב",
+  "Night": "לילה",
+  "sunny": "שמשי",
+  "clear": "בהיר",
+  "clear night": "לילה בהיר",
+  "clear-night": "לילה בהיר",
+  "cloudy": "מעונן",
+  "partlycloudy": "מעונן חלקית",
+  "partly cloudy": "מעונן חלקית",
+  "rainy": "גשום",
+  "pouring": "גשם חזק",
+  "lightning": "ברקים",
+  "lightning rainy": "ברקים וגשם",
+  "lightning-rainy": "ברקים וגשם",
+  "snowy": "מושלג",
+  "snowy rainy": "שלג וגשם",
+  "snowy-rainy": "שלג וגשם",
+  "windy": "סוער",
+  "windy variant": "סוער משתנה",
+  "windy-variant": "סוער משתנה",
+  "fog": "ערפל",
+  "hail": "ברד",
+  "exceptional": "חריג",
+  "unknown": "לא ידוע",
+  "Select source": "בחירת מקור",
+  "Previous": "הקודם",
+  "Next": "הבא",
+  "Play / Pause": "נגן / השהה",
+  "Play": "נגן",
+  "Open Music Dashboard": "לוח מוזיקה",
+  "Open Weather Dashboard": "לוח מזג אוויר",
+  "Solar Dashboard": "לוח סולארי",
+  "Open Solar Dashboard": "לוח סולארי",
+  "Open My Day": "היום שלי",
+  "Your name": "השם שלך",
+  "Decrease": "הנמכה",
+  "Increase": "העלאה",
+  "Overview": "סקירה",
+  "Detail View": "תצוגת פירוט",
+  "Widget View": "תצוגת רכיבים",
+  "Moisture": "לחות קרקע",
+  "Closed": "סגור",
+  "Tap to expand": "הקישו להרחבה",
+  "No forecast available": "אין תחזית",
+  "No hourly forecast available": "אין תחזית שעתית",
+  "No motion sensors configured.<br>Add a motionEntity to your cameras in config.js.": "אין חיישני תנועה.<br>הוסיפו motionEntity למצלמות בקובץ config.js.",
+  "No motion events in the last 24 hours.": "אין אירועי תנועה ב-24 השעות האחרונות.",
+  "open": "פתוח",
+  "Blocks arming": "חוסם דריכה",
+  "Done": "בוצע",
+  "Failed": "נכשל",
+  "Sending…": "שולח…",
+  "Not connected": "אין חיבור",
+  "Wrong PIN": "קוד שגוי",
+  "Wrong PIN — check ALARM_CODE in config.js": "קוד שגוי — בדקו את ALARM_CODE בקובץ config.js",
+  "Entity not found — check ALARM_ENTITY in config.js": "היישות לא נמצאה — בדקו את ALARM_ENTITY בקובץ config.js",
+  "Timed out — check connection": "הזמן עבר — בדקו את החיבור",
+  "Entity not configured": "היישות לא מוגדרת",
+  "Failed — check entity ID": "נכשל — בדקו את מזהה היישות",
+  "Connection error — check WebSocket status": "שגיאת חיבור — בדקו את סטטוס ה-WebSocket",
+  "HA token invalid — update HA_TOKEN in config.js and reload": "האסימון לא תקין — עדכנו את HA_TOKEN בקובץ config.js וטענו מחדש",
+  "No images found — add paths to BACKGROUND_IMAGES in config.js.": "לא נמצאו תמונות — הוסיפו נתיבים ל-BACKGROUND_IMAGES בקובץ config.js.",
+  "Could not load history.": "לא ניתן לטעון היסטוריה.",
+  "Temp": "טמפ׳",
+  "AQI — last 24 hours": "AQI — 24 שעות אחרונות",
+  "CO2 — last 24 hours": "CO2 — 24 שעות אחרונות",
+  "PM2.5 — last 24 hours": "PM2.5 — 24 שעות אחרונות",
+  "TVOC — last 24 hours": "TVOC — 24 שעות אחרונות",
+  "Picture uses a photo from <code>photos/background/</code> instead of the themed gradient. Add images to <code>BACKGROUND_IMAGES</code> in config.js.": "תמונה משתמשת בקובץ מתוך <code>photos/background/</code> במקום הרקע הצבעוני. הוסיפו נתיבים ל-<code>BACKGROUND_IMAGES</code> בקובץ config.js.",
+  "Add photos to the <code>photos/</code> folder and list them in <code>PHOTO_FRAME_IMAGES</code> inside config.js.": "הוסיפו תמונות לתיקייה <code>photos/</code> ורשמו אותן ב-<code>PHOTO_FRAME_IMAGES</code> בקובץ config.js."
+};
+function t(key) {
   const lang = getLocale().split('-')[0].toLowerCase();
-  const defaults = {
-    today: 'Today', tomorrow: 'Tomorrow', day: 'Day', allEvents: 'All Events',
-    on: 'On', off: 'Off', loading: 'Loading…', noEvents: 'No events today',
-    noTasks: 'No tasks', couldNotLoadMeals: 'Could not load meals',
-    allDay: 'All Day',
-    habitHistory: 'Habit History', moodHistory: 'Mood History',
-    habitTracker: 'Habit Tracker', moodTracker: 'Mood Tracker',
-    todaysMeals: "Today's Meals", toDo: 'To-Do', upcoming: 'Upcoming',
-    tempHigh: 'H:', tempLow: 'L:',
-  };
-  return (_LOCALE_WORDS[lang] || {})[key] || defaults[key] || key;
+  const fromWords = (_LOCALE_WORDS[lang] || {})[key];
+  if (fromWords) return fromWords;
+  if (lang === 'he' && _HE[key]) return _HE[key];
+  return _I18N_EN[key] || key;
+}
+function _localeWord(key) { return t(key); }
+function _isHebrewLocale() {
+  return getLocale().split('-')[0].toLowerCase() === 'he';
+}
+// Config status words (On, Closed, Armed) stay English in the file.
+// Hebrew mode maps the known tokens. Custom wording is left as written.
+const _STATUS_HE = {
+  on: "פעיל",
+  off: "כבוי",
+  open: "פתוח",
+  closed: "סגור",
+  armed: "דרוך",
+  disarmed: "מנוטרל",
+  privacy: "פרטיות",
+  live: "בשידור",
+  detected: "זוהה",
+  clear: "פנוי",
+};
+function tStatus(word) {
+  if (!_isHebrewLocale()) return word;
+  const mapped = _STATUS_HE[String(word ?? "").trim().toLowerCase()];
+  return mapped || word;
+}
+function _applyI18n() {
+  const locale = getLocale();
+  const he = _isHebrewLocale();
+  document.documentElement.lang = he ? 'he' : (locale || 'en');
+  document.documentElement.dir = he ? 'rtl' : 'ltr';
+  document.querySelectorAll('[data-i18n]').forEach(el => {
+    el.textContent = t(el.getAttribute('data-i18n'));
+  });
+  document.querySelectorAll('[data-i18n-title]').forEach(el => {
+    el.title = t(el.getAttribute('data-i18n-title'));
+  });
+  document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
+    el.placeholder = t(el.getAttribute('data-i18n-placeholder'));
+  });
+  document.querySelectorAll('[data-i18n-aria]').forEach(el => {
+    el.setAttribute('aria-label', t(el.getAttribute('data-i18n-aria')));
+  });
+  document.querySelectorAll('[data-i18n-html]').forEach(el => {
+    el.innerHTML = t(el.getAttribute('data-i18n-html'));
+  });
+  if (typeof applyFonts === 'function' && typeof _settings !== 'undefined') {
+    applyFonts(_settings.dashFont || 'Montserrat', _settings.dashFontWeight || 300);
+  }
+  if (typeof _applyDailyI18n === 'function') _applyDailyI18n();
+  if (typeof updateGreeting === 'function') { try { updateGreeting(); } catch (e) {} }
+  if (typeof refreshWeather === 'function') { try { refreshWeather(); } catch (e) {} }
+  if (typeof window._renderDashboardsHub === 'function') window._renderDashboardsHub();
+  if (typeof window._renderFavoritesPopover === 'function') window._renderFavoritesPopover();
+  if (window._alarmShownState && typeof refreshAlarmUI === 'function') refreshAlarmUI(window._alarmShownState);
+  if (typeof _refreshStatGrid === 'function') { _refreshStatGrid('hs'); _refreshStatGrid('ov2hs'); }
+  const aqi = document.getElementById('aqi-fs-overlay');
+  if (aqi && aqi.classList.contains('open') && typeof _buildAqiSlides === 'function') _buildAqiSlides();
 }
 function fmtToday()              { return _localeWord('today');              }
 function fmtTomorrow()           { return _localeWord('tomorrow');           }
@@ -9716,7 +10104,7 @@ function _wsShowAuthError() {
     bar.classList.add("visible");
     // Replace the default text with a token-specific message
     const span = bar.querySelector("span");
-    if (span) span.textContent = "HA token invalid — update HA_TOKEN in config.js and reload";
+    if (span) { span.setAttribute("data-i18n", "HA token invalid — update HA_TOKEN in config.js and reload"); span.textContent = t("HA token invalid — update HA_TOKEN in config.js and reload"); }
   }
 }
 
@@ -10030,6 +10418,11 @@ let _wfsLastCondition = null;
  * refreshWeather — reads the weather entity from cache and updates
  * the icon, temperature, and description in the top-centre bar.
  */
+function _wxDesc(state) {
+  const raw = state || "";
+  const spaced = raw.replace(/-/g, " ");
+  return t(raw) !== raw ? t(raw) : t(spaced);
+}
 function refreshWeather() {
   const d = haGetCached(CONFIG.weather.entity);
   if (!d) return;
@@ -10037,7 +10430,7 @@ function refreshWeather() {
   const attrs = d.attributes || {};
   const iconHtml = _getWxIcons()[state] || WX_ICON_DEFAULT;
   const temp = attrs.temperature != null ? Math.round(attrs.temperature) + CONFIG.weather.tempUnit : "—";
-  const desc = (state || "").replace(/-/g, " ");
+  const desc = _wxDesc(state);
 
   // Update main top bar + mirrors in daily and now-playing overlays
   ["", "daily-", "np-", "ac-"].forEach(prefix => {
@@ -10072,7 +10465,7 @@ function openWeatherPopup() {
   }
   const temp = attrs.temperature != null ? Math.round(attrs.temperature) + unit : "—";
   document.getElementById("wx-popup-temp").textContent = temp;
-  document.getElementById("wx-popup-desc").textContent = state.replace(/-/g, " ");
+  document.getElementById("wx-popup-desc").textContent = _wxDesc(state);
   document.getElementById("wx-popup-hilo").innerHTML = "";
 
   // Stats
@@ -10143,7 +10536,7 @@ function _renderWxForecast(forecast, unit, icons) {
   const fRow = document.getElementById("wx-popup-forecast");
   if (!fRow) return;
   if (!forecast.length) {
-    fRow.innerHTML = `<div style="font-size:9px;letter-spacing:0.15em;color:rgba(255,255,255,0.3);padding:8px 0;">No forecast available</div>`;
+    fRow.innerHTML = `<div style="font-size:9px;letter-spacing:0.15em;color:rgba(255,255,255,0.3);padding:8px 0;">${t("No forecast available")}</div>`;
     return;
   }
   const days = forecast.slice(1, 6);
@@ -11404,7 +11797,7 @@ function _wfsFetchForecast(unit, icons) {
     }
 
     if (!forecast.length) {
-      fRow.innerHTML = `<div style="font-size:9px;letter-spacing:0.15em;color:rgba(255,255,255,0.3);padding:8px 0;width:100%;text-align:center;">No forecast available</div>`;
+      fRow.innerHTML = `<div style="font-size:9px;letter-spacing:0.15em;color:rgba(255,255,255,0.3);padding:8px 0;width:100%;text-align:center;">${t("No forecast available")}</div>`;
       return;
     }
 
@@ -11471,7 +11864,7 @@ function _wfsFetchHourly(unit, icons) {
     const forecast = response[CONFIG.weather.entity]?.forecast || [];
 
     if (!forecast.length) {
-      container.innerHTML = `<div style="font-size:9px;letter-spacing:0.15em;color:rgba(255,255,255,0.3);padding:8px 0;width:100%;text-align:center;">No hourly forecast available</div>`;
+      container.innerHTML = `<div style="font-size:9px;letter-spacing:0.15em;color:rgba(255,255,255,0.3);padding:8px 0;width:100%;text-align:center;">${t("No hourly forecast available")}</div>`;
       return;
     }
 
@@ -11724,7 +12117,7 @@ function _refreshStatGrid(prefix) {
       } else {
         isOn = ["on","locked","armed_away","armed_home","running"].includes(val);
       }
-      display = isOn ? s.onValue : s.offValue;
+      display = tStatus(isOn ? s.onValue : s.offValue);
       // invertColor: some stats show their "themed" state on the raw-off
       // value instead of raw-on (e.g. Cameras — "Privacy" should read as
       // regular/neutral, "On" should read as themed) — see CONFIG.homeStats.
@@ -11949,7 +12342,7 @@ function refreshControls() {
         const countEl = document.getElementById(`chip-count-${i}`);
         if (countEl) {
           if (activeCount > 0) {
-            countEl.textContent = `${activeCount} on`;
+            countEl.textContent = `${activeCount} ${tStatus("on")}`;
             countEl.style.display = "";
           } else {
             countEl.style.display = "none";
@@ -12507,8 +12900,8 @@ function refreshMusic() {
 
   const d = haGetCached(_activeMusicEntity);
   const attrs = d.attributes || {};
-  safeText("np-artist", attrs.media_artist || "Unknown Artist");
-  safeText("np-track",  attrs.media_title  || "Unknown Track");
+  safeText("np-artist", attrs.media_artist || t("Unknown Artist"));
+  safeText("np-track",  attrs.media_title  || t("Unknown Track"));
   _refreshVolFromState(attrs);
 
   const iconPlay  = document.getElementById("np-icon-play");
@@ -12608,7 +13001,7 @@ async function openPopup(i) {
   // toggle buttons) instead of the generic mushroom/toggle list. The popup
   // itself is titled "Moisture" even though the tab/chip stays "Plants".
   if (c.label === "Plants") {
-    document.getElementById("popup-title").textContent = "Moisture";
+    document.getElementById("popup-title").textContent = t("Moisture");
     list.innerHTML = "";
     _openPopupOverlay("popup--garden");
     _gardenPopupOpen = true;
@@ -12760,7 +13153,7 @@ async function openPopup(i) {
                   <div class="mush-switch-name mush-switch-name--flex">
                     ${escapeHtml(s.label)}${badge}
                   </div>
-                  <div class="mush-switch-status">Tap to expand</div>
+                  <div class="mush-switch-status">${t("Tap to expand")}</div>
                 </div>
                 <span id="expchev-${gid}" class="exprow-chevron">›</span>
               </div>
@@ -13544,7 +13937,7 @@ function updateMushroomCoverCard(i, j, isOn, d) {
   const fillEl = document.getElementById(`coverfill-${i}-${j}`);
   const slEl   = document.getElementById(`coverslider-${i}-${j}`);
 
-  if (posEl)  posEl.textContent  = isOn ? pos + "% open" : "Closed";
+  if (posEl)  posEl.textContent  = isOn ? `${pos}% ${t("open")}` : t("Closed");
   if (fillEl) fillEl.style.width = pos + "%";
   if (slEl)   slEl.value         = pos;
 }
@@ -13589,7 +13982,7 @@ async function coverCommand(i, j, service) {
   } else if (service === "close_cover") {
     if (card)   card.classList.remove("on");
     if (fillEl) fillEl.style.width = "0%";
-    if (posEl)  posEl.textContent  = "Closed";
+    if (posEl)  posEl.textContent  = t("Closed");
     if (slEl)   slEl.value         = 0;
   }
   await haService("cover", service, { entity_id: s.entity });
@@ -14191,7 +14584,7 @@ function renderAlarmOpenSensors() {
   }
   const label = document.createElement("div");
   label.className = "alarm-open-sensors-label";
-  label.textContent = "Blocks arming";
+  label.textContent = t("Blocks arming");
   const list = document.createElement("div");
   list.className = "alarm-open-sensors-list";
   entries.forEach(([id, status]) => {
@@ -14210,10 +14603,11 @@ function renderAlarmOpenSensors() {
 }
 
 function refreshAlarmUI(state) {
+  window._alarmShownState = state;
   const badge = document.getElementById("alarm-status-badge");
   const secBtn = document.getElementById("security-btn");
   if (badge) {
-    badge.textContent = ALARM_STATE_LABELS[state] || state.toUpperCase().replace(/_/g, " ");
+    badge.textContent = t(ALARM_STATE_LABELS[state] || state.toUpperCase().replace(/_/g, " "));
     badge.className = "alarm-badge " + alarmStateBadgeClass(state);
   }
   if (secBtn) {
@@ -14233,7 +14627,7 @@ function refreshAlarmUI(state) {
   // ── Sync ov3 security card ──
   const ov3Badge = document.getElementById("ov3-alarm-badge");
   if (ov3Badge) {
-    ov3Badge.textContent = ALARM_STATE_LABELS[state] || state.toUpperCase().replace(/_/g, " ");
+    ov3Badge.textContent = t(ALARM_STATE_LABELS[state] || state.toUpperCase().replace(/_/g, " "));
     ov3Badge.className = "alarm-badge " + alarmStateBadgeClass(state);
   }
   const ov3Card = document.getElementById("ov3-security-card");
@@ -14270,7 +14664,7 @@ async function openSecurity() {
       `Check the ALARM_ENTITY value in config.js — open HA → Developer Tools → States ` +
       `and search for "alarm_control_panel" to find the correct entity ID.`
     );
-    setAlarmFeedback("Entity not found — check ALARM_ENTITY in config.js", "error");
+    setAlarmFeedback(t("Entity not found — check ALARM_ENTITY in config.js"), "error");
   }
   document.getElementById("security-overlay").classList.add("open");
 }
@@ -14339,9 +14733,9 @@ function alarmAction(service, codeOverride) {
     return;
   }
   haptic("medium");
-  setAlarmFeedback("Sending…", "");
+  setAlarmFeedback(t("Sending…"), "");
   if (!_ws || _ws.readyState !== WebSocket.OPEN) {
-    setAlarmFeedback("Not connected", "error");
+    setAlarmFeedback(t("Not connected"), "error");
     return;
   }
 
@@ -14385,14 +14779,14 @@ function alarmAction(service, codeOverride) {
     _ws.removeEventListener("message", _alarmWsHandler);
     _alarmWsHandler = null;
     if (msg.success) {
-      setAlarmFeedback("Done", "success", true);
+      setAlarmFeedback(t("Done"), "success", true);
     } else {
-      const raw = msg.error?.message || "Failed";
+      const raw = msg.error?.message || t("Failed");
       // Give the user a clear hint: wrong PIN vs connection/config problem
       const isCodeError = /code|invalid|incorrect/i.test(raw);
       const friendlyMsg = isCodeError
-        ? (_alarmCodeConfigured() ? "Wrong PIN — check ALARM_CODE in config.js" : "Wrong PIN")
-        : "Connection error — check WebSocket status";
+        ? (_alarmCodeConfigured() ? t("Wrong PIN — check ALARM_CODE in config.js") : t("Wrong PIN"))
+        : t("Connection error — check WebSocket status");
       setAlarmFeedback(friendlyMsg, "error");
       console.error("[Alarm] WS error:", msg.error);
     }
@@ -14406,7 +14800,7 @@ function alarmAction(service, codeOverride) {
       _alarmWsHandler = null;
     }
     _alarmWsTimeout = null;
-    setAlarmFeedback("Timed out — check connection", "error");
+    setAlarmFeedback(t("Timed out — check connection"), "error");
   }, 10000);
 
   _ws.addEventListener("message", _alarmWsHandler);
@@ -14419,9 +14813,9 @@ function alarmAction(service, codeOverride) {
  * ─────────────────────────────────────────────────────────────────────────── */
 function securityAction(domain, service) {
   haptic("medium");
-  setAlarmFeedback("Sending…", "");
+  setAlarmFeedback(t("Sending…"), "");
   if (!_ws || _ws.readyState !== WebSocket.OPEN) {
-    setAlarmFeedback("Not connected", "error");
+    setAlarmFeedback(t("Not connected"), "error");
     return;
   }
 
@@ -14439,7 +14833,7 @@ function securityAction(domain, service) {
   }
 
   if (!entityId) {
-    setAlarmFeedback("Entity not configured", "error");
+    setAlarmFeedback(t("Entity not configured"), "error");
     return;
   }
 
@@ -14458,9 +14852,9 @@ function securityAction(domain, service) {
     if (msg.id !== msgId) return;
     _ws.removeEventListener("message", handler);
     if (msg.success) {
-      setAlarmFeedback("Done", "success", true);
+      setAlarmFeedback(t("Done"), "success", true);
     } else {
-      setAlarmFeedback("Failed — check entity ID", "error");
+      setAlarmFeedback(t("Failed — check entity ID"), "error");
       console.error("[Security] WS error:", msg.error);
     }
   };
@@ -14534,7 +14928,7 @@ async function _mbLoad(entity, mediaContentId, mediaContentType, title) {
     if (msg.id !== msgId) return;
     clearTimeout(_handlerTimeout);
     wsRef.removeEventListener("message", _handler);
-    if (!msg.success) { list.innerHTML = `<div class="mb-loading">${msg.error?.message || "Failed"}</div>`; return; }
+    if (!msg.success) { list.innerHTML = `<div class="mb-loading">${msg.error?.message || t("Failed")}</div>`; return; }
     const result = msg.result;
 
     if (isDrill) {
@@ -15598,13 +15992,13 @@ async function _loadMotionLog() {
 
   // Only show spinner on first load (scroll is empty), not on auto-refresh
   if (!scroll.children.length || scroll.querySelector(".cam-log-loading")) {
-    scroll.innerHTML = `<div class="cam-log-loading"><div class="cam-log-spinner"></div> Loading\u2026</div>`;
+    scroll.innerHTML = `<div class="cam-log-loading"><div class="cam-log-spinner"></div> ${t("Loading…")}</div>`;
   }
 
   // Collect all motion entities from camera config
   const cams = _getCamEntities().filter(c => c.motionEntity);
   if (!cams.length) {
-    scroll.innerHTML = `<div class="cam-log-empty">No motion sensors configured.<br>Add a motionEntity to your cameras in config.js.</div>`;
+    scroll.innerHTML = `<div class="cam-log-empty">${t("No motion sensors configured.<br>Add a motionEntity to your cameras in config.js.")}</div>`;
     return;
   }
 
@@ -15638,7 +16032,7 @@ async function _loadMotionLog() {
       .sort((a, b) => b.time - a.time);
 
     if (!filtered.length) {
-      scroll.innerHTML = `<div class="cam-log-empty">No motion events in the last 24 hours.</div>`;
+      scroll.innerHTML = `<div class="cam-log-empty">${t("No motion events in the last 24 hours.")}</div>`;
       if (rangeEl) rangeEl.textContent = "0 events · last 24 h";
       return;
     }
@@ -15678,7 +16072,7 @@ async function _loadMotionLog() {
     if (rangeEl) rangeEl.textContent = `${filtered.length} event${filtered.length !== 1 ? "s" : ""} · last 24 h`;
 
   } catch (err) {
-    scroll.innerHTML = `<div class="cam-log-empty">Could not load history.<br><span style="font-size:9px;opacity:0.5">${err}</span></div>`;
+    scroll.innerHTML = `<div class="cam-log-empty">${t("Could not load history.")}<br><span style="font-size:9px;opacity:0.5">${err}</span></div>`;
   }
 }
 
@@ -15696,9 +16090,7 @@ function openPhotoFrame() {
   } else {
     // No images configured — show a helpful empty state instead of a black screen
     document.getElementById("pf-empty").style.display = "";
-    document.getElementById("pf-empty-hint").innerHTML =
-      "Add photos to the <code>photos/</code> folder and list them in " +
-      "<code>PHOTO_FRAME_IMAGES</code> inside config.js.";
+    document.getElementById("pf-empty-hint").innerHTML = t("Add photos to the <code>photos/</code> folder and list them in <code>PHOTO_FRAME_IMAGES</code> inside config.js.");
   }
   _pfShowControls();
   window._showSwipeDownHint?.();
@@ -15869,9 +16261,9 @@ function refreshNowPlayingFS() {
         if (!_npFsOpen) return;
         if (_musicEntities().some(_isPlaying)) return; // resumed, skip
 
-        safeText("np-fs-title",  "Nothing Playing");
+        safeText("np-fs-title",  t("Nothing Playing"));
         safeText("np-fs-artist", "");
-        safeText("np-ls-title",  "Nothing Playing");
+        safeText("np-ls-title",  t("Nothing Playing"));
         safeText("np-ls-artist", "");
 
         const playIcon  = document.getElementById("np-fs-icon-play");
@@ -15921,7 +16313,7 @@ function refreshNowPlayingFS() {
   const isPlaying = d.state === "playing";
 
   // Show media_content_id or album or a sensible fallback instead of "Unknown Artist"
-  const title  = attrs.media_title  || attrs.media_content_id || "Nothing Playing";
+  const title  = attrs.media_title  || attrs.media_content_id || t("Nothing Playing");
   const artist = attrs.media_artist || attrs.media_album_name || attrs.app_name || "";
   safeText("np-fs-title",  title);
   safeText("np-fs-artist", artist);
@@ -16122,8 +16514,8 @@ function _refreshOv3MusicCard() {
 
   // Meta
   if (idleEl)   idleEl.style.display   = "none";
-  if (artistEl) { artistEl.style.display = ""; artistEl.textContent = attrs.media_artist || "Unknown Artist"; }
-  if (trackEl)  { trackEl.style.display  = ""; trackEl.textContent  = attrs.media_title  || "Unknown Track";  }
+  if (artistEl) { artistEl.style.display = ""; artistEl.textContent = attrs.media_artist || t("Unknown Artist"); }
+  if (trackEl)  { trackEl.style.display  = ""; trackEl.textContent  = attrs.media_title  || t("Unknown Track");  }
   if (sepEl)    sepEl.style.display = "";
 
   // Album art background
@@ -16838,6 +17230,7 @@ function _parseEventDate(ev) {
 }
 
 function _isSameDay(a, b) {
+  if (!a || !b) return false;
   return a.getFullYear() === b.getFullYear() &&
          a.getMonth()    === b.getMonth()    &&
          a.getDate()     === b.getDate();
@@ -18041,8 +18434,8 @@ function _buildAqiSlides() {
         <span class="aqi-badge" id="aqi-badge-${i}">—</span>
       </div>
       <div class="aqi-metric-grid">
-        <div class="aqi-metric">${_aqiMetricIcon("temp")}<div class="aqi-metric-label">Temp</div><div class="aqi-metric-value" id="aqi-temp-${i}">—</div></div>
-        <div class="aqi-metric">${_aqiMetricIcon("humidity")}<div class="aqi-metric-label">Humidity</div><div class="aqi-metric-value" id="aqi-hum-${i}">—</div></div>
+        <div class="aqi-metric">${_aqiMetricIcon("temp")}<div class="aqi-metric-label">${t("Temp")}</div><div class="aqi-metric-value" id="aqi-temp-${i}">—</div></div>
+        <div class="aqi-metric">${_aqiMetricIcon("humidity")}<div class="aqi-metric-label">${t("Humidity")}</div><div class="aqi-metric-value" id="aqi-hum-${i}">—</div></div>
         <div class="aqi-metric">${_aqiMetricIcon("co2")}<div class="aqi-metric-label">CO2</div><div class="aqi-metric-value" id="aqi-co2-${i}">—</div></div>
         <div class="aqi-metric">${_aqiMetricIcon("tvoc")}<div class="aqi-metric-label">TVOC</div><div class="aqi-metric-value" id="aqi-tvoc-${i}">—</div></div>
         <div class="aqi-metric">${_aqiMetricIcon("pm25")}<div class="aqi-metric-label">PM2.5</div><div class="aqi-metric-value" id="aqi-pm25-${i}">—</div></div>
@@ -18050,21 +18443,21 @@ function _buildAqiSlides() {
       </div>
       <div class="aqi-chart-row">
         <div class="aqi-chart-col">
-          <div class="aqi-chart-label">AQI — last 24 hours</div>
+          <div class="aqi-chart-label">${t("AQI — last 24 hours")}</div>
           <div class="aqi-chart-canvas" id="aqi-chart-aqi-${i}"></div>
         </div>
         <div class="aqi-chart-col">
-          <div class="aqi-chart-label">CO2 — last 24 hours</div>
+          <div class="aqi-chart-label">${t("CO2 — last 24 hours")}</div>
           <div class="aqi-chart-canvas" id="aqi-chart-co2-${i}"></div>
         </div>
       </div>
       <div class="aqi-chart-row">
         <div class="aqi-chart-col">
-          <div class="aqi-chart-label">PM2.5 — last 24 hours</div>
+          <div class="aqi-chart-label">${t("PM2.5 — last 24 hours")}</div>
           <div class="aqi-chart-canvas" id="aqi-chart-pm25-${i}"></div>
         </div>
         <div class="aqi-chart-col">
-          <div class="aqi-chart-label">TVOC — last 24 hours</div>
+          <div class="aqi-chart-label">${t("TVOC — last 24 hours")}</div>
           <div class="aqi-chart-canvas" id="aqi-chart-tvoc-${i}"></div>
         </div>
       </div>
@@ -19668,7 +20061,7 @@ function _refreshOv3Greeting() {
   const greetEl = document.getElementById("ov3-greeting-text");
   if (greetEl) {
     const name = (typeof _settings !== "undefined" && _settings.personalisedName) ? `, ${_settings.personalisedName.toUpperCase()}` : "";
-    const fullLabel = label.toUpperCase() + name;
+    const fullLabel = t(label).toUpperCase() + name;
     // The shrink-to-fit loop below forces a layout read on every call, so only
     // run it when the label text actually changes (a handful of times a day),
     // not on every 2s refresh tick.
@@ -19942,7 +20335,7 @@ function _refreshOv3Weather() {
   const tempEl = document.getElementById("ov3-wx-temp");
   if (tempEl) tempEl.textContent = attrs.temperature != null ? Math.round(attrs.temperature) + unit : "—";
   const descEl = document.getElementById("ov3-wx-desc");
-  if (descEl) descEl.textContent = state.replace(/-/g, " ");
+  if (descEl) descEl.textContent = _wxDesc(state);
   const hilo = document.getElementById("ov3-wx-hilo");
   if (hilo) {
     // Prefer the daily forecast cache (has templow); fallback to state attrs
@@ -20666,6 +21059,7 @@ const WEIGHT_OPTIONS = [
 ];
 
 let _fontLinkEl = null;
+let _heeboLinkEl = null;
 
 function _buildGoogleFontsUrl(font, weight) {
   const entry = FONT_CATALOGUE.find(f => f.name === font) || FONT_CATALOGUE[0];
@@ -20681,6 +21075,17 @@ function applyFonts(font, weight) {
     document.head.appendChild(_fontLinkEl);
   }
   _fontLinkEl.href = _buildGoogleFontsUrl(font, weight);
+  if (_isHebrewLocale()) {
+    if (!_heeboLinkEl) {
+      _heeboLinkEl = document.createElement('link');
+      _heeboLinkEl.rel = 'stylesheet';
+      _heeboLinkEl.href = 'https://fonts.googleapis.com/css2?family=Heebo:wght@300;400&display=swap';
+      document.head.appendChild(_heeboLinkEl);
+    }
+    _heeboLinkEl.disabled = false;
+  } else if (_heeboLinkEl) {
+    _heeboLinkEl.disabled = true;
+  }
 
   // Inject/update a style block that overrides all hardcoded font-family and font-weight
   // using !important so it wins over every specific CSS rule in the stylesheet.
@@ -20690,7 +21095,8 @@ function applyFonts(font, weight) {
     styleEl.id = 'homie-font-override';
     document.head.appendChild(styleEl);
   }
-  styleEl.textContent = `* { font-family: '${font}', sans-serif !important; font-weight: ${weight} !important; }`;
+  const fontStack = _isHebrewLocale() ? `'${font}', 'Heebo', sans-serif` : `'${font}', sans-serif`;
+  styleEl.textContent = `* { font-family: ${fontStack} !important; font-weight: ${weight} !important; }`;
 
 
 }
@@ -20902,6 +21308,7 @@ function applyAllSettings() {
   // Overview screen visibility — hide dots for disabled screens, and
   // bounce off the current screen if it just got disabled
   _applyEnabledOverviews();
+  if (typeof _applyI18n === 'function') _applyI18n();
 }
 
 function applySetting(key, value) {
@@ -20910,7 +21317,7 @@ function applySetting(key, value) {
   saveSettings();
   applyAllSettings();
   // Re-tick clock and re-render week strip so all day names update immediately
-  if (key === 'locale') { tickClock(); _dailyBuildWeekStrip(); _applyDailyI18n(); }
+  if (key === 'locale') { tickClock(); _dailyBuildWeekStrip(); _applyI18n(); }
   if (key === 'clockFormat') { tickClock(); }
 }
 
@@ -21178,11 +21585,11 @@ function openSettings() {
   // Build theme picker bubbles dynamically from THEMES
   const themeList = document.getElementById("st-theme-list");
   if (themeList) {
-    themeList.innerHTML = Object.entries(THEMES).map(([id, t]) => `
+    themeList.innerHTML = Object.entries(THEMES).map(([id, theme]) => `
       <label class="startup-mode-option" onclick="applyTheme('${escapeHtml(id)}')">
         <input type="radio" name="settingsTheme" value="${escapeHtml(id)}" id="st-theme-${escapeHtml(id)}" ${_activeTheme === id ? 'checked' : ''}>
         <span class="startup-mode-label">
-          <span style="display:inline-block;width:9px;height:9px;border-radius:50%;background:${escapeHtml(t.accent)};margin-right:7px;vertical-align:middle;flex-shrink:0"></span>${escapeHtml(t.name)}
+          <span style="display:inline-block;width:9px;height:9px;border-radius:50%;background:${escapeHtml(theme.accent)};margin-inline-end:7px;vertical-align:middle;flex-shrink:0"></span><span data-i18n="${escapeHtml(theme.name)}">${escapeHtml(t(theme.name))}</span>
         </span>
         <span class="startup-mode-check">
           <svg width="10" height="10" aria-hidden="true"><use href="#icon-check"/></svg>
@@ -21195,7 +21602,7 @@ function openSettings() {
   if (bgImageList) {
     const bgList = (typeof BACKGROUND_IMAGES !== "undefined" && Array.isArray(BACKGROUND_IMAGES)) ? BACKGROUND_IMAGES : [];
     if (!bgList.length) {
-      bgImageList.innerHTML = `<p class="settings-hint">No images found — add paths to <code>BACKGROUND_IMAGES</code> in config.js.</p>`;
+      bgImageList.innerHTML = `<p class="settings-hint" data-i18n="No images found — add paths to BACKGROUND_IMAGES in config.js.">${escapeHtml(t("No images found — add paths to BACKGROUND_IMAGES in config.js."))}</p>`;
     } else {
       const activeImg = _getActiveBackgroundImage();
       bgImageList.innerHTML = bgList.map(path => {
@@ -21242,21 +21649,21 @@ function openSettings() {
       const themeRadios = [
         `<label class="startup-mode-option" onclick="applyTodTheme('${slot}', '')">
           <input type="radio" name="st-tod-${slot}" value="" id="st-tod-${slot}-default">
-          <span class="startup-mode-label">Default</span>
+          <span class="startup-mode-label" data-i18n="Default">${t("Default")}</span>
           <span class="startup-mode-check">${checkSvg}</span>
         </label>`,
-        ...Object.entries(THEMES).map(([id, t]) => `
+        ...Object.entries(THEMES).map(([id, theme]) => `
         <label class="startup-mode-option" onclick="applyTodTheme('${slot}', '${escapeHtml(id)}')">
           <input type="radio" name="st-tod-${slot}" value="${escapeHtml(id)}" id="st-tod-${slot}-${escapeHtml(id)}">
           <span class="startup-mode-label">
-            <span style="display:inline-block;width:9px;height:9px;border-radius:50%;background:${escapeHtml(t.accent)};margin-right:7px;vertical-align:middle;flex-shrink:0"></span>${escapeHtml(t.name)}
+            <span style="display:inline-block;width:9px;height:9px;border-radius:50%;background:${escapeHtml(theme.accent)};margin-inline-end:7px;vertical-align:middle;flex-shrink:0"></span><span data-i18n="${escapeHtml(theme.name)}">${escapeHtml(t(theme.name))}</span>
           </span>
           <span class="startup-mode-check">${checkSvg}</span>
         </label>`)
       ].join('');
       return `
       <div class="settings-section-title" onclick="toggleSettingsSection(this)" style="font-size:11px">
-        ${label}
+        <span data-i18n="${escapeHtml(label)}">${escapeHtml(t(label))}</span>
         <span style="opacity:0.4;font-size:9px;letter-spacing:0.1em;font-weight:400;margin-left:auto;padding-right:8px">${hours}</span>
         <span class="settings-section-chevron"><svg width="12" height="12" aria-hidden="true"><use href="#icon-chevron-down"/></svg></span>
       </div>
@@ -21364,7 +21771,7 @@ let _resetArmTimer = null;
 function confirmResetSettings(btn) {
   if (!_resetArmed) {
     _resetArmed = true;
-    btn.textContent = "Tap again to confirm";
+    btn.textContent = t("Tap again to confirm");
     btn.classList.add("armed");
     clearTimeout(_resetArmTimer);
     _resetArmTimer = setTimeout(() => _disarmReset(btn), 4000);
@@ -21376,7 +21783,7 @@ function confirmResetSettings(btn) {
 }
 function _disarmReset(btn) {
   _resetArmed = false;
-  btn.textContent = "Reset";
+  btn.textContent = t("Reset");
   btn.classList.remove("armed");
 }
 
@@ -21652,7 +22059,7 @@ function _disarmReset(btn) {
 
     // Weather description as the label
     const descSrc = document.getElementById("ac-wx-desc");
-    if (labelEl && descSrc) labelEl.textContent = descSrc.textContent.trim() || "Weather";
+    if (labelEl && descSrc) labelEl.textContent = descSrc.textContent.trim() || t("Weather");
 
     // Weather icon — clone the SVG/emoji from the top-bar weather icon
     if (iconEl) {
@@ -21747,7 +22154,7 @@ _applyDailyI18n();
         <button class="mb-back-btn" id="mb-back-btn" onclick="mediaBrowserBack()" style="display:none">
           <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
         </button>
-        <span id="mb-title">Browse Media</span>
+        <span id="mb-title" data-i18n="Browse Media">Browse Media</span>
       </div>
       <span id="mb-player-label" class="mb-player-label"></span>
     </div>
@@ -21779,8 +22186,8 @@ _applyDailyI18n();
           </div>
         </div>
         <!-- Track info -->
-        <div class="np-fs-title" id="np-fs-title">Unknown Track</div>
-        <div class="np-fs-artist" id="np-fs-artist">Unknown Artist</div>
+        <div class="np-fs-title" id="np-fs-title" data-i18n="Unknown Track">Unknown Track</div>
+        <div class="np-fs-artist" id="np-fs-artist" data-i18n="Unknown Artist">Unknown Artist</div>
         <!-- Progress -->
         <div class="np-fs-progress-wrap">
           <div class="np-fs-progress-bg">
@@ -21793,14 +22200,14 @@ _applyDailyI18n();
         </div>
         <!-- Controls -->
         <div class="np-fs-controls">
-          <button class="np-fs-btn" onclick="mediaCommand('media_previous_track')" title="Previous">
+          <button class="np-fs-btn" onclick="mediaCommand('media_previous_track')" title="Previous" data-i18n-title="Previous">
             <svg width="28" height="28" viewBox="0 0 18 18" fill="none"><rect x="2" y="3" width="2.5" height="12" rx="1" style="fill:var(--accent)"/><path d="M15 3.8 L6.5 9 L15 14.2 Z" style="fill:var(--accent)"/></svg>
           </button>
-          <button class="np-fs-btn np-fs-btn--play" id="np-fs-playpause" onclick="mediaCommand('media_play_pause')" title="Play / Pause">
+          <button class="np-fs-btn np-fs-btn--play" id="np-fs-playpause" onclick="mediaCommand('media_play_pause')" title="Play / Pause" data-i18n-title="Play / Pause">
             <svg id="np-fs-icon-play" width="28" height="28" viewBox="0 0 16 16" fill="none"><path d="M5 2.8 L13 8 L5 13.2 Z" style="fill:var(--accent)"/></svg>
             <svg id="np-fs-icon-pause" width="28" height="28" viewBox="0 0 16 16" fill="none" style="display:none"><rect x="3.5" y="2.5" width="3" height="11" rx="1" style="fill:var(--accent)"/><rect x="9.5" y="2.5" width="3" height="11" rx="1" style="fill:var(--accent)"/></svg>
           </button>
-          <button class="np-fs-btn" onclick="mediaCommand('media_next_track')" title="Next">
+          <button class="np-fs-btn" onclick="mediaCommand('media_next_track')" title="Next" data-i18n-title="Next">
             <svg width="28" height="28" viewBox="0 0 18 18" fill="none"><path d="M3 3.8 L11.5 9 L3 14.2 Z" style="fill:var(--accent)"/><rect x="13.5" y="3" width="2.5" height="12" rx="1" style="fill:var(--accent)"/></svg>
           </button>
           <!-- Volume: absolutely positioned right so playback buttons stay centred -->
@@ -21813,7 +22220,7 @@ _applyDailyI18n();
                   <path id="np-fs-vol-wave2" d="M15.54 8.46a5 5 0 0 1 0 7.07"/>
                 </svg>
               </button>
-              <span class="np-vol-tip">Phone volume only</span>
+              <span class="np-vol-tip" data-i18n="Phone volume only">Phone volume only</span>
               <div class="np-fs-vol-popup" id="np-fs-vol-popup">
                 <input class="np-vol-slider" id="np-fs-vol-slider" type="range" min="0" max="100" value="50"
                   oninput="onVolSliderInput('np-fs-vol-slider','np-fs-vol-label')"
@@ -21826,7 +22233,7 @@ _applyDailyI18n();
         <!-- Pills -->
         <div class="np-fs-pills">
           <div style="position:relative;">
-            <button class="np-source-pill" id="np-fs-source-pill" onclick="openSourceDropdown('np-fs-src-dropdown')" title="Select source"></button>
+            <button class="np-source-pill" id="np-fs-source-pill" onclick="openSourceDropdown('np-fs-src-dropdown')" title="Select source" data-i18n-title="Select source"></button>
             <div class="np-src-dropdown np-src-dropdown--above" id="np-fs-src-dropdown"></div>
           </div>
           <button class="np-browse-btn" onclick="openMediaBrowser()" title="Browse media">
@@ -21852,8 +22259,8 @@ _applyDailyI18n();
         </div>
         <!-- Right: info + controls -->
         <div class="np-ls-info">
-          <div class="np-ls-title" id="np-ls-title">Unknown Track</div>
-          <div class="np-ls-artist" id="np-ls-artist">Unknown Artist</div>
+          <div class="np-ls-title" id="np-ls-title" data-i18n="Unknown Track">Unknown Track</div>
+          <div class="np-ls-artist" id="np-ls-artist" data-i18n="Unknown Artist">Unknown Artist</div>
           <!-- Progress -->
           <div class="np-ls-progress-wrap">
             <div class="np-fs-progress-bg">
@@ -21866,14 +22273,14 @@ _applyDailyI18n();
           </div>
           <!-- Controls -->
           <div class="np-fs-controls" style="margin-top:2rem;justify-content:center;">
-            <button class="np-fs-btn" onclick="mediaCommand('media_previous_track')" title="Previous">
+            <button class="np-fs-btn" onclick="mediaCommand('media_previous_track')" title="Previous" data-i18n-title="Previous">
               <svg width="28" height="28" viewBox="0 0 18 18" fill="none"><rect x="2" y="3" width="2.5" height="12" rx="1" style="fill:var(--accent)"/><path d="M15 3.8 L6.5 9 L15 14.2 Z" style="fill:var(--accent)"/></svg>
             </button>
-            <button class="np-fs-btn np-fs-btn--play" onclick="mediaCommand('media_play_pause')" title="Play / Pause">
+            <button class="np-fs-btn np-fs-btn--play" onclick="mediaCommand('media_play_pause')" title="Play / Pause" data-i18n-title="Play / Pause">
               <svg id="np-ls-icon-play" width="28" height="28" viewBox="0 0 16 16" fill="none"><path d="M5 2.8 L13 8 L5 13.2 Z" style="fill:var(--accent)"/></svg>
               <svg id="np-ls-icon-pause" width="28" height="28" viewBox="0 0 16 16" fill="none" style="display:none"><rect x="3.5" y="2.5" width="3" height="11" rx="1" style="fill:var(--accent)"/><rect x="9.5" y="2.5" width="3" height="11" rx="1" style="fill:var(--accent)"/></svg>
             </button>
-            <button class="np-fs-btn" onclick="mediaCommand('media_next_track')" title="Next">
+            <button class="np-fs-btn" onclick="mediaCommand('media_next_track')" title="Next" data-i18n-title="Next">
               <svg width="28" height="28" viewBox="0 0 18 18" fill="none"><path d="M3 3.8 L11.5 9 L3 14.2 Z" style="fill:var(--accent)"/><rect x="13.5" y="3" width="2.5" height="12" rx="1" style="fill:var(--accent)"/></svg>
             </button>
             <!-- Volume: absolutely positioned right so playback buttons stay centred -->
@@ -21886,7 +22293,7 @@ _applyDailyI18n();
                     <path id="np-ls-vol-wave2" d="M15.54 8.46a5 5 0 0 1 0 7.07"/>
                   </svg>
                 </button>
-                <span class="np-vol-tip">Phone volume only</span>
+                <span class="np-vol-tip" data-i18n="Phone volume only">Phone volume only</span>
                 <div class="np-fs-vol-popup" id="np-ls-vol-popup">
                   <input class="np-vol-slider" id="np-ls-vol-slider" type="range" min="0" max="100" value="50"
                     oninput="onVolSliderInput('np-ls-vol-slider','np-ls-vol-label')"
@@ -21899,7 +22306,7 @@ _applyDailyI18n();
           <!-- Pills -->
           <div class="np-fs-pills" style="margin-top:1.5rem;justify-content:center;">
             <div style="position:relative;">
-              <button class="np-source-pill" id="np-ls-source-pill" onclick="openSourceDropdown('np-ls-src-dropdown')" title="Select source"></button>
+              <button class="np-source-pill" id="np-ls-source-pill" onclick="openSourceDropdown('np-ls-src-dropdown')" title="Select source" data-i18n-title="Select source"></button>
               <div class="np-src-dropdown np-src-dropdown--above" id="np-ls-src-dropdown"></div>
             </div>
             <button class="np-browse-btn" onclick="openMediaBrowser()" title="Browse media">
@@ -21955,8 +22362,8 @@ _applyDailyI18n();
       </div>
       <!-- View toggle: Day / All -->
       <div class="daily-view-toggle">
-        <div class="daily-view-tab active" id="daily-tab-day" onclick="dailySwitchView('day')">Day</div>
-        <div class="daily-view-tab" id="daily-tab-all" onclick="dailySwitchView('all')">All Events</div>
+        <div class="daily-view-tab active" id="daily-tab-day" onclick="dailySwitchView('day')" data-i18n="Day">Day</div>
+        <div class="daily-view-tab" id="daily-tab-all" onclick="dailySwitchView('all')" data-i18n="All Events">All Events</div>
       </div>
       <!-- 7-day week strip (shown in Day view only) -->
       <div class="daily-week-strip" id="daily-week-strip"></div>
@@ -21973,7 +22380,7 @@ _applyDailyI18n();
       <div class="daily-meals-section">
         <div class="daily-meals-header">
           <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 2v7c0 1.1.9 2 2 2h4a2 2 0 0 0 2-2V2"/><line x1="7" y1="2" x2="7" y2="11"/><line x1="3" y1="6" x2="11" y2="6"/><path d="M18.5 2a2.5 2.5 0 0 0-2.5 2.5v5a2.5 2.5 0 0 0 2.5 2.5H19v8a1 1 0 0 0 2 0V2h-2.5z"/></svg>
-          <span class="daily-meals-title">Today's Meals</span>
+          <span class="daily-meals-title" data-i18n="Today's Meals">Today's Meals</span>
         </div>
         <div class="daily-meals-grid" id="daily-meals-grid">
           <div class="daily-meals-empty">Loading…</div>
@@ -21999,7 +22406,7 @@ _applyDailyI18n();
             <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
               <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
             </svg>
-            <span class="daily-habits-title">Habit Tracker</span>
+            <span class="daily-habits-title" data-i18n="Habit Tracker">Habit Tracker</span>
             <button class="history-icon-btn" onclick="openHabitHistory()" title="View habit history" style="margin-left:auto;">
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
             </button>
@@ -22016,7 +22423,7 @@ _applyDailyI18n();
               <line x1="9" y1="9" x2="9.01" y2="9"/>
               <line x1="15" y1="9" x2="15.01" y2="9"/>
             </svg>
-            <span class="daily-habits-title">Mood Tracker</span>
+            <span class="daily-habits-title" data-i18n="Mood Tracker">Mood Tracker</span>
             <button class="history-icon-btn" onclick="openMoodHistory()" title="View mood history" style="margin-left:auto;">
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
             </button>
@@ -22049,7 +22456,7 @@ _applyDailyI18n();
           <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.5 19H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9Z"/></svg>
           Motion Events
         </div>
-        <div class="cam-log-range" id="cam-log-range">Last 24 hours</div>
+        <div class="cam-log-range" id="cam-log-range" data-i18n="Last 24 hours">Last 24 hours</div>
       </div>
       <div class="cam-log-filters" id="cam-log-filters"></div>
       <div class="cam-log-scroll" id="cam-log-scroll">
@@ -22082,8 +22489,8 @@ _applyDailyI18n();
         <polyline points="21 15 16 10 5 21"/>
       </svg>
     </div>
-    <div class="pf-empty-title">No Photos</div>
-    <div class="pf-empty-hint" id="pf-empty-hint">Add photos to the <code>photos/</code> folder and list them in <code>PHOTO_FRAME_IMAGES</code> inside config.js.</div>
+    <div class="pf-empty-title" data-i18n="No Photos">No Photos</div>
+    <div class="pf-empty-hint" id="pf-empty-hint" data-i18n-html="Add photos to the <code>photos/</code> folder and list them in <code>PHOTO_FRAME_IMAGES</code> inside config.js.">Add photos to the <code>photos/</code> folder and list them in <code>PHOTO_FRAME_IMAGES</code> inside config.js.</div>
   </div>
 
   <!-- Controls -->
@@ -22094,21 +22501,21 @@ _applyDailyI18n();
     </div>
     <!-- Buttons -->
     <div class="pf-btns">
-      <button class="pf-btn" onclick="pfPrev()" title="Previous">
+      <button class="pf-btn" onclick="pfPrev()" title="Previous" data-i18n-title="Previous">
         <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
       </button>
-      <button class="pf-btn pf-btn--play" id="pf-playpause" onclick="pfTogglePlay()" title="Play / Pause">
+      <button class="pf-btn pf-btn--play" id="pf-playpause" onclick="pfTogglePlay()" title="Play / Pause" data-i18n-title="Play / Pause">
         <svg id="pf-icon-play" width="26" height="26" viewBox="0 0 24 24" fill="none"><polygon points="5 3 19 12 5 21 5 3" fill="var(--accent)"/></svg>
         <svg id="pf-icon-pause" width="26" height="26" viewBox="0 0 24 24" fill="none" style="display:none"><rect x="6" y="4" width="4" height="16" rx="1" fill="var(--accent)"/><rect x="14" y="4" width="4" height="16" rx="1" fill="var(--accent)"/></svg>
       </button>
-      <button class="pf-btn" onclick="pfNext()" title="Next">
+      <button class="pf-btn" onclick="pfNext()" title="Next" data-i18n-title="Next">
         <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
       </button>
     </div>
     <!-- Counter + Shuffle -->
     <div class="pf-meta">
       <span class="pf-counter" id="pf-counter">0 / 0</span>
-      <button class="pf-shuffle" id="pf-shuffle" onclick="pfToggleShuffle()">⇄ Shuffle</button>
+      <button class="pf-shuffle" id="pf-shuffle" onclick="pfToggleShuffle()" data-i18n="⇄ Shuffle">⇄ Shuffle</button>
     </div>
   </div>
 </div>
@@ -22247,11 +22654,11 @@ _applyDailyI18n();
             </g>
 
             <!-- Sunrise label + time -->
-            <text x="15" y="131" text-anchor="middle" font-size="8" letter-spacing="0.22em" fill="rgba(255,255,255,0.5)">SUNRISE</text>
+            <text x="15" y="131" text-anchor="middle" font-size="8" letter-spacing="0.22em" fill="rgba(255,255,255,0.5)" data-i18n="SUNRISE">SUNRISE</text>
             <text id="wfs-sunrise-val" x="15" y="146" text-anchor="middle" font-size="11" font-weight="500" fill="#fff">—</text>
 
             <!-- Sunset label + time -->
-            <text x="195" y="131" text-anchor="middle" font-size="8" letter-spacing="0.22em" fill="rgba(255,255,255,0.5)">SUNSET</text>
+            <text x="195" y="131" text-anchor="middle" font-size="8" letter-spacing="0.22em" fill="rgba(255,255,255,0.5)" data-i18n="SUNSET">SUNSET</text>
             <text id="wfs-sunset-val" x="195" y="146" text-anchor="middle" font-size="11" font-weight="500" fill="#fff">—</text>
 
             <!-- Moon phase icon — centered inside the arc -->
@@ -22277,7 +22684,7 @@ _applyDailyI18n();
         </div>
         <div class="wfs-moon-phase">
           <div class="wfs-moon-info">
-            <span class="wfs-aqi-pm-label">Moon Phase</span>
+            <span class="wfs-aqi-pm-label" data-i18n="Moon Phase">Moon Phase</span>
             <span class="wfs-moon-value" id="wfs-moon-value">—</span>
           </div>
         </div>
@@ -22291,7 +22698,7 @@ _applyDailyI18n();
       <div class="wfs-stat">
         <div class="wfs-stat-header">
           <div class="wfs-stat-icon"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="rgba(180,220,255,0.9)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"/></svg></div>
-          <div class="wfs-stat-label">HUMIDITY</div>
+          <div class="wfs-stat-label" data-i18n="HUMIDITY">HUMIDITY</div>
         </div>
         <div class="wfs-stat-bottom">
           <div class="wfs-stat-value" id="wfs-stat-humidity">—</div>
@@ -22301,7 +22708,7 @@ _applyDailyI18n();
       <div class="wfs-stat">
         <div class="wfs-stat-header">
           <div class="wfs-stat-icon"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="rgba(180,220,255,0.9)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9.59 4.59A2 2 0 1 1 11 8H2m10.59 11.41A2 2 0 1 0 14 16H2m15.73-8.27A2.5 2.5 0 1 1 19.5 12H2"/></svg></div>
-          <div class="wfs-stat-label">WIND</div>
+          <div class="wfs-stat-label" data-i18n="WIND">WIND</div>
         </div>
         <div class="wfs-stat-bottom">
           <div class="wfs-stat-value" id="wfs-stat-wind">—</div>
@@ -22311,7 +22718,7 @@ _applyDailyI18n();
       <div class="wfs-stat">
         <div class="wfs-stat-header">
           <div class="wfs-stat-icon"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="rgba(180,220,255,0.9)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg></div>
-          <div class="wfs-stat-label">UV INDEX</div>
+          <div class="wfs-stat-label" data-i18n="UV INDEX">UV INDEX</div>
         </div>
         <div class="wfs-stat-bottom">
           <div class="wfs-stat-value" id="wfs-stat-uv">—</div>
@@ -22321,7 +22728,7 @@ _applyDailyI18n();
       <div class="wfs-stat">
         <div class="wfs-stat-header">
           <div class="wfs-stat-icon"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="rgba(180,220,255,0.9)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg></div>
-          <div class="wfs-stat-label">PRESSURE</div>
+          <div class="wfs-stat-label" data-i18n="PRESSURE">PRESSURE</div>
         </div>
         <div class="wfs-stat-bottom">
           <div class="wfs-stat-value" id="wfs-stat-pressure">—</div>
@@ -22331,7 +22738,7 @@ _applyDailyI18n();
       <div class="wfs-stat">
         <div class="wfs-stat-header">
           <div class="wfs-stat-icon"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="rgba(180,220,255,0.9)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 15h4l4-12 4 17 4-12 2 7h4"/></svg></div>
-          <div class="wfs-stat-label">CLOUD</div>
+          <div class="wfs-stat-label" data-i18n="CLOUD">CLOUD</div>
         </div>
         <div class="wfs-stat-bottom">
           <div class="wfs-stat-value" id="wfs-stat-cloud">—</div>
@@ -22346,7 +22753,7 @@ _applyDailyI18n();
       <!-- Panel 1: 5-day forecast -->
       <div class="wfs-scroll-panel">
         <div class="wfs-forecast">
-          <div class="wfs-forecast-title">5-Day Forecast</div>
+          <div class="wfs-forecast-title" data-i18n="5-Day Forecast">5-Day Forecast</div>
           <div class="wfs-forecast-row" id="wfs-forecast-row">
             <!-- Populated by JS -->
           </div>
@@ -22356,7 +22763,7 @@ _applyDailyI18n();
       <!-- Panel 2: Hourly forecast -->
       <div class="wfs-scroll-panel">
         <div class="wfs-forecast">
-          <div class="wfs-forecast-title">Hourly Forecast</div>
+          <div class="wfs-forecast-title" data-i18n="Hourly Forecast">Hourly Forecast</div>
           <div class="wfs-hourly-chart-card" id="wfs-hourly-row">
             <!-- Populated by JS -->
           </div>
@@ -22397,7 +22804,7 @@ _applyDailyI18n();
           <span class="therm-current-deg">°</span>
         </div>
         <div class="therm-target-wrap">
-          <span class="therm-set-label">Target</span>
+          <span class="therm-set-label" data-i18n="Target">Target</span>
           <div class="therm-set-wrap">
             <span class="therm-set-temp" id="therm-set-temp-display">—</span>
             <span class="therm-set-deg">°</span>
@@ -22406,47 +22813,47 @@ _applyDailyI18n();
         <span class="therm-mode-badge" id="therm-mode-badge"></span>
       </div>
       <!-- − button in bottom-left of gap -->
-      <button class="therm-adj-btn therm-adj-btn--minus" onclick="thermAdjust(-0.5)" title="Decrease">−</button>
+      <button class="therm-adj-btn therm-adj-btn--minus" onclick="thermAdjust(-0.5)" title="Decrease" data-i18n-title="Decrease">−</button>
       <!-- + button in bottom-right of gap -->
-      <button class="therm-adj-btn therm-adj-btn--plus"  onclick="thermAdjust(+0.5)" title="Increase">+</button>
+      <button class="therm-adj-btn therm-adj-btn--plus"  onclick="thermAdjust(+0.5)" title="Increase" data-i18n-title="Increase">+</button>
     </div>
 
     <!-- Mode buttons -->
     <div class="therm-modes" id="therm-modes">
-      <button class="therm-mode-btn" data-mode="off" onclick="thermSetMode('off')" title="Off">
+      <button class="therm-mode-btn" data-mode="off" onclick="thermSetMode('off')" title="Off" data-i18n-title="Off">
         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.5)" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
           <path d="M18.36 6.64a9 9 0 1 1-12.73 0"/><line x1="12" y1="2" x2="12" y2="12"/>
         </svg>
-        <span>Off</span>
+        <span data-i18n="Off">Off</span>
       </button>
-      <button class="therm-mode-btn" data-mode="cool" onclick="thermSetMode('cool')" title="Cool">
+      <button class="therm-mode-btn" data-mode="cool" onclick="thermSetMode('cool')" title="Cool" data-i18n-title="Cool">
         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="rgba(120,200,255,0.9)" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
           <line x1="12" y1="2" x2="12" y2="22"/><line x1="2" y1="12" x2="22" y2="12"/>
           <polyline points="8 6 12 2 16 6"/><polyline points="18 8 22 12 18 16"/>
           <polyline points="16 18 12 22 8 18"/><polyline points="6 16 2 12 6 8"/>
         </svg>
-        <span>Cool</span>
+        <span data-i18n="Cool">Cool</span>
       </button>
-      <button class="therm-mode-btn" data-mode="heat" onclick="thermSetMode('heat')" title="Heat">
+      <button class="therm-mode-btn" data-mode="heat" onclick="thermSetMode('heat')" title="Heat" data-i18n-title="Heat">
         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="rgba(255,140,80,0.9)" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
           <path d="M12 2c-1 0-3.5 1.5-3.5 5 0 0 1.5-1.5 3.5-1.5s3.5 1.5 3.5 1.5C15.5 3.5 13 2 12 2z"/>
           <path d="M6.5 9C4 9 2 11.5 2 14c0 4 3 8 10 8s10-4 10-8c0-2.5-2-5-4.5-5-1.5 0-2.5 1-5.5 1S8 9 6.5 9z"/>
         </svg>
-        <span>Heat</span>
+        <span data-i18n="Heat">Heat</span>
       </button>
-      <button class="therm-mode-btn" data-mode="fan_only" onclick="thermSetMode('fan_only')" title="Fan">
+      <button class="therm-mode-btn" data-mode="fan_only" onclick="thermSetMode('fan_only')" title="Fan" data-i18n-title="Fan">
         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.7)" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
           <path d="M12 12 C12 8 15 5 18 6 C19 9 17 12 14 12"/><path d="M12 12 C16 12 19 15 18 18 C15 19 12 17 12 14"/>
           <path d="M12 12 C12 16 9 19 6 18 C5 15 7 12 10 12"/><path d="M12 12 C8 12 5 9 6 6 C9 5 12 7 12 10"/>
           <circle cx="12" cy="12" r="2"/>
         </svg>
-        <span>Fan</span>
+        <span data-i18n="Fan">Fan</span>
       </button>
-      <button class="therm-mode-btn" data-mode="dry" onclick="thermSetMode('dry')" title="Dry">
+      <button class="therm-mode-btn" data-mode="dry" onclick="thermSetMode('dry')" title="Dry" data-i18n-title="Dry">
         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="rgba(180,220,255,0.7)" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
           <path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"/>
         </svg>
-        <span>Dry</span>
+        <span data-i18n="Dry">Dry</span>
       </button>
     </div>
   </div>
@@ -22459,12 +22866,12 @@ _applyDailyI18n();
     <!-- Summary KPIs: reuses the home screen's hero-stats look (with its
          own 6-column override below, since the home screen's version is 5) -->
     <div class="hero-stats aqi-kpi-row" style="margin-bottom:1.4rem;">
-      <div class="stat"><div class="stat-label">Worst Air</div><div class="stat-value" id="aqi-kpi-worst">—</div></div>
-      <div class="stat"><div class="stat-label">Avg Temp</div><div class="stat-value" id="aqi-kpi-temp">—</div></div>
-      <div class="stat"><div class="stat-label">Avg Humidity</div><div class="stat-value" id="aqi-kpi-hum">—</div></div>
-      <div class="stat"><div class="stat-label">Avg CO2</div><div class="stat-value" id="aqi-kpi-co2">—</div></div>
-      <div class="stat"><div class="stat-label">Avg TVOC</div><div class="stat-value" id="aqi-kpi-tvoc">—</div></div>
-      <div class="stat"><div class="stat-label">Avg PM2.5</div><div class="stat-value" id="aqi-kpi-pm25">—</div></div>
+      <div class="stat"><div class="stat-label" data-i18n="Worst Air">Worst Air</div><div class="stat-value" id="aqi-kpi-worst">—</div></div>
+      <div class="stat"><div class="stat-label" data-i18n="Avg Temp">Avg Temp</div><div class="stat-value" id="aqi-kpi-temp">—</div></div>
+      <div class="stat"><div class="stat-label" data-i18n="Avg Humidity">Avg Humidity</div><div class="stat-value" id="aqi-kpi-hum">—</div></div>
+      <div class="stat"><div class="stat-label" data-i18n="Avg CO2">Avg CO2</div><div class="stat-value" id="aqi-kpi-co2">—</div></div>
+      <div class="stat"><div class="stat-label" data-i18n="Avg TVOC">Avg TVOC</div><div class="stat-value" id="aqi-kpi-tvoc">—</div></div>
+      <div class="stat"><div class="stat-label" data-i18n="Avg PM2.5">Avg PM2.5</div><div class="stat-value" id="aqi-kpi-pm25">—</div></div>
     </div>
 
     <!-- Room tabs (built by JS, reuses .therm-room-tab) -->
@@ -22622,32 +23029,32 @@ _applyDailyI18n();
       <div class="settings-top-header-wrap">
         <div class="settings-top-header-title">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
-          <span>Settings</span>
+          <span data-i18n="Settings">Settings</span>
         </div>
-        <span class="settings-top-header-subtitle">Dashboard preferences</span>
+        <span class="settings-top-header-subtitle" data-i18n="Dashboard preferences">Dashboard preferences</span>
       </div>
     </div>
     <div class="settings-body-row">
     <div class="settings-rail" id="settings-rail">
-      <button class="settings-rail-btn active" id="settings-rail-appearance" data-cat="appearance" style="--cat-color:#A78BFA;--cat-color-rgb:167,139,250" onclick="switchSettingsCategory('appearance')" title="Appearance">
+      <button class="settings-rail-btn active" id="settings-rail-appearance" data-cat="appearance" style="--cat-color:#A78BFA;--cat-color-rgb:167,139,250" onclick="switchSettingsCategory('appearance')" title="Appearance" data-i18n-title="Appearance">
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
-        <span class="settings-rail-label">Appearance</span>
+        <span class="settings-rail-label" data-i18n="Appearance">Appearance</span>
       </button>
-      <button class="settings-rail-btn" id="settings-rail-layout" data-cat="layout" style="--cat-color:#5DADE2;--cat-color-rgb:93,173,226" onclick="switchSettingsCategory('layout')" title="Layout">
+      <button class="settings-rail-btn" id="settings-rail-layout" data-cat="layout" style="--cat-color:#5DADE2;--cat-color-rgb:93,173,226" onclick="switchSettingsCategory('layout')" title="Layout" data-i18n-title="Layout">
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="9" y1="21" x2="9" y2="9"/></svg>
-        <span class="settings-rail-label">Layout</span>
+        <span class="settings-rail-label" data-i18n="Layout">Layout</span>
       </button>
-      <button class="settings-rail-btn" id="settings-rail-screens" data-cat="screens" style="--cat-color:#2DD4BF;--cat-color-rgb:45,212,191" onclick="switchSettingsCategory('screens')" title="Screens">
+      <button class="settings-rail-btn" id="settings-rail-screens" data-cat="screens" style="--cat-color:#2DD4BF;--cat-color-rgb:45,212,191" onclick="switchSettingsCategory('screens')" title="Screens" data-i18n-title="Screens">
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="2" width="16" height="20" rx="2" ry="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg>
-        <span class="settings-rail-label">Screens</span>
+        <span class="settings-rail-label" data-i18n="Screens">Screens</span>
       </button>
-      <button class="settings-rail-btn" id="settings-rail-behavior" data-cat="behavior" style="--cat-color:#FBBF24;--cat-color-rgb:251,191,36" onclick="switchSettingsCategory('behavior')" title="Behavior">
+      <button class="settings-rail-btn" id="settings-rail-behavior" data-cat="behavior" style="--cat-color:#FBBF24;--cat-color-rgb:251,191,36" onclick="switchSettingsCategory('behavior')" title="Behavior" data-i18n-title="Behavior">
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="4" y1="21" x2="4" y2="14"/><line x1="4" y1="10" x2="4" y2="3"/><line x1="12" y1="21" x2="12" y2="12"/><line x1="12" y1="8" x2="12" y2="3"/><line x1="20" y1="21" x2="20" y2="16"/><line x1="20" y1="12" x2="20" y2="3"/><line x1="1" y1="14" x2="7" y2="14"/><line x1="9" y1="8" x2="15" y2="8"/><line x1="17" y1="16" x2="23" y2="16"/></svg>
-        <span class="settings-rail-label">Behavior</span>
+        <span class="settings-rail-label" data-i18n="Behavior">Behavior</span>
       </button>
-      <button class="settings-rail-btn" id="settings-rail-about" data-cat="about" style="--cat-color:#FB923C;--cat-color-rgb:251,146,60" onclick="switchSettingsCategory('about')" title="About">
+      <button class="settings-rail-btn" id="settings-rail-about" data-cat="about" style="--cat-color:#FB923C;--cat-color-rgb:251,146,60" onclick="switchSettingsCategory('about')" title="About" data-i18n-title="About">
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
-        <span class="settings-rail-label">About</span>
+        <span class="settings-rail-label" data-i18n="About">About</span>
       </button>
     </div>
     <div class="settings-content" id="settings-content">
@@ -22655,12 +23062,12 @@ _applyDailyI18n();
   <div class="settings-cat-header" style="--cat-color:#A78BFA;--cat-color-rgb:167,139,250">
     <span class="settings-cat-header-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg></span>
     <div>
-      <div class="settings-cat-header-title">Appearance</div>
-      <div class="settings-cat-header-subtitle">Theme, background, fonts, and language</div>
+      <div class="settings-cat-header-title" data-i18n="Appearance">Appearance</div>
+      <div class="settings-cat-header-subtitle" data-i18n="Theme, background, fonts, and language">Theme, background, fonts, and language</div>
     </div>
   </div>
 <div class="settings-section-title" onclick="toggleSettingsSection(this)">
-      THEME
+      <span data-i18n="THEME">THEME</span>
       <span class="settings-section-chevron"><svg width="12" height="12" aria-hidden="true"><use href="#icon-chevron-down"/></svg></span>
     </div>
     <div class="settings-section-body">
@@ -22671,27 +23078,27 @@ _applyDailyI18n();
 
 <hr class="settings-divider">
     <div class="settings-section-title" onclick="toggleSettingsSection(this)">
-      BACKGROUND
+      <span data-i18n="BACKGROUND">BACKGROUND</span>
       <span class="settings-section-chevron"><svg width="12" height="12" aria-hidden="true"><use href="#icon-chevron-down"/></svg></span>
     </div>
     <div class="settings-section-body">
       <div class="startup-mode-list">
         <label class="startup-mode-option" onclick="applySetting('bgSource','themed')">
           <input type="radio" name="bgSource" value="themed" id="st-bgsrc-themed">
-          <span class="startup-mode-label">Themed</span>
+          <span class="startup-mode-label" data-i18n="Themed">Themed</span>
           <span class="startup-mode-check">
             <svg width="10" height="10" aria-hidden="true"><use href="#icon-check"/></svg>
           </span>
         </label>
         <label class="startup-mode-option" onclick="applySetting('bgSource','picture')">
           <input type="radio" name="bgSource" value="picture" id="st-bgsrc-picture">
-          <span class="startup-mode-label">Picture</span>
+          <span class="startup-mode-label" data-i18n="Picture">Picture</span>
           <span class="startup-mode-check">
             <svg width="10" height="10" aria-hidden="true"><use href="#icon-check"/></svg>
           </span>
         </label>
       </div>
-      <p class="settings-hint">Picture uses a photo from <code>photos/background/</code> instead of the themed gradient. Add images to <code>BACKGROUND_IMAGES</code> in config.js.</p>
+      <p class="settings-hint" data-i18n-html="Picture uses a photo from <code>photos/background/</code> instead of the themed gradient. Add images to <code>BACKGROUND_IMAGES</code> in config.js.">Picture uses a photo from <code>photos/background/</code> instead of the themed gradient. Add images to <code>BACKGROUND_IMAGES</code> in config.js.</p>
       <div class="startup-mode-list" id="st-bg-image-list"></div>
     </div>
 
@@ -22699,11 +23106,11 @@ _applyDailyI18n();
 
 <hr class="settings-divider">
     <div class="settings-section-title" onclick="toggleSettingsSection(this)">
-      TIME OF DAY THEME
+      <span data-i18n="TIME OF DAY THEME">TIME OF DAY THEME</span>
       <span class="settings-section-chevron"><svg width="12" height="12" aria-hidden="true"><use href="#icon-chevron-down"/></svg></span>
     </div>
     <div class="settings-section-body">
-      <p class="settings-hint">Automatically switch the accent colour at set times of day. Leave a slot as Default to keep the current theme.</p>
+      <p class="settings-hint" data-i18n="Automatically switch the accent colour at set times of day. Leave a slot as Default to keep the current theme.">Automatically switch the accent colour at set times of day. Leave a slot as Default to keep the current theme.</p>
       <div id="st-tod-rows"></div>
     </div>
 
@@ -22711,28 +23118,28 @@ _applyDailyI18n();
 
 <hr class="settings-divider">
     <div class="settings-section-title" onclick="toggleSettingsSection(this)">
-      BLOOM INTENSITY
+      <span data-i18n="BLOOM INTENSITY">BLOOM INTENSITY</span>
       <span class="settings-section-chevron"><svg width="12" height="12" aria-hidden="true"><use href="#icon-chevron-down"/></svg></span>
     </div>
     <div class="settings-section-body">
       <div class="startup-mode-list">
         <label class="startup-mode-option" onclick="applySetting('bgMode','radiant')">
           <input type="radio" name="bgMode" value="radiant" id="st-bg-radiant">
-          <span class="startup-mode-label">Radiant</span>
+          <span class="startup-mode-label" data-i18n="Radiant">Radiant</span>
           <span class="startup-mode-check">
             <svg width="10" height="10" aria-hidden="true"><use href="#icon-check"/></svg>
           </span>
         </label>
         <label class="startup-mode-option" onclick="applySetting('bgMode','vivid')">
           <input type="radio" name="bgMode" value="vivid" id="st-bg-vivid">
-          <span class="startup-mode-label">Vivid</span>
+          <span class="startup-mode-label" data-i18n="Vivid">Vivid</span>
           <span class="startup-mode-check">
             <svg width="10" height="10" aria-hidden="true"><use href="#icon-check"/></svg>
           </span>
         </label>
         <label class="startup-mode-option" onclick="applySetting('bgMode','subtle')">
           <input type="radio" name="bgMode" value="subtle" id="st-bg-subtle">
-          <span class="startup-mode-label">Subtle</span>
+          <span class="startup-mode-label" data-i18n="Subtle">Subtle</span>
           <span class="startup-mode-check">
             <svg width="10" height="10" aria-hidden="true"><use href="#icon-check"/></svg>
           </span>
@@ -22744,7 +23151,7 @@ _applyDailyI18n();
 
 <hr class="settings-divider">
     <div class="settings-section-title" onclick="toggleSettingsSection(this)">
-      FONTS
+      <span data-i18n="FONTS">FONTS</span>
       <span class="settings-section-chevron"><svg width="12" height="12" aria-hidden="true"><use href="#icon-chevron-down"/></svg></span>
     </div>
     <div class="settings-section-body">
@@ -22811,34 +23218,34 @@ _applyDailyI18n();
   <div class="settings-cat-header" style="--cat-color:#5DADE2;--cat-color-rgb:93,173,226">
     <span class="settings-cat-header-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="9" y1="21" x2="9" y2="9"/></svg></span>
     <div>
-      <div class="settings-cat-header-title">Layout</div>
-      <div class="settings-cat-header-subtitle">What shows on screen, and where</div>
+      <div class="settings-cat-header-title" data-i18n="Layout">Layout</div>
+      <div class="settings-cat-header-subtitle" data-i18n="What shows on screen, and where">What shows on screen, and where</div>
     </div>
   </div>
 <hr class="settings-divider" id="st-divider-topleft" style="display:none">
 <div class="settings-section-title" id="st-title-topleft" onclick="toggleSettingsSection(this)">
-      TOP-LEFT ELEMENTS
+      <span data-i18n="TOP-LEFT ELEMENTS">TOP-LEFT ELEMENTS</span>
       <span class="settings-section-chevron"><svg width="12" height="12" aria-hidden="true"><use href="#icon-chevron-down"/></svg></span>
     </div>
     <div class="settings-section-body" id="st-body-topleft">
     <div class="settings-item">
-      <span class="settings-label">Dashboard Name</span>
+      <span class="settings-label" data-i18n="Dashboard Name">Dashboard Name</span>
       <label class="settings-check"><input type="checkbox" id="st-show-name" onchange="applySetting('showDashboardName', this.checked)"><span class="settings-check-mark"><svg width="10" height="10" aria-hidden="true"><use href="#icon-check"/></svg></span></label>
     </div>
     <div class="settings-item">
-      <span class="settings-label">Custom Name</span>
+      <span class="settings-label" data-i18n="Custom Name">Custom Name</span>
       <input class="settings-input" id="st-dashboard-name" type="text" maxlength="24" placeholder="HOMIE DASH" oninput="applySetting('dashboardName', this.value)">
     </div>
     <div class="settings-item">
-      <span class="settings-label">Clock</span>
+      <span class="settings-label" data-i18n="Clock">Clock</span>
       <label class="settings-check"><input type="checkbox" id="st-clock" onchange="applySetting('showClock', this.checked)"><span class="settings-check-mark"><svg width="10" height="10" aria-hidden="true"><use href="#icon-check"/></svg></span></label>
     </div>
     <div class="settings-item">
-      <span class="settings-label">Clock Format</span>
+      <span class="settings-label" data-i18n="Clock Format">Clock Format</span>
       <label class="settings-check"><input type="checkbox" id="st-clock-format" onchange="applySetting('clockFormat', this.checked ? '12h' : '24h'); tickClock(); if(document.getElementById('clock-overlay')?.classList.contains('open')){_fcInit&&_fcInit();}"><span class="settings-check-mark"><svg width="10" height="10" aria-hidden="true"><use href="#icon-check"/></svg></span></label>
     </div>
     <div class="settings-item settings-sub">
-      <span class="settings-label" style="font-size:10px;opacity:0.5">Checked for 12-hour (AM/PM), unchecked for 24-hour</span>
+      <span class="settings-label" style="font-size:10px;opacity:0.5" data-i18n="Checked for 12-hour (AM/PM), unchecked for 24-hour">Checked for 12-hour (AM/PM), unchecked for 24-hour</span>
     </div>
     </div>
 
@@ -22846,13 +23253,13 @@ _applyDailyI18n();
 
 <hr class="settings-divider" id="st-divider-center">
     <div class="settings-section-title" id="st-title-center" onclick="toggleSettingsSection(this)">
-      CENTER ELEMENTS
+      <span data-i18n="CENTER ELEMENTS">CENTER ELEMENTS</span>
       <span class="settings-section-chevron"><svg width="12" height="12" aria-hidden="true"><use href="#icon-chevron-down"/></svg></span>
     </div>
     <div class="settings-section-body" id="st-body-center">
     <div class="settings-item">
-      <span class="settings-label">Personalised Name</span>
-      <input class="settings-input" id="st-personalised-name" type="text" maxlength="32" placeholder="Your name" oninput="applySetting('personalisedName', this.value.trim() || null); updateGreeting();">
+      <span class="settings-label" data-i18n="Personalised Name">Personalised Name</span>
+      <input class="settings-input" id="st-personalised-name" type="text" maxlength="32" placeholder="Your name" data-i18n-placeholder="Your name" oninput="applySetting('personalisedName', this.value.trim() || null); updateGreeting();">
     </div>
     </div>
 
@@ -22860,64 +23267,64 @@ _applyDailyI18n();
 
 <hr class="settings-divider" id="st-divider-topright">
     <div class="settings-section-title" id="st-title-topright" onclick="toggleSettingsSection(this)">
-      TOP-RIGHT ELEMENTS
+      <span data-i18n="TOP-RIGHT ELEMENTS">TOP-RIGHT ELEMENTS</span>
       <span class="settings-section-chevron"><svg width="12" height="12" aria-hidden="true"><use href="#icon-chevron-down"/></svg></span>
     </div>
     <div class="settings-section-body" id="st-body-topright">
     <div class="settings-item">
-      <span class="settings-label">Favorites</span>
+      <span class="settings-label" data-i18n="Favorites">Favorites</span>
       <label class="settings-check"><input type="checkbox" id="st-favorites" onchange="applySetting('showFavoritesButton', this.checked)"><span class="settings-check-mark"><svg width="10" height="10" aria-hidden="true"><use href="#icon-check"/></svg></span></label>
     </div>
     <div class="settings-item">
-      <span class="settings-label">Dashboards</span>
+      <span class="settings-label" data-i18n="Dashboards">Dashboards</span>
       <label class="settings-check"><input type="checkbox" id="st-dashboards" onchange="applySetting('showModeLauncher', this.checked)"><span class="settings-check-mark"><svg width="10" height="10" aria-hidden="true"><use href="#icon-check"/></svg></span></label>
     </div>
     <div class="settings-item settings-sub">
-      <span class="settings-label">Now Playing</span>
+      <span class="settings-label" data-i18n="Now Playing">Now Playing</span>
       <label class="settings-check"><input type="checkbox" id="st-nowplaying" onchange="applySetting('showNowPlayingButton', this.checked)"><span class="settings-check-mark"><svg width="10" height="10" aria-hidden="true"><use href="#icon-check"/></svg></span></label>
     </div>
     <div class="settings-item settings-sub">
-      <span class="settings-label">Memories</span>
+      <span class="settings-label" data-i18n="Memories">Memories</span>
       <label class="settings-check"><input type="checkbox" id="st-memories" onchange="applySetting('showPhotoButton', this.checked)"><span class="settings-check-mark"><svg width="10" height="10" aria-hidden="true"><use href="#icon-check"/></svg></span></label>
     </div>
     <div class="settings-item settings-sub">
-      <span class="settings-label">My Day</span>
+      <span class="settings-label" data-i18n="My Day">My Day</span>
       <label class="settings-check"><input type="checkbox" id="st-myday" onchange="applySetting('showDailyButton', this.checked)"><span class="settings-check-mark"><svg width="10" height="10" aria-hidden="true"><use href="#icon-check"/></svg></span></label>
     </div>
     <div class="settings-item settings-sub">
-      <span class="settings-label">Cameras</span>
+      <span class="settings-label" data-i18n="Cameras">Cameras</span>
       <label class="settings-check"><input type="checkbox" id="st-cameras" onchange="applySetting('showCamerasButton', this.checked)"><span class="settings-check-mark"><svg width="10" height="10" aria-hidden="true"><use href="#icon-check"/></svg></span></label>
     </div>
     <div class="settings-item settings-sub">
-      <span class="settings-label">Thermostat</span>
+      <span class="settings-label" data-i18n="Thermostat">Thermostat</span>
       <label class="settings-check"><input type="checkbox" id="st-thermostat" onchange="applySetting('showThermostatButton', this.checked)"><span class="settings-check-mark"><svg width="10" height="10" aria-hidden="true"><use href="#icon-check"/></svg></span></label>
     </div>
     <div class="settings-item settings-sub">
-      <span class="settings-label">Clock</span>
+      <span class="settings-label" data-i18n="Clock">Clock</span>
       <label class="settings-check"><input type="checkbox" id="st-clock-mode" onchange="applySetting('showClockButton', this.checked)"><span class="settings-check-mark"><svg width="10" height="10" aria-hidden="true"><use href="#icon-check"/></svg></span></label>
     </div>
     <div class="settings-item settings-sub">
-      <span class="settings-label">Weather</span>
+      <span class="settings-label" data-i18n="Weather">Weather</span>
       <label class="settings-check"><input type="checkbox" id="st-weather-fs" onchange="applySetting('showWeatherFSButton', this.checked)"><span class="settings-check-mark"><svg width="10" height="10" aria-hidden="true"><use href="#icon-check"/></svg></span></label>
     </div>
     <div class="settings-item settings-sub">
-      <span class="settings-label">Solar</span>
+      <span class="settings-label" data-i18n="Solar">Solar</span>
       <label class="settings-check"><input type="checkbox" id="st-solar-fs" onchange="applySetting('showSolarFSButton', this.checked)"><span class="settings-check-mark"><svg width="10" height="10" aria-hidden="true"><use href="#icon-check"/></svg></span></label>
     </div>
     <div class="settings-item settings-sub">
-      <span class="settings-label">Indoor AQI</span>
+      <span class="settings-label" data-i18n="Indoor AQI">Indoor AQI</span>
       <label class="settings-check"><input type="checkbox" id="st-aqi-fs" onchange="applySetting('showAqiFSButton', this.checked)"><span class="settings-check-mark"><svg width="10" height="10" aria-hidden="true"><use href="#icon-check"/></svg></span></label>
     </div>
     <div class="settings-item settings-sub">
-      <span class="settings-label">Indoor Presence</span>
+      <span class="settings-label" data-i18n="Indoor Presence">Indoor Presence</span>
       <label class="settings-check"><input type="checkbox" id="st-presence" onchange="applySetting('showPresenceButton', this.checked)"><span class="settings-check-mark"><svg width="10" height="10" aria-hidden="true"><use href="#icon-check"/></svg></span></label>
     </div>
     <div class="settings-item settings-sub">
-      <span class="settings-label">Insights</span>
+      <span class="settings-label" data-i18n="Insights">Insights</span>
       <label class="settings-check"><input type="checkbox" id="st-system" onchange="applySetting('showSystemButton', this.checked)"><span class="settings-check-mark"><svg width="10" height="10" aria-hidden="true"><use href="#icon-check"/></svg></span></label>
     </div>
     <div class="settings-item">
-      <span class="settings-label">Security</span>
+      <span class="settings-label" data-i18n="Security">Security</span>
       <label class="settings-check"><input type="checkbox" id="st-security" onchange="applySetting('showSecurityButton', this.checked)"><span class="settings-check-mark"><svg width="10" height="10" aria-hidden="true"><use href="#icon-check"/></svg></span></label>
     </div>
     </div>
@@ -22926,7 +23333,7 @@ _applyDailyI18n();
 
 <hr class="settings-divider" id="st-divider-sensor">
     <div class="settings-section-title" id="st-title-sensor" onclick="toggleSettingsSection(this)">
-      SENSOR ROW
+      <span data-i18n="SENSOR ROW">SENSOR ROW</span>
       <span class="settings-section-chevron"><svg width="12" height="12" aria-hidden="true"><use href="#icon-chevron-down"/></svg></span>
     </div>
     <div class="settings-section-body" id="st-body-sensor">
@@ -22938,20 +23345,20 @@ _applyDailyI18n();
 
 <hr class="settings-divider" id="st-divider-ov3-elements" style="display:none">
     <div class="settings-section-title" id="st-title-ov3-elements" style="display:none" onclick="toggleSettingsSection(this)">
-      ELEMENTS
+      <span data-i18n="ELEMENTS">ELEMENTS</span>
       <span class="settings-section-chevron"><svg width="12" height="12" aria-hidden="true"><use href="#icon-chevron-down"/></svg></span>
     </div>
     <div class="settings-section-body" id="st-body-ov3-elements" style="display:none">
       <div class="settings-item">
-        <span class="settings-label">Clock Format</span>
+        <span class="settings-label" data-i18n="Clock Format">Clock Format</span>
         <label class="settings-toggle"><input type="checkbox" id="st-clock-format-ov3" onchange="applySetting('clockFormat', this.checked ? '12h' : '24h'); tickClock(); if(document.getElementById('clock-overlay')?.classList.contains('open')){_fcInit&&_fcInit();}"><span class="settings-knob"></span></label>
       </div>
       <div class="settings-item settings-sub">
-        <span class="settings-label" style="font-size:10px;opacity:0.5">Toggle on for 12-hour (AM/PM), off for 24-hour</span>
+        <span class="settings-label" style="font-size:10px;opacity:0.5" data-i18n="Toggle on for 12-hour (AM/PM), off for 24-hour">Toggle on for 12-hour (AM/PM), off for 24-hour</span>
       </div>
       <div class="settings-item">
-        <span class="settings-label">Personalised Name</span>
-        <input class="settings-input" id="st-personalised-name-ov3" type="text" maxlength="32" placeholder="Your name" oninput="applySetting('personalisedName', this.value.trim() || null); updateGreeting();">
+        <span class="settings-label" data-i18n="Personalised Name">Personalised Name</span>
+        <input class="settings-input" id="st-personalised-name-ov3" type="text" maxlength="32" placeholder="Your name" data-i18n-placeholder="Your name" oninput="applySetting('personalisedName', this.value.trim() || null); updateGreeting();">
       </div>
     </div>
 
@@ -22961,103 +23368,103 @@ _applyDailyI18n();
   <div class="settings-cat-header" style="--cat-color:#2DD4BF;--cat-color-rgb:45,212,191">
     <span class="settings-cat-header-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="2" width="16" height="20" rx="2" ry="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg></span>
     <div>
-      <div class="settings-cat-header-title">Screens</div>
-      <div class="settings-cat-header-subtitle">Startup screen, overview pages, and screensaver</div>
+      <div class="settings-cat-header-title" data-i18n="Screens">Screens</div>
+      <div class="settings-cat-header-subtitle" data-i18n="Startup screen, overview pages, and screensaver">Startup screen, overview pages, and screensaver</div>
     </div>
   </div>
     <div class="settings-section-title" onclick="toggleSettingsSection(this)">
-      STARTUP
+      <span data-i18n="STARTUP">STARTUP</span>
       <span class="settings-section-chevron"><svg width="12" height="12" aria-hidden="true"><use href="#icon-chevron-down"/></svg></span>
     </div>
     <div class="settings-section-body">
     <div class="startup-mode-list">
       <label class="startup-mode-option" onclick="applySetting('startupMode','overview1')">
         <input type="radio" name="startupMode" value="overview1" id="sm-overview1">
-        <span class="startup-mode-label">Overview 1</span>
+        <span class="startup-mode-label" data-i18n="Overview 1">Overview 1</span>
         <span class="startup-mode-check">
           <svg width="10" height="10" aria-hidden="true"><use href="#icon-check"/></svg>
         </span>
       </label>
       <label class="startup-mode-option" onclick="applySetting('startupMode','overview2')">
         <input type="radio" name="startupMode" value="overview2" id="sm-overview2">
-        <span class="startup-mode-label">Overview 2</span>
+        <span class="startup-mode-label" data-i18n="Overview 2">Overview 2</span>
         <span class="startup-mode-check">
           <svg width="10" height="10" aria-hidden="true"><use href="#icon-check"/></svg>
         </span>
       </label>
       <label class="startup-mode-option" onclick="applySetting('startupMode','overview3')">
         <input type="radio" name="startupMode" value="overview3" id="sm-overview3">
-        <span class="startup-mode-label">Overview 3</span>
+        <span class="startup-mode-label" data-i18n="Overview 3">Overview 3</span>
         <span class="startup-mode-check">
           <svg width="10" height="10" aria-hidden="true"><use href="#icon-check"/></svg>
         </span>
       </label>
       <label class="startup-mode-option" onclick="applySetting('startupMode','nowplaying')">
         <input type="radio" name="startupMode" value="nowplaying" id="sm-nowplaying">
-        <span class="startup-mode-label">Now Playing</span>
+        <span class="startup-mode-label" data-i18n="Now Playing">Now Playing</span>
         <span class="startup-mode-check">
           <svg width="10" height="10" aria-hidden="true"><use href="#icon-check"/></svg>
         </span>
       </label>
       <label class="startup-mode-option" onclick="applySetting('startupMode','memories')">
         <input type="radio" name="startupMode" value="memories" id="sm-memories">
-        <span class="startup-mode-label">Memories</span>
+        <span class="startup-mode-label" data-i18n="Memories">Memories</span>
         <span class="startup-mode-check">
           <svg width="10" height="10" aria-hidden="true"><use href="#icon-check"/></svg>
         </span>
       </label>
       <label class="startup-mode-option" onclick="applySetting('startupMode','myday')">
         <input type="radio" name="startupMode" value="myday" id="sm-myday">
-        <span class="startup-mode-label">My Day</span>
+        <span class="startup-mode-label" data-i18n="My Day">My Day</span>
         <span class="startup-mode-check">
           <svg width="10" height="10" aria-hidden="true"><use href="#icon-check"/></svg>
         </span>
       </label>
       <label class="startup-mode-option" onclick="applySetting('startupMode','cameras')">
         <input type="radio" name="startupMode" value="cameras" id="sm-cameras">
-        <span class="startup-mode-label">Cameras</span>
+        <span class="startup-mode-label" data-i18n="Cameras">Cameras</span>
         <span class="startup-mode-check">
           <svg width="10" height="10" aria-hidden="true"><use href="#icon-check"/></svg>
         </span>
       </label>
       <label class="startup-mode-option" onclick="applySetting('startupMode','thermostat')">
         <input type="radio" name="startupMode" value="thermostat" id="sm-thermostat">
-        <span class="startup-mode-label">Thermostat</span>
+        <span class="startup-mode-label" data-i18n="Thermostat">Thermostat</span>
         <span class="startup-mode-check">
           <svg width="10" height="10" aria-hidden="true"><use href="#icon-check"/></svg>
         </span>
       </label>
       <label class="startup-mode-option" onclick="applySetting('startupMode','clock')">
         <input type="radio" name="startupMode" value="clock" id="sm-clock">
-        <span class="startup-mode-label">Clock (Analog)</span>
+        <span class="startup-mode-label" data-i18n="Clock (Analog)">Clock (Analog)</span>
         <span class="startup-mode-check">
           <svg width="10" height="10" aria-hidden="true"><use href="#icon-check"/></svg>
         </span>
       </label>
       <label class="startup-mode-option" onclick="applySetting('startupMode','clock-digital')">
         <input type="radio" name="startupMode" value="clock-digital" id="sm-clock-digital">
-        <span class="startup-mode-label">Clock (Digital)</span>
+        <span class="startup-mode-label" data-i18n="Clock (Digital)">Clock (Digital)</span>
         <span class="startup-mode-check">
           <svg width="10" height="10" aria-hidden="true"><use href="#icon-check"/></svg>
         </span>
       </label>
       <label class="startup-mode-option" onclick="applySetting('startupMode','weather')">
         <input type="radio" name="startupMode" value="weather" id="sm-weather">
-        <span class="startup-mode-label">Weather</span>
+        <span class="startup-mode-label" data-i18n="Weather">Weather</span>
         <span class="startup-mode-check">
           <svg width="10" height="10" aria-hidden="true"><use href="#icon-check"/></svg>
         </span>
       </label>
       <label class="startup-mode-option" onclick="applySetting('startupMode','solar')">
         <input type="radio" name="startupMode" value="solar" id="sm-solar">
-        <span class="startup-mode-label">Solar</span>
+        <span class="startup-mode-label" data-i18n="Solar">Solar</span>
         <span class="startup-mode-check">
           <svg width="10" height="10" aria-hidden="true"><use href="#icon-check"/></svg>
         </span>
       </label>
       <label class="startup-mode-option" onclick="applySetting('startupMode','indooraqi')">
         <input type="radio" name="startupMode" value="indooraqi" id="sm-indooraqi">
-        <span class="startup-mode-label">Indoor AQI</span>
+        <span class="startup-mode-label" data-i18n="Indoor AQI">Indoor AQI</span>
         <span class="startup-mode-check">
           <svg width="10" height="10" aria-hidden="true"><use href="#icon-check"/></svg>
         </span>
@@ -23069,25 +23476,25 @@ _applyDailyI18n();
 
 <hr class="settings-divider">
     <div class="settings-section-title" onclick="toggleSettingsSection(this)">
-      OVERVIEW SCREENS
+      <span data-i18n="OVERVIEW SCREENS">OVERVIEW SCREENS</span>
       <span class="settings-section-chevron"><svg width="12" height="12" aria-hidden="true"><use href="#icon-chevron-down"/></svg></span>
     </div>
     <div class="settings-section-body">
-    <p class="settings-hint">Choose which Overview screens are active. If only one is selected, swiping and the page dots are disabled and that screen is shown on its own.</p>
+    <p class="settings-hint" data-i18n="Choose which Overview screens are active. If only one is selected, swiping and the page dots are disabled and that screen is shown on its own.">Choose which Overview screens are active. If only one is selected, swiping and the page dots are disabled and that screen is shown on its own.</p>
     <div class="startup-mode-list" id="st-enabled-overviews">
       <label class="startup-mode-option" onclick="toggleEnabledOverview('overview1'); event.preventDefault()">
         <input type="radio" value="overview1" id="eo-overview1">
-        <span class="startup-mode-label">Overview 1</span>
+        <span class="startup-mode-label" data-i18n="Overview 1">Overview 1</span>
         <span class="startup-mode-check"><svg width="10" height="10" aria-hidden="true"><use href="#icon-check"/></svg></span>
       </label>
       <label class="startup-mode-option" onclick="toggleEnabledOverview('overview2'); event.preventDefault()">
         <input type="radio" value="overview2" id="eo-overview2">
-        <span class="startup-mode-label">Overview 2</span>
+        <span class="startup-mode-label" data-i18n="Overview 2">Overview 2</span>
         <span class="startup-mode-check"><svg width="10" height="10" aria-hidden="true"><use href="#icon-check"/></svg></span>
       </label>
       <label class="startup-mode-option" onclick="toggleEnabledOverview('overview3'); event.preventDefault()">
         <input type="radio" value="overview3" id="eo-overview3">
-        <span class="startup-mode-label">Overview 3</span>
+        <span class="startup-mode-label" data-i18n="Overview 3">Overview 3</span>
         <span class="startup-mode-check"><svg width="10" height="10" aria-hidden="true"><use href="#icon-check"/></svg></span>
       </label>
     </div>
@@ -23097,91 +23504,91 @@ _applyDailyI18n();
 
 <hr class="settings-divider">
     <div class="settings-section-title" onclick="toggleSettingsSection(this)">
-      SCREENSAVER
+      <span data-i18n="SCREENSAVER">SCREENSAVER</span>
       <span class="settings-section-chevron"><svg width="12" height="12" aria-hidden="true"><use href="#icon-chevron-down"/></svg></span>
     </div>
     <div class="settings-section-body">
       <div class="settings-item">
-        <span class="settings-label">Enable Screensaver</span>
+        <span class="settings-label" data-i18n="Enable Screensaver">Enable Screensaver</span>
         <label class="settings-check"><input type="checkbox" id="st-ss-enabled" onchange="applyScreensaverSetting('screensaverEnabled', this.checked)"><span class="settings-check-mark"><svg width="10" height="10" aria-hidden="true"><use href="#icon-check"/></svg></span></label>
       </div>
       <div class="settings-item">
-        <span class="settings-label">Start after (min)</span>
+        <span class="settings-label" data-i18n="Start after (min)">Start after (min)</span>
         <input class="settings-input--num" id="st-ss-delay" type="number" min="1" max="120" value="5" oninput="applyScreensaverSetting('screensaverDelay', Math.max(1, parseInt(this.value)||5))">
       </div>
       <div class="settings-item">
-        <span class="settings-label">Rotate after (min)</span>
+        <span class="settings-label" data-i18n="Rotate after (min)">Rotate after (min)</span>
         <input class="settings-input--num" id="st-ss-rotate" type="number" min="1" max="120" value="5" oninput="applyScreensaverSetting('screensaverRotate', Math.max(1, parseInt(this.value)||5))">
       </div>
       <div class="settings-item" onclick="document.getElementById('ss-modes-body').classList.toggle('open')" style="cursor:pointer">
-        <span class="settings-label">Rotate between</span>
+        <span class="settings-label" data-i18n="Rotate between">Rotate between</span>
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.4)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
       </div>
       <div class="settings-section-body" id="ss-modes-body">
       <div class="startup-mode-list" id="st-ss-modes" style="margin-bottom:10px">
         <label class="startup-mode-option" onclick="toggleScreensaverMode('overview1'); event.preventDefault()">
           <input type="radio" value="overview1" id="ssm-overview1">
-          <span class="startup-mode-label">Overview 1</span>
+          <span class="startup-mode-label" data-i18n="Overview 1">Overview 1</span>
           <span class="startup-mode-check"><svg width="10" height="10" aria-hidden="true"><use href="#icon-check"/></svg></span>
         </label>
         <label class="startup-mode-option" onclick="toggleScreensaverMode('overview2'); event.preventDefault()">
           <input type="radio" value="overview2" id="ssm-overview2">
-          <span class="startup-mode-label">Overview 2</span>
+          <span class="startup-mode-label" data-i18n="Overview 2">Overview 2</span>
           <span class="startup-mode-check"><svg width="10" height="10" aria-hidden="true"><use href="#icon-check"/></svg></span>
         </label>
         <label class="startup-mode-option" onclick="toggleScreensaverMode('overview3'); event.preventDefault()">
           <input type="radio" value="overview3" id="ssm-overview3">
-          <span class="startup-mode-label">Overview 3</span>
+          <span class="startup-mode-label" data-i18n="Overview 3">Overview 3</span>
           <span class="startup-mode-check"><svg width="10" height="10" aria-hidden="true"><use href="#icon-check"/></svg></span>
         </label>
         <label class="startup-mode-option" onclick="toggleScreensaverMode('nowplaying'); event.preventDefault()">
           <input type="radio" value="nowplaying" id="ssm-nowplaying">
-          <span class="startup-mode-label">Now Playing</span>
+          <span class="startup-mode-label" data-i18n="Now Playing">Now Playing</span>
           <span class="startup-mode-check"><svg width="10" height="10" aria-hidden="true"><use href="#icon-check"/></svg></span>
         </label>
         <label class="startup-mode-option" onclick="toggleScreensaverMode('memories'); event.preventDefault()">
           <input type="radio" value="memories" id="ssm-memories">
-          <span class="startup-mode-label">Memories</span>
+          <span class="startup-mode-label" data-i18n="Memories">Memories</span>
           <span class="startup-mode-check"><svg width="10" height="10" aria-hidden="true"><use href="#icon-check"/></svg></span>
         </label>
         <label class="startup-mode-option" onclick="toggleScreensaverMode('myday'); event.preventDefault()">
           <input type="radio" value="myday" id="ssm-myday">
-          <span class="startup-mode-label">My Day</span>
+          <span class="startup-mode-label" data-i18n="My Day">My Day</span>
           <span class="startup-mode-check"><svg width="10" height="10" aria-hidden="true"><use href="#icon-check"/></svg></span>
         </label>
         <label class="startup-mode-option" onclick="toggleScreensaverMode('cameras'); event.preventDefault()">
           <input type="radio" value="cameras" id="ssm-cameras">
-          <span class="startup-mode-label">Cameras</span>
+          <span class="startup-mode-label" data-i18n="Cameras">Cameras</span>
           <span class="startup-mode-check"><svg width="10" height="10" aria-hidden="true"><use href="#icon-check"/></svg></span>
         </label>
         <label class="startup-mode-option" onclick="toggleScreensaverMode('thermostat'); event.preventDefault()">
           <input type="radio" value="thermostat" id="ssm-thermostat">
-          <span class="startup-mode-label">Thermostat</span>
+          <span class="startup-mode-label" data-i18n="Thermostat">Thermostat</span>
           <span class="startup-mode-check"><svg width="10" height="10" aria-hidden="true"><use href="#icon-check"/></svg></span>
         </label>
         <label class="startup-mode-option" onclick="toggleScreensaverMode('clock'); event.preventDefault()">
           <input type="radio" value="clock" id="ssm-clock">
-          <span class="startup-mode-label">Clock (Analog)</span>
+          <span class="startup-mode-label" data-i18n="Clock (Analog)">Clock (Analog)</span>
           <span class="startup-mode-check"><svg width="10" height="10" aria-hidden="true"><use href="#icon-check"/></svg></span>
         </label>
         <label class="startup-mode-option" onclick="toggleScreensaverMode('clock-digital'); event.preventDefault()">
           <input type="radio" value="clock-digital" id="ssm-clock-digital">
-          <span class="startup-mode-label">Clock (Digital)</span>
+          <span class="startup-mode-label" data-i18n="Clock (Digital)">Clock (Digital)</span>
           <span class="startup-mode-check"><svg width="10" height="10" aria-hidden="true"><use href="#icon-check"/></svg></span>
         </label>
         <label class="startup-mode-option" onclick="toggleScreensaverMode('weather'); event.preventDefault()">
           <input type="radio" value="weather" id="ssm-weather">
-          <span class="startup-mode-label">Weather</span>
+          <span class="startup-mode-label" data-i18n="Weather">Weather</span>
           <span class="startup-mode-check"><svg width="10" height="10" aria-hidden="true"><use href="#icon-check"/></svg></span>
         </label>
         <label class="startup-mode-option" onclick="toggleScreensaverMode('solar'); event.preventDefault()">
           <input type="radio" value="solar" id="ssm-solar">
-          <span class="startup-mode-label">Solar</span>
+          <span class="startup-mode-label" data-i18n="Solar">Solar</span>
           <span class="startup-mode-check"><svg width="10" height="10" aria-hidden="true"><use href="#icon-check"/></svg></span>
         </label>
         <label class="startup-mode-option" onclick="toggleScreensaverMode('indooraqi'); event.preventDefault()">
           <input type="radio" value="indooraqi" id="ssm-indooraqi">
-          <span class="startup-mode-label">Indoor AQI</span>
+          <span class="startup-mode-label" data-i18n="Indoor AQI">Indoor AQI</span>
           <span class="startup-mode-check"><svg width="10" height="10" aria-hidden="true"><use href="#icon-check"/></svg></span>
         </label>
       </div>
@@ -23194,19 +23601,19 @@ _applyDailyI18n();
   <div class="settings-cat-header" style="--cat-color:#FBBF24;--cat-color-rgb:251,191,36">
     <span class="settings-cat-header-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="4" y1="21" x2="4" y2="14"/><line x1="4" y1="10" x2="4" y2="3"/><line x1="12" y1="21" x2="12" y2="12"/><line x1="12" y1="8" x2="12" y2="3"/><line x1="20" y1="21" x2="20" y2="16"/><line x1="20" y1="12" x2="20" y2="3"/><line x1="1" y1="14" x2="7" y2="14"/><line x1="9" y1="8" x2="15" y2="8"/><line x1="17" y1="16" x2="23" y2="16"/></svg></span>
     <div>
-      <div class="settings-cat-header-title">Behavior</div>
-      <div class="settings-cat-header-subtitle">Gestures and language</div>
+      <div class="settings-cat-header-title" data-i18n="Behavior">Behavior</div>
+      <div class="settings-cat-header-subtitle" data-i18n="Gestures and language">Gestures and language</div>
     </div>
   </div>
 <div class="settings-section-title" onclick="toggleSettingsSection(this)">
-      LANGUAGE
+      <span data-i18n="LANGUAGE">LANGUAGE</span>
       <span class="settings-section-chevron"><svg width="12" height="12" aria-hidden="true"><use href="#icon-chevron-down"/></svg></span>
     </div>
     <div class="settings-section-body">
       <div class="startup-mode-list">
         <label class="startup-mode-option" onclick="applySetting('locale','')">
           <input type="radio" name="dashLocale" value="" id="st-locale-auto" checked>
-          <span class="startup-mode-label">Auto (Browser)</span>
+          <span class="startup-mode-label" data-i18n="Auto (Browser)">Auto (Browser)</span>
           <span class="startup-mode-check"><svg width="10" height="10" aria-hidden="true"><use href="#icon-check"/></svg></span>
         </label>
         <label class="startup-mode-option" onclick="applySetting('locale','en-GB')">
@@ -23284,6 +23691,11 @@ _applyDailyI18n();
           <span class="startup-mode-label">العربية</span>
           <span class="startup-mode-check"><svg width="10" height="10" aria-hidden="true"><use href="#icon-check"/></svg></span>
         </label>
+        <label class="startup-mode-option" onclick="applySetting('locale','he-IL')">
+          <input type="radio" name="dashLocale" value="he-IL" id="st-locale-he">
+          <span class="startup-mode-label">עברית</span>
+          <span class="startup-mode-check"><svg width="10" height="10" aria-hidden="true"><use href="#icon-check"/></svg></span>
+        </label>
       </div>
     </div>
 
@@ -23291,29 +23703,29 @@ _applyDailyI18n();
 
 <hr class="settings-divider">
     <div class="settings-section-title" onclick="toggleSettingsSection(this)">
-      GESTURES
+      <span data-i18n="GESTURES">GESTURES</span>
       <span class="settings-section-chevron"><svg width="12" height="12" aria-hidden="true"><use href="#icon-chevron-down"/></svg></span>
     </div>
     <div class="settings-section-body">
-      <p class="settings-hint">Choose how to exit a dashboard and return to the overview screen.</p>
+      <p class="settings-hint" data-i18n="Choose how to exit a dashboard and return to the overview screen.">Choose how to exit a dashboard and return to the overview screen.</p>
       <div class="startup-mode-list">
         <label class="startup-mode-option" onclick="applySetting('exitGesture','swipe-down')">
           <input type="radio" name="exitGesture" value="swipe-down" id="st-gesture-swipe-down">
-          <span class="startup-mode-label">Scroll Down (from top)</span>
+          <span class="startup-mode-label" data-i18n="Scroll Down (from top)">Scroll Down (from top)</span>
           <span class="startup-mode-check">
             <svg width="10" height="10" aria-hidden="true"><use href="#icon-check"/></svg>
           </span>
         </label>
         <label class="startup-mode-option" onclick="applySetting('exitGesture','swipe-up')">
           <input type="radio" name="exitGesture" value="swipe-up" id="st-gesture-swipe-up">
-          <span class="startup-mode-label">Scroll Up (from bottom)</span>
+          <span class="startup-mode-label" data-i18n="Scroll Up (from bottom)">Scroll Up (from bottom)</span>
           <span class="startup-mode-check">
             <svg width="10" height="10" aria-hidden="true"><use href="#icon-check"/></svg>
           </span>
         </label>
         <label class="startup-mode-option" onclick="applySetting('exitGesture','pinch')">
           <input type="radio" name="exitGesture" value="pinch" id="st-gesture-pinch">
-          <span class="startup-mode-label">Pinch</span>
+          <span class="startup-mode-label" data-i18n="Pinch">Pinch</span>
           <span class="startup-mode-check">
             <svg width="10" height="10" aria-hidden="true"><use href="#icon-check"/></svg>
           </span>
@@ -23324,12 +23736,12 @@ _applyDailyI18n();
     
 <hr class="settings-divider">
     <div class="settings-section-title" onclick="toggleSettingsSection(this)">
-      PRESENCE
+      <span data-i18n="PRESENCE">PRESENCE</span>
       <span class="settings-section-chevron"><svg width="12" height="12" aria-hidden="true"><use href="#icon-chevron-down"/></svg></span>
     </div>
     <div class="settings-section-body">
       <div class="settings-item">
-        <span class="settings-label">Show detections from last (hrs)</span>
+        <span class="settings-label" data-i18n="Show detections from last (hrs)">Show detections from last (hrs)</span>
         <input class="settings-input--num" id="st-presence-hours" type="number" min="1" max="72" value="6" oninput="applyPresenceSetting('presenceHours', Math.max(1, Math.min(72, parseInt(this.value)||6)))">
       </div>
     </div>
@@ -23338,22 +23750,22 @@ _applyDailyI18n();
   <div class="settings-cat-header" style="--cat-color:#FB923C;--cat-color-rgb:251,146,60">
     <span class="settings-cat-header-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg></span>
     <div>
-      <div class="settings-cat-header-title">About</div>
-      <div class="settings-cat-header-subtitle">Version info and reset</div>
+      <div class="settings-cat-header-title" data-i18n="About">About</div>
+      <div class="settings-cat-header-subtitle" data-i18n="Version info and reset">Version info and reset</div>
     </div>
   </div>
   <div class="settings-about-card">
     <div class="settings-version">Homie Dashboard <span style="text-transform:none">v<span id="settings-version-num"></span></span></div>
     <div class="settings-version-latest" id="settings-version-latest-row" style="display:none">
-      Latest: <a href="https://github.com/shimon88/homie-dashboard/releases/latest" target="_blank" rel="noopener" style="text-transform:none">v<span id="settings-version-latest"></span></a><span class="settings-version-update-badge" id="settings-version-update-badge" style="display:none">Update available</span>
+      <span data-i18n="Latest:">Latest:</span> <a href="https://github.com/shimon88/homie-dashboard/releases/latest" target="_blank" rel="noopener" style="text-transform:none">v<span id="settings-version-latest"></span></a><span class="settings-version-update-badge" id="settings-version-update-badge" style="display:none" data-i18n="Update available">Update available</span>
     </div>
   </div>
   <div class="settings-about-card settings-about-danger">
     <div>
-      <div class="settings-about-danger-title">Reset to defaults</div>
-      <div class="settings-about-danger-subtitle">Restores every setting on this page. Doesn't affect your rooms or devices.</div>
+      <div class="settings-about-danger-title" data-i18n="Reset to defaults">Reset to defaults</div>
+      <div class="settings-about-danger-subtitle" data-i18n="Restores every setting on this page. Doesn't affect your rooms or devices.">Restores every setting on this page. Doesn't affect your rooms or devices.</div>
     </div>
-    <button class="settings-reset" onclick="confirmResetSettings(this)">Reset</button>
+    <button class="settings-reset" onclick="confirmResetSettings(this)" data-i18n="Reset">Reset</button>
   </div>
 </div>
     </div>
@@ -23363,9 +23775,9 @@ _applyDailyI18n();
 
 <!-- ─── PAGE DOTS ─── -->
 <div class="page-dots">
-  <div class="page-dot active" id="sdot-0" onclick="switchOverview(0)" title="Overview"></div>
-  <div class="page-dot" id="sdot-1" onclick="switchOverview(1)" title="Detail View"></div>
-  <div class="page-dot" id="sdot-2" onclick="switchOverview(2)" title="Widget View"></div>
+  <div class="page-dot active" id="sdot-0" onclick="switchOverview(0)" title="Overview" data-i18n-title="Overview"></div>
+  <div class="page-dot" id="sdot-1" onclick="switchOverview(1)" title="Detail View" data-i18n-title="Detail View"></div>
+  <div class="page-dot" id="sdot-2" onclick="switchOverview(2)" title="Widget View" data-i18n-title="Widget View"></div>
 </div>
 <script>
   // Runs immediately after the dots exist in the DOM — fix active dot to match stored screen
@@ -23400,7 +23812,7 @@ _applyDailyI18n();
   <button class="sfs-close" onclick="closeSolarFS()" title="Back">
     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
   </button>
-  <div class="sfs-title">SOLAR ENERGY</div>
+  <div class="sfs-title" data-i18n="SOLAR ENERGY">SOLAR ENERGY</div>
 
   <div class="sfs-content">
 
@@ -23469,7 +23881,7 @@ _applyDailyI18n();
             <line x1="-6" y1="12" x2="6" y2="12"/>
           </g>
           <!-- Label -->
-          <text y="30" text-anchor="middle" font-size="8" letter-spacing="0.22em" fill="rgba(255,215,0,0.7)" font-family="inherit">SOLAR</text>
+          <text y="30" text-anchor="middle" font-size="8" letter-spacing="0.22em" fill="rgba(255,215,0,0.7)" font-family="inherit" data-i18n="SOLAR">SOLAR</text>
           <!-- Value -->
           <text id="sfs-node-solar-val" y="-26" text-anchor="middle" font-size="11" font-weight="500" fill="#ffd700" font-family="inherit">—</text>
         </g>
@@ -23486,7 +23898,7 @@ _applyDailyI18n();
             <!-- Charge fill (dynamic via JS) -->
             <rect id="sfs-bat-fill" x="-10" y="-7" width="8" height="10" rx="1" fill="rgba(0,220,100,0.5)" stroke="none"/>
           </g>
-          <text y="30" text-anchor="middle" font-size="8" letter-spacing="0.22em" fill="rgba(0,220,100,0.7)" font-family="inherit">BATTERY</text>
+          <text y="30" text-anchor="middle" font-size="8" letter-spacing="0.22em" fill="rgba(0,220,100,0.7)" font-family="inherit" data-i18n="BATTERY">BATTERY</text>
           <text id="sfs-node-bat-val" y="-26" text-anchor="middle" font-size="11" font-weight="500" fill="#00dc64" font-family="inherit">—</text>
         </g>
 
@@ -23499,7 +23911,7 @@ _applyDailyI18n();
             <polyline points="-10,2 -10,13 10,13 10,2"/>
             <rect x="-4" y="6" width="8" height="7" rx="1"/>
           </g>
-          <text y="30" text-anchor="middle" font-size="8" letter-spacing="0.22em" fill="#ffffff" font-family="inherit">HOME</text>
+          <text y="30" text-anchor="middle" font-size="8" letter-spacing="0.22em" fill="#ffffff" font-family="inherit" data-i18n="HOME">HOME</text>
           <text id="sfs-node-home-val" y="-26" text-anchor="middle" font-size="11" font-weight="500" fill="#fff" font-family="inherit">—</text>
         </g>
 
@@ -23517,13 +23929,13 @@ _applyDailyI18n();
             <line x1="7" y1="10" x2="3" y2="1"/>
             <line x1="-7" y1="10" x2="7" y2="10"/>
           </g>
-          <text y="30" text-anchor="middle" font-size="8" letter-spacing="0.22em" fill="rgba(249,115,22,0.7)" font-family="inherit">GRID</text>
+          <text y="30" text-anchor="middle" font-size="8" letter-spacing="0.22em" fill="rgba(249,115,22,0.7)" font-family="inherit" data-i18n="GRID">GRID</text>
           <text id="sfs-node-grid-val" y="-26" text-anchor="middle" font-size="11" font-weight="500" fill="#f97316" font-family="inherit">—</text>
         </g>
 
         <!-- ═══ FLOW LABELS ═══ -->
-        <text id="sfs-lbl-export" x="385" y="158" font-size="8" fill="rgba(249,115,22,0.6)" font-family="inherit" letter-spacing="0.1em">EXPORT</text>
-        <text id="sfs-lbl-charge" x="215" y="132" font-size="8" fill="rgba(0,220,100,0.6)" font-family="inherit" letter-spacing="0.1em">CHARGE</text>
+        <text id="sfs-lbl-export" x="385" y="158" font-size="8" fill="rgba(249,115,22,0.6)" font-family="inherit" letter-spacing="0.1em" data-i18n="EXPORT">EXPORT</text>
+        <text id="sfs-lbl-charge" x="215" y="132" font-size="8" fill="rgba(0,220,100,0.6)" font-family="inherit" letter-spacing="0.1em" data-i18n="CHARGE">CHARGE</text>
       </svg>
     </div>
 
@@ -23535,7 +23947,7 @@ _applyDailyI18n();
           <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#f87171" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
         </div>
         <div class="sfs-stat-value"><span id="sfs-stat-live-con">—</span><span class="sfs-stat-unit"> W</span></div>
-        <div class="sfs-stat-label">Live Usage</div>
+        <div class="sfs-stat-label" data-i18n="Live Usage">Live Usage</div>
       </div>
       <!-- Today's Consumption -->
       <div class="sfs-con-card">
@@ -23543,7 +23955,7 @@ _applyDailyI18n();
           <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.7)" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
         </div>
         <div class="sfs-stat-value"><span id="sfs-stat-home">—</span><span class="sfs-stat-unit"> kW</span></div>
-        <div class="sfs-stat-label">Today's Usage</div>
+        <div class="sfs-stat-label" data-i18n="Today's Usage">Today's Usage</div>
       </div>
       <!-- Today's Cost -->
       <div class="sfs-con-card">
@@ -23551,7 +23963,7 @@ _applyDailyI18n();
           <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#a78bfa" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M17 6.5A7 7 0 1 0 17 17.5"/><line x1="5" y1="11" x2="13" y2="11"/><line x1="5" y1="14" x2="13" y2="14"/></svg>
         </div>
         <div class="sfs-stat-value"><span id="sfs-stat-today-cost">—</span><span class="sfs-stat-unit"> €</span></div>
-        <div class="sfs-stat-label">Today's Cost</div>
+        <div class="sfs-stat-label" data-i18n="Today's Cost">Today's Cost</div>
       </div>
       <!-- Monthly Consumption -->
       <div class="sfs-con-card">
@@ -23559,7 +23971,7 @@ _applyDailyI18n();
           <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#60a5fa" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
         </div>
         <div class="sfs-stat-value"><span id="sfs-stat-monthly-kwh">—</span><span class="sfs-stat-unit"> kWh</span></div>
-        <div class="sfs-stat-label">Monthly Usage</div>
+        <div class="sfs-stat-label" data-i18n="Monthly Usage">Monthly Usage</div>
       </div>
       <!-- Monthly Cost -->
       <div class="sfs-con-card">
@@ -23567,7 +23979,7 @@ _applyDailyI18n();
           <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#a78bfa" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M17 6.5A7 7 0 1 0 17 17.5"/><line x1="5" y1="11" x2="13" y2="11"/><line x1="5" y1="14" x2="13" y2="14"/></svg>
         </div>
         <div class="sfs-stat-value"><span id="sfs-stat-monthly-cost">—</span><span class="sfs-stat-unit"> €</span></div>
-        <div class="sfs-stat-label">Monthly Cost</div>
+        <div class="sfs-stat-label" data-i18n="Monthly Cost">Monthly Cost</div>
       </div>
     </div>
 
@@ -23579,7 +23991,7 @@ _applyDailyI18n();
           <svg width="22" height="22" viewBox="-14 -15 28 28" fill="none" stroke="#ffd700" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="-13" y="-14" width="26" height="20" rx="2"/><line x1="-4" y1="-14" x2="-4" y2="6"/><line x1="4" y1="-14" x2="4" y2="6"/><line x1="-13" y1="-5" x2="13" y2="-5"/><line x1="-13" y1="2" x2="13" y2="2"/><line x1="0" y1="6" x2="0" y2="12"/><line x1="-6" y1="12" x2="6" y2="12"/></svg>
         </div>
         <div class="sfs-stat-value"><span id="sfs-stat-solar">—</span><span class="sfs-stat-unit"> kW</span></div>
-        <div class="sfs-stat-label">Production</div>
+        <div class="sfs-stat-label" data-i18n="Production">Production</div>
       </div>
       <!-- Grid Export -->
       <div class="sfs-stat-card">
@@ -23587,7 +23999,7 @@ _applyDailyI18n();
           <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#f97316" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><polyline points="18 8 22 12 18 16"/><line x1="2" y1="12" x2="22" y2="12"/></svg>
         </div>
         <div class="sfs-stat-value"><span id="sfs-stat-export">—</span><span class="sfs-stat-unit"> kW</span></div>
-        <div class="sfs-stat-label">Grid</div>
+        <div class="sfs-stat-label" data-i18n="Grid">Grid</div>
       </div>
       <!-- Battery -->
       <div class="sfs-stat-card">
@@ -23595,7 +24007,7 @@ _applyDailyI18n();
           <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#00dc64" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="6" width="18" height="12" rx="2"/><line x1="23" y1="10" x2="23" y2="14"/><line x1="5" y1="9" x2="5" y2="15"/><line x1="9" y1="9" x2="9" y2="15"/><line x1="13" y1="9" x2="13" y2="15"/></svg>
         </div>
         <div class="sfs-stat-value"><span id="sfs-stat-battery">—</span><span class="sfs-stat-unit"> %</span></div>
-        <div class="sfs-stat-label">Battery</div>
+        <div class="sfs-stat-label" data-i18n="Battery">Battery</div>
       </div>
       <!-- Inverter Temp -->
       <div class="sfs-stat-card">
@@ -23603,7 +24015,7 @@ _applyDailyI18n();
           <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#60a5fa" stroke-width="1.6" stroke-linecap="round"><path d="M14 14.76V3.5a2.5 2.5 0 0 0-5 0v11.26a4.5 4.5 0 1 0 5 0z"/></svg>
         </div>
         <div class="sfs-stat-value"><span id="sfs-stat-temp">—</span><span class="sfs-stat-unit"> °C</span></div>
-        <div class="sfs-stat-label">Inverter Temp</div>
+        <div class="sfs-stat-label" data-i18n="Inverter Temp">Inverter Temp</div>
       </div>
       <!-- Weather Temp -->
       <div class="sfs-stat-card">
@@ -23611,7 +24023,7 @@ _applyDailyI18n();
           <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#fbbf24" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><line x1="12" y1="2" x2="12" y2="4"/><line x1="12" y1="20" x2="12" y2="22"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="2" y1="12" x2="4" y2="12"/><line x1="20" y1="12" x2="22" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
         </div>
         <div class="sfs-stat-value"><span id="sfs-stat-weather-temp">—</span><span class="sfs-stat-unit" id="sfs-stat-weather-unit"> °C</span></div>
-        <div class="sfs-stat-label">Outdoor Temp</div>
+        <div class="sfs-stat-label" data-i18n="Outdoor Temp">Outdoor Temp</div>
       </div>
     </div>
 
@@ -23620,10 +24032,10 @@ _applyDailyI18n();
       <div class="sfs-chart-scroll-panel">
         <div class="sfs-chart-row">
           <div class="sfs-chart-header">
-            <span class="sfs-chart-title">HOURLY ENERGY</span>
+            <span class="sfs-chart-title" data-i18n="HOURLY ENERGY">HOURLY ENERGY</span>
             <div class="sfs-chart-legend">
-              <span class="sfs-legend-dot" style="background:#ffd700"></span><span class="sfs-legend-lbl">Solar</span>
-              <span class="sfs-legend-dot" style="background:#60a5fa"></span><span class="sfs-legend-lbl">Consumption</span>
+              <span class="sfs-legend-dot" style="background:#ffd700"></span><span class="sfs-legend-lbl" data-i18n="Solar">Solar</span>
+              <span class="sfs-legend-dot" style="background:#60a5fa"></span><span class="sfs-legend-lbl" data-i18n="Consumption">Consumption</span>
             </div>
           </div>
           <div class="sfs-chart-area">
@@ -23636,10 +24048,10 @@ _applyDailyI18n();
       <div class="sfs-chart-scroll-panel">
         <div class="sfs-chart-row">
           <div class="sfs-chart-header">
-            <span class="sfs-chart-title">DAILY ENERGY</span>
+            <span class="sfs-chart-title" data-i18n="DAILY ENERGY">DAILY ENERGY</span>
             <div class="sfs-chart-legend">
-              <span class="sfs-legend-dot" style="background:#ffd700"></span><span class="sfs-legend-lbl">Solar</span>
-              <span class="sfs-legend-dot" style="background:#60a5fa"></span><span class="sfs-legend-lbl">Consumption</span>
+              <span class="sfs-legend-dot" style="background:#ffd700"></span><span class="sfs-legend-lbl" data-i18n="Solar">Solar</span>
+              <span class="sfs-legend-dot" style="background:#60a5fa"></span><span class="sfs-legend-lbl" data-i18n="Consumption">Consumption</span>
             </div>
           </div>
           <div class="sfs-chart-area" id="sfs-daily-chart-area">
@@ -23681,9 +24093,9 @@ _applyDailyI18n();
     <div id="hub-title-wrap">
       <div id="hub-title">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>
-        <span>Dashboards</span>
+        <span data-i18n="Dashboards">Dashboards</span>
       </div>
-      <span id="hub-hint">★ Tap the star on any tile to pin it to Favorites</span>
+      <span id="hub-hint" data-i18n="★ Tap the star on any tile to pin it to Favorites">★ Tap the star on any tile to pin it to Favorites</span>
     </div>
   </div>
   <div id="hub-body"></div>
@@ -23808,7 +24220,7 @@ _applyDailyI18n();
   #favorites-popover {
     position: absolute;
     top: 50%;
-    right: calc(100% + 12px);
+    inset-inline-end: calc(100% + 12px);
     transform: translateY(-50%) translateX(8px) scale(0.97);
     background: #141416;
     border: 1px solid rgba(255,255,255,0.1);
@@ -23830,7 +24242,7 @@ _applyDailyI18n();
   #favorites-popover::before {
     content: "";
     position: absolute;
-    top: 50%; right: -6px;
+    top: 50%; inset-inline-end: -6px;
     width: 12px; height: 12px;
     background: #141416;
     border-right: 1px solid rgba(255,255,255,0.1);
@@ -23902,6 +24314,8 @@ _applyDailyI18n();
     _renderDashboardsHub();
   }
   window._hubToggleFavorite = _hubToggleFavorite;
+  window._renderDashboardsHub = _renderDashboardsHub;
+  window._renderFavoritesPopover = _renderFavoritesPopover;
 
   function _renderDashboardsHub() {
     const body = document.getElementById("hub-body");
@@ -23919,17 +24333,17 @@ _applyDailyI18n();
     Object.keys(byCategory).forEach(c => { if (!order.includes(c)) order.push(c); });
 
     if (!order.length) {
-      body.innerHTML = `<div style="padding:2.5rem 1.8rem;text-align:center;color:rgba(255,255,255,0.35);font-size:0.8rem;">No dashboards available</div>`;
+      body.innerHTML = `<div style="padding:2.5rem 1.8rem;text-align:center;color:rgba(255,255,255,0.35);font-size:0.8rem;">${escapeHtml(t("No dashboards available"))}</div>`;
       return;
     }
 
     body.innerHTML = order.map(cat => `
       <div class="hub-category">
-        <div class="hub-cat-title">${escapeHtml(cat)}</div>
+        <div class="hub-cat-title">${escapeHtml(t(cat))}</div>
         <div class="hub-grid">
           ${byCategory[cat].map(({ btn, color }) => {
             const id = btn.id;
-            const label = btn.getAttribute("title") || btn.querySelector(".launcher-label")?.textContent || "";
+            const label = t(btn.getAttribute("data-i18n-title") || btn.querySelector(".launcher-label")?.getAttribute("data-i18n") || btn.getAttribute("title") || "");
             const svg = _hubBiggerIcon(btn.querySelector("svg")?.outerHTML || "");
             const onclickAttr = (btn.getAttribute("onclick") || "").replace(/"/g, "&quot;");
             const isFav = favorites.includes(id);
@@ -23971,7 +24385,7 @@ _applyDailyI18n();
 
     const validFavorites = favorites.filter(id => byId[id]);
     if (!validFavorites.length) {
-      pop.innerHTML = `<div class="fav-pop-empty">No favorites yet. Open Dashboards and tap the star on anything you'd like pinned here.</div>`;
+      pop.innerHTML = `<div class="fav-pop-empty">${escapeHtml(t("No favorites yet. Open Dashboards and tap the star on anything you'd like pinned here."))}</div>`;
       return;
     }
 
@@ -23980,7 +24394,7 @@ _applyDailyI18n();
       const meta = HUB_TILE_META[id] || { color: "#b8965c" };
       const svg = _hubBiggerIcon(btn.querySelector("svg")?.outerHTML || "").replace(/width="20"/, 'width="18"').replace(/height="20"/, 'height="18"');
       const onclickAttr = (btn.getAttribute("onclick") || "").replace(/"/g, "&quot;");
-      const label = (btn.getAttribute("title") || "").replace(/"/g, "&quot;");
+      const label = t(btn.getAttribute("data-i18n-title") || btn.getAttribute("title") || "").replace(/"/g, "&quot;");
       return `<div class="fav-pop-icon" style="--c:${meta.color}" title="${label}" onclick="${onclickAttr};_closeLauncher();">${svg}</div>`;
     }).join("");
   }
@@ -24017,9 +24431,9 @@ _applyDailyI18n();
     <div id="sys-title-wrap">
       <div id="sys-title">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 2v4M12 18v4M4.9 4.9l2.8 2.8M16.3 16.3l2.8 2.8M2 12h4M18 12h4M4.9 19.1l2.8-2.8M16.3 7.7l2.8-2.8"/><circle cx="12" cy="12" r="3.5"/></svg>
-        <span>Insights</span>
+        <span data-i18n="Insights">Insights</span>
       </div>
-      <span id="sys-subtitle">Home Assistant Insights</span>
+      <span id="sys-subtitle" data-i18n="Home Assistant Insights">Home Assistant Insights</span>
     </div>
   </div>
   <div id="sys-static"></div>
@@ -24783,7 +25197,7 @@ _applyDailyI18n();
   <div id="presence-header">
     <div id="presence-title">
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="4.5" r="2"/><path d="M12 6.5v5.5l-3.2 7.2M12 12l3.2 7.2M8.7 10 5 12.4M15.3 10 19 12.4"/></svg>
-      <span>Indoor Presence</span>
+      <span data-i18n="Indoor Presence">Indoor Presence</span>
     </div>
   </div>
 
@@ -25236,7 +25650,7 @@ _applyDailyI18n();
         <path d="M23 7l-7 5 7 5V7z"/><rect x="1" y="5" width="15" height="14" rx="2"/>
         <line x1="1" y1="1" x2="23" y2="23"/>
       </svg>
-      <span>Camera offline</span>
+      <span data-i18n="Camera offline">Camera offline</span>
     </div>
   </div>
 </div>
@@ -25405,5 +25819,6 @@ _applyDailyI18n();
 })();
 </script>
 
+<script>_applyI18n();</script>
 </body>
 </html>
