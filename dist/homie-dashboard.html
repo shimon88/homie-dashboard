@@ -26,7 +26,7 @@
 <head>
 <meta charset="UTF-8">
 <!-- DASHBOARD VERSION — update this when releasing a new version -->
-<script>const DASHBOARD_VERSION = "4.3.0";</script>
+<script>const DASHBOARD_VERSION = "4.3.1";</script>
 <!-- GITHUB REPO — used only to check for the latest tagged release in Settings -->
 <script>const GITHUB_REPO = "shimon88/homie-dashboard";</script>
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
@@ -60,6 +60,9 @@
      * Standardised text opacity levels used across popups and labels. */
     --text-primary:   rgba(255,255,255,1);
     --text-secondary: rgba(255,255,255,0.9);
+    /* User text scale. 1 = designed size. rem/em follow the root font-size;
+       px font-sizes multiply this same variable so ratios stay put. */
+    --ui-scale: 1;
   }
 
   html, body {
@@ -80,8 +83,10 @@
    * pixel value everywhere. 16px (the default) lands right around a 1280px-
    * wide viewport, so nothing changes on screens already tuned at that size;
    * smaller/larger tablets scale down/up within the clamped range.
+   * --ui-scale (Settings → Text size) multiplies this root and every px
+   * font-size by the same factor, so type grows together.
    * ────────────────────────────────────────────────────────────────────── */
-  html { font-size: clamp(13px, 0.625vw + 8px, 20px); }
+  html { font-size: calc(clamp(13px, 0.625vw + 8px, 20px) * var(--ui-scale, 1)); }
 
   /* ─── TOP BAR ─── */
   .top-bar {
@@ -276,7 +281,7 @@
   /* Launcher labels: permanently hidden (icons-only launcher). */
   .launcher-label {
     display: none !important;
-    font-size: 7px;
+    font-size:calc(7px * var(--ui-scale, 1));
     letter-spacing: 0.15em;
     text-transform: uppercase;
     color: rgba(255,255,255,0.75);
@@ -323,7 +328,7 @@
     padding: 14px 14px 10px;
   }
   .litter-chart-title {
-    font-size: 8px;
+    font-size:calc(8px * var(--ui-scale, 1));
     letter-spacing: 0.28em;
     color: #fff;
     text-transform: uppercase;
@@ -345,7 +350,7 @@
     flex: 1;
   }
   .litter-bar-val {
-    font-size: 9px;
+    font-size:calc(9px * var(--ui-scale, 1));
     color: #fff;
     letter-spacing: 0.05em;
     min-height: 12px;
@@ -364,7 +369,7 @@
     min-height: 3px;
   }
   .litter-bar-label {
-    font-size: 8px;
+    font-size:calc(8px * var(--ui-scale, 1));
     color: #fff;
     letter-spacing: 0.1em;
     text-align: center;
@@ -382,7 +387,7 @@
   }
   .pet-card-icon { display: flex; align-items: center; justify-content: center; margin-bottom: 5px; }
   .pet-card-text {
-    font-size: 9px;
+    font-size:calc(9px * var(--ui-scale, 1));
     line-height: 1.4;
     color: rgba(255,255,255,0.9);
     letter-spacing: 0.25em;
@@ -436,7 +441,7 @@
   }
   .hero-title {
     font-family: inherit;
-    font-size: var(--greeting-fs, 3.5rem);
+    font-size: calc(var(--greeting-fs, 3.5rem) * var(--ui-scale, 1));
     letter-spacing: 0.2em;
     margin-bottom: 2rem;
     line-height: 1;
@@ -734,7 +739,7 @@
   }
   .floor-label,
   .ov2-floor-label {
-    font-size: clamp(6px, 0.703vw, 9px);
+    font-size:calc(clamp(6px, 0.703vw, 9px) * var(--ui-scale, 1));
     letter-spacing: clamp(0.5px, 0.211vw, 2.7px);
   }
   .floor-readings,
@@ -747,7 +752,7 @@
   }
   .floor-reading-val,
   .ov2-floor-reading-val {
-    font-size: clamp(9px, 1.0156vw, 13px);
+    font-size:calc(clamp(9px, 1.0156vw, 13px) * var(--ui-scale, 1));
   }
   .floor-reading-sep {
     height: clamp(6px, 0.78125vw, 10px);
@@ -765,7 +770,7 @@
   .chip {
     gap: clamp(4px, 0.546875vw, 7px);
     padding: clamp(4px, 0.46875vw, 6px) clamp(8px, 1.09375vw, 14px);
-    font-size: clamp(7px, 0.703vw, 9px);
+    font-size:calc(clamp(7px, 0.703vw, 9px) * var(--ui-scale, 1));
   }
   .dot {
     width: clamp(4px, 0.46875vw, 6px);
@@ -865,11 +870,11 @@
     padding: 4px 0;
   }
   #pg-garden-card .ov3-garden-stat-label {
-    font-size: 10px;
+    font-size:calc(10px * var(--ui-scale, 1));
     letter-spacing: 0.2em;
   }
   #pg-garden-card .ov3-garden-stat-value {
-    font-size: 16px;
+    font-size:calc(16px * var(--ui-scale, 1));
   }
   /* Centre each irrigation toggle within its own half of the row, instead
      of the OV3 layout which pushes them apart toward the middle divider. */
@@ -882,7 +887,7 @@
     padding: 8px 12px;
   }
   #pg-irrigation-card .ov3-garden-irr-label {
-    font-size: 10px;
+    font-size:calc(10px * var(--ui-scale, 1));
   }
   /* No divider line between the moisture card and the Irrigation label —
      just the section heading, no border-top. */
@@ -918,14 +923,14 @@
     letter-spacing: 0.04em;
   }
   .wx-popup-desc {
-    font-size: 13px;
+    font-size:calc(13px * var(--ui-scale, 1));
     letter-spacing: 0.2em;
     text-transform: uppercase;
     color: rgba(255,255,255,0.6);
     margin-top: 10px;
   }
   .wx-popup-hilo {
-    font-size: 13px;
+    font-size:calc(13px * var(--ui-scale, 1));
     letter-spacing: 0.1em;
     color: rgba(255,255,255,0.4);
     margin-top: 8px;
@@ -942,7 +947,7 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    font-size: 13px;
+    font-size:calc(13px * var(--ui-scale, 1));
     letter-spacing: 0.1em;
   }
   .wx-stat-label {
@@ -957,7 +962,7 @@
     font-weight: 500;
   }
   .wx-forecast-title {
-    font-size: 10px;
+    font-size:calc(10px * var(--ui-scale, 1));
     letter-spacing: 0.3em;
     text-transform: uppercase;
     color: rgba(255,255,255,0.9);
@@ -984,7 +989,7 @@
     background: var(--ac-05);
   }
   .wx-forecast-day-name {
-    font-size: 11px;
+    font-size:calc(11px * var(--ui-scale, 1));
     letter-spacing: 0.15em;
     text-transform: uppercase;
     color: rgba(255,255,255,0.9);
@@ -992,13 +997,13 @@
   }
   .wx-forecast-day svg { width: 34px; height: 34px; }
   .wx-forecast-hi {
-    font-size: 22px;
+    font-size:calc(22px * var(--ui-scale, 1));
     font-weight: 300;
     color: rgba(255,255,255,0.9);
     letter-spacing: 0.04em;
   }
   .wx-forecast-lo {
-    font-size: 13px;
+    font-size:calc(13px * var(--ui-scale, 1));
     color: rgba(255,255,255,1);
   }
   .popup--security {
@@ -1006,7 +1011,7 @@
     width: min(380px, 92vw);
   }
   .alarm-badge {
-    font-size: 8px;
+    font-size:calc(8px * var(--ui-scale, 1));
     letter-spacing: 0.2em;
     padding: 3px 10px;
     border-radius: 20px;
@@ -1029,7 +1034,7 @@
   }
   .alarm-open-sensors[hidden] { display: none; }
   .alarm-open-sensors-label {
-    font-size: 8px;
+    font-size:calc(8px * var(--ui-scale, 1));
     letter-spacing: 0.22em;
     text-transform: uppercase;
     color: #f2cf41;
@@ -1043,13 +1048,13 @@
     display: flex;
     justify-content: space-between;
     gap: 10px;
-    font-size: 12px;
+    font-size:calc(12px * var(--ui-scale, 1));
     line-height: 1.45;
     color: rgba(255,255,255,0.88);
   }
   .alarm-open-sensor-state {
     flex: none;
-    font-size: 8px;
+    font-size:calc(8px * var(--ui-scale, 1));
     letter-spacing: 0.16em;
     text-transform: uppercase;
     color: #f2cf41;
@@ -1070,7 +1075,7 @@
     border: 1px solid rgba(255,255,255,0.1);
     border-radius: 12px;
     color: rgba(255,255,255,0.65);
-    font-size: 8px;
+    font-size:calc(8px * var(--ui-scale, 1));
     letter-spacing: 0.2em;
     text-transform: uppercase;
     cursor: pointer;
@@ -1089,7 +1094,7 @@
     margin-bottom: 8px;
   }
   .alarm-action-section-label {
-    font-size: 8px;
+    font-size:calc(8px * var(--ui-scale, 1));
     letter-spacing: 0.22em;
     text-transform: uppercase;
     color: rgba(255,255,255,0.3);
@@ -1108,7 +1113,7 @@
   .alarm-feedback {
     min-height: 20px;
     text-align: center;
-    font-size: 9px;
+    font-size:calc(9px * var(--ui-scale, 1));
     letter-spacing: 0.25em;
     text-transform: uppercase;
     color: rgba(255,255,255,0.5);
@@ -1124,7 +1129,7 @@
     margin: 4px 0 14px;
     text-align: center;
     letter-spacing: 0.45em;
-    font-size: 22px;
+    font-size:calc(22px * var(--ui-scale, 1));
     color: var(--accent-hi);
   }
   .alarm-pin-grid {
@@ -1138,12 +1143,12 @@
     border: 1px solid rgba(255,255,255,0.1);
     background: #111;
     color: #fff;
-    font-size: 18px;
+    font-size:calc(18px * var(--ui-scale, 1));
     letter-spacing: 0.04em;
     cursor: pointer;
   }
   .alarm-pin-key:active { transform: scale(0.97); }
-  .alarm-pin-key--ok { color: var(--accent-hi); border-color: var(--ac-4); font-size: 13px; letter-spacing: 0.16em; }
+  .alarm-pin-key--ok { color: var(--accent-hi); border-color: var(--ac-4); font-size:calc(13px * var(--ui-scale, 1)); letter-spacing: 0.16em; }
   .alarm-pin-cancel {
     display: block;
     width: 100%;
@@ -1153,7 +1158,7 @@
     border: none;
     color: rgba(255,255,255,0.45);
     letter-spacing: 0.2em;
-    font-size: 11px;
+    font-size:calc(11px * var(--ui-scale, 1));
     text-transform: uppercase;
     cursor: pointer;
   }
@@ -1163,7 +1168,7 @@
   .topbar-security-btn.armed-away svg { stroke: #3fd49a; }
   .topbar-security-btn.triggered svg  { stroke: #ff4d57; animation: alarm-pulse 0.7s infinite alternate; }
   .popup-title {
-    font-size: 10px;
+    font-size:calc(10px * var(--ui-scale, 1));
     letter-spacing: 0.3em;
     color: #fff;
     text-transform: uppercase;
@@ -1210,7 +1215,7 @@
     border-color: var(--ac-4);
   }
   .popup-item-label {
-    font-size: 11px;
+    font-size:calc(11px * var(--ui-scale, 1));
     letter-spacing: 0.12em;
     color: #fff;
     text-transform: uppercase;
@@ -1249,7 +1254,7 @@
   }
   /* Expandable group chevron */
   .exprow-chevron {
-    font-size: 15px;
+    font-size:calc(15px * var(--ui-scale, 1));
     color: rgba(255,255,255,0.35);
     transition: transform 0.2s;
     flex-shrink: 0;
@@ -1263,7 +1268,7 @@
 
   .chip-count {
     color: var(--accent-hi);
-    font-size: 9px;
+    font-size:calc(9px * var(--ui-scale, 1));
     letter-spacing: 0.25em;
     border-left: 1px solid var(--ac-35);
     padding-left: 8px;
@@ -1272,7 +1277,7 @@
 
   /* ─── POPUP GROUP LABELS (e.g. "Main Bath" / "Ensuite" separators) ─── */
   .popup-group-label {
-    font-size: 9px;
+    font-size:calc(9px * var(--ui-scale, 1));
     letter-spacing: 0.3em;
     color: var(--text-secondary);
     text-transform: uppercase;
@@ -1325,7 +1330,7 @@
   .mush-switch-card.on .mush-switch-icon svg { stroke: var(--accent-hi); }
   .mush-switch-meta { flex: 1; min-width: 0; }
   .mush-switch-name {
-    font-size: 9px;
+    font-size:calc(9px * var(--ui-scale, 1));
     letter-spacing: 0.25em;
     color: #fff;
     text-transform: uppercase;
@@ -1334,7 +1339,7 @@
     text-overflow: ellipsis;
   }
   .mush-switch-status {
-    font-size: 9px;
+    font-size:calc(9px * var(--ui-scale, 1));
     color: rgba(255,255,255,0.4);
     letter-spacing: 0.2em;
     margin-top: 2px;
@@ -1388,7 +1393,7 @@
     100% { opacity: 0; }
   }
   .popup-scene-label {
-    font-size: 9px;
+    font-size:calc(9px * var(--ui-scale, 1));
     letter-spacing: 0.25em;
     color: var(--hi-85);
     text-transform: uppercase;
@@ -1424,13 +1429,13 @@
     gap: 10px;
   }
   .popup-room-name {
-    font-size: 9px;
+    font-size:calc(9px * var(--ui-scale, 1));
     letter-spacing: 0.25em;
     color: #fff;
     text-transform: uppercase;
   }
   .popup-room-badge {
-    font-size: 9px;
+    font-size:calc(9px * var(--ui-scale, 1));
     letter-spacing: 0.15em;
     color: var(--accent-hi);
     opacity: 0;
@@ -1440,7 +1445,7 @@
   /* Badge used inline within an expandable row label — needs a small left gap */
   .popup-room-badge--inline { margin-inline-start: 8px; }
   .popup-room-chevron {
-    font-size: 12px;
+    font-size:calc(12px * var(--ui-scale, 1));
     color: rgba(255,255,255,0.35);
     transition: transform 0.25s ease, color 0.2s;
     line-height: 1;
@@ -1525,7 +1530,7 @@
     min-width: 0;
   }
   .mush-light-name {
-    font-size: 9px;
+    font-size:calc(9px * var(--ui-scale, 1));
     letter-spacing: 0.25em;
     color: #fff;
     text-transform: uppercase;
@@ -1534,7 +1539,7 @@
     text-overflow: ellipsis;
   }
   .mush-light-pct {
-    font-size: 9px;
+    font-size:calc(9px * var(--ui-scale, 1));
     color: rgba(255,255,255,0.45);
     letter-spacing: 0.25em;
     margin-top: 2px;
@@ -1610,7 +1615,7 @@
   }
   .mush-color-panel.open { display: flex; }
   .mush-panel-section-label {
-    font-size: 9px;
+    font-size:calc(9px * var(--ui-scale, 1));
     letter-spacing: 0.25em;
     color: rgba(255,255,255,0.3);
     text-transform: uppercase;
@@ -1641,7 +1646,7 @@
     border-radius: 8px;
     border: 1px solid rgba(255,255,255,0.15);
     background: rgba(255,255,255,0.05);
-    font-size: 9px;
+    font-size:calc(9px * var(--ui-scale, 1));
     letter-spacing: 0.25em;
     text-transform: uppercase;
     color: rgba(255,255,255,0.6);
@@ -1723,7 +1728,7 @@
   .mush-ac-icon svg { transition: stroke 0.3s; }
   .mush-ac-meta { flex: 1; min-width: 0; }
   .mush-ac-name {
-    font-size: 9px;
+    font-size:calc(9px * var(--ui-scale, 1));
     letter-spacing: 0.25em;
     color: #fff;
     text-transform: uppercase;
@@ -1732,7 +1737,7 @@
     text-overflow: ellipsis;
   }
   .mush-ac-status {
-    font-size: 9px;
+    font-size:calc(9px * var(--ui-scale, 1));
     color: rgba(255,255,255,0.45);
     letter-spacing: 0.25em;
     margin-top: 2px;
@@ -1792,7 +1797,7 @@
     flex: 1;
   }
   .mush-ac-temp-val {
-    font-size: 15px;
+    font-size:calc(15px * var(--ui-scale, 1));
     color: #fff;
     letter-spacing: 0.05em;
     min-width: 38px;
@@ -1804,7 +1809,7 @@
     border: 1px solid rgba(255,255,255,0.15);
     background: rgba(255,255,255,0.06);
     color: rgba(255,255,255,0.8);
-    font-size: 16px;
+    font-size:calc(16px * var(--ui-scale, 1));
     line-height: 1;
     display: flex; align-items: center; justify-content: center;
     cursor: pointer;
@@ -1821,7 +1826,7 @@
     border-radius: 8px;
     border: 1px solid rgba(255,255,255,0.15);
     background: rgba(255,255,255,0.05);
-    font-size: 9px;
+    font-size:calc(9px * var(--ui-scale, 1));
     letter-spacing: 0.2em;
     text-transform: uppercase;
     color: rgba(255,255,255,0.6);
@@ -1866,7 +1871,7 @@
   .mush-purifier-card.on .mush-purifier-icon svg { stroke: var(--accent); }
   .mush-purifier-meta { flex: 1; min-width: 0; }
   .mush-purifier-name {
-    font-size: 9px;
+    font-size:calc(9px * var(--ui-scale, 1));
     letter-spacing: 0.25em;
     color: #fff;
     text-transform: uppercase;
@@ -1875,7 +1880,7 @@
     text-overflow: ellipsis;
   }
   .mush-purifier-status {
-    font-size: 9px;
+    font-size:calc(9px * var(--ui-scale, 1));
     color: rgba(255,255,255,0.45);
     letter-spacing: 0.25em;
     margin-top: 2px;
@@ -1884,7 +1889,7 @@
   }
   .mush-purifier-card.on .mush-purifier-status { color: var(--ac-85); }
   .mush-purifier-pct {
-    font-size: 9px;
+    font-size:calc(9px * var(--ui-scale, 1));
     color: rgba(255,255,255,0.45);
     letter-spacing: 0.25em;
     margin-top: 2px;
@@ -1983,7 +1988,7 @@
   .mush-cover-card.on .mush-cover-icon svg { stroke: var(--accent-hi); }
   .mush-cover-meta { flex: 1; min-width: 0; }
   .mush-cover-name {
-    font-size: 9px;
+    font-size:calc(9px * var(--ui-scale, 1));
     letter-spacing: 0.25em;
     color: #fff;
     text-transform: uppercase;
@@ -1992,7 +1997,7 @@
     text-overflow: ellipsis;
   }
   .mush-cover-pos {
-    font-size: 9px;
+    font-size:calc(9px * var(--ui-scale, 1));
     color: rgba(255,255,255,0.45);
     letter-spacing: 0.25em;
     margin-top: 2px;
@@ -2456,7 +2461,7 @@
   }
   /* Track fill — uses a CSS gradient via JS */
   .np-vol-val {
-    font-size: 9px;
+    font-size:calc(9px * var(--ui-scale, 1));
     letter-spacing: 0.15em;
     color: rgba(255,255,255,0.55);
     margin-top: 4px;
@@ -2488,7 +2493,7 @@
   }
   .np-fs-pills .np-source-pill,
   .np-fs-pills .np-browse-btn {
-    font-size: 10px;
+    font-size:calc(10px * var(--ui-scale, 1));
     padding: 6px 18px;
     height: 32px;
     margin-right: 0;
@@ -2505,7 +2510,7 @@
   .popup--media-browser { max-width: 420px; max-height: 70vh; display: flex; flex-direction: column; }
   .popup--media-browser .popup-list { overflow-y: auto; flex: 1; padding: 0; }
   #media-browser-overlay { z-index: 400; }
-  .mb-loading { text-align: center; padding: 30px; opacity: 0.5; font-size: 11px; letter-spacing: 0.2em; }
+  .mb-loading { text-align: center; padding: 30px; opacity: 0.5; font-size:calc(11px * var(--ui-scale, 1)); letter-spacing: 0.2em; }
   .mb-item {
     display: flex;
     align-items: center;
@@ -2538,7 +2543,7 @@
   }
   .mb-item-info { flex: 1; min-width: 0; }
   .mb-item-title {
-    font-size: 11px;
+    font-size:calc(11px * var(--ui-scale, 1));
     letter-spacing: 0.1em;
     white-space: nowrap;
     overflow: hidden;
@@ -2546,7 +2551,7 @@
     color: #fff;
   }
   .mb-item-subtitle {
-    font-size: 9px;
+    font-size:calc(9px * var(--ui-scale, 1));
     opacity: 0.45;
     letter-spacing: 0.1em;
     margin-top: 2px;
@@ -2596,7 +2601,7 @@
   }
   /* Small player name label shown in the top-right of the media browser */
   .mb-player-label {
-    font-size: 8px;
+    font-size:calc(8px * var(--ui-scale, 1));
     opacity: 0.5;
     letter-spacing: 0.15em;
   }
@@ -2718,7 +2723,7 @@
   }
   /* Track info */
   .np-fs-title {
-    font-size: clamp(1.6rem, 4.5vw, 2.4rem);
+    font-size:calc(clamp(1.6rem, 4.5vw, 2.4rem) * var(--ui-scale, 1));
     font-weight: 300;
     color: #fff;
     letter-spacing: 0.04em;
@@ -2728,7 +2733,7 @@
     text-shadow: 0 2px 12px rgba(0,0,0,0.5);
   }
   .np-fs-artist {
-    font-size: 13px;
+    font-size:calc(13px * var(--ui-scale, 1));
     letter-spacing: 0.3em;
     color: var(--accent);
     text-transform: uppercase;
@@ -2761,7 +2766,7 @@
   .np-fs-time-row {
     display: flex;
     justify-content: space-between;
-    font-size: 12px;
+    font-size:calc(12px * var(--ui-scale, 1));
     letter-spacing: 0.2em;
     color: #fff;
   }
@@ -2863,7 +2868,7 @@
     padding: 3rem 2.5rem 3rem 2.8rem;
   }
   .np-ls-title {
-    font-size: clamp(2rem, 5vw, 3.2rem);
+    font-size:calc(clamp(2rem, 5vw, 3.2rem) * var(--ui-scale, 1));
     font-weight: 300;
     color: #fff;
     letter-spacing: 0.03em;
@@ -2873,7 +2878,7 @@
     text-align: center;
   }
   .np-ls-artist {
-    font-size: 12px;
+    font-size:calc(12px * var(--ui-scale, 1));
     letter-spacing: 0.3em;
     color: var(--accent);
     text-transform: uppercase;
@@ -3000,7 +3005,7 @@
     gap: 8px;
   }
   .daily-header-date {
-    font-size: 9px;
+    font-size:calc(9px * var(--ui-scale, 1));
     letter-spacing: 0.25em;
     color: #ffffff;
     text-transform: uppercase;
@@ -3022,7 +3027,7 @@
   }
   .daily-col + .daily-col { border-inline-start: 1px solid var(--ac-12); }
   .daily-col-title {
-    font-size: 9px;
+    font-size:calc(9px * var(--ui-scale, 1));
     letter-spacing: 0.35em;
     color: var(--accent);
     text-transform: uppercase;
@@ -3067,7 +3072,7 @@
   .daily-week-day.today { background: var(--ac-12); }
   .daily-week-day.selected { background: var(--ac-2); }
   .daily-week-day-name {
-    font-size: 8px; letter-spacing: 0.2em;
+    font-size:calc(8px * var(--ui-scale, 1)); letter-spacing: 0.2em;
     color: rgba(255,255,255,0.9); text-transform: uppercase;
   }
   .daily-week-day.today .daily-week-day-name { color: var(--accent); }
@@ -3091,7 +3096,7 @@
   .daily-view-tab {
     flex: 1;
     padding: 6px 10px;
-    font-size: 8px;
+    font-size:calc(8px * var(--ui-scale, 1));
     letter-spacing: 0.25em;
     text-transform: uppercase;
     text-align: center;
@@ -3109,7 +3114,7 @@
   }
   /* ── All-events date group header ── */
   .daily-date-group {
-    font-size: 8px;
+    font-size:calc(8px * var(--ui-scale, 1));
     letter-spacing: 0.28em;
     color: #ffffff;
     text-transform: uppercase;
@@ -3137,7 +3142,7 @@
     flex-shrink: 0;
   }
   .daily-meals-title {
-    font-size: 9px;
+    font-size:calc(9px * var(--ui-scale, 1));
     letter-spacing: 0.35em;
     text-transform: uppercase;
     color: var(--ac-85);
@@ -3177,7 +3182,7 @@
     min-width: 0;
   }
   .daily-meal-name {
-    font-size: 11px;
+    font-size:calc(11px * var(--ui-scale, 1));
     color: rgba(255,255,255,0.88);
     white-space: nowrap;
     overflow: hidden;
@@ -3185,7 +3190,7 @@
     letter-spacing: 0.04em;
   }
   .daily-meals-empty {
-    font-size: 9px;
+    font-size:calc(9px * var(--ui-scale, 1));
     letter-spacing: 0.2em;
     color: #fff;
     text-transform: uppercase;
@@ -3225,7 +3230,7 @@
     flex-shrink: 0;
   }
   .daily-habits-title {
-    font-size: 9px;
+    font-size:calc(9px * var(--ui-scale, 1));
     letter-spacing: 0.35em;
     text-transform: uppercase;
     color: var(--ac-85);
@@ -3240,7 +3245,7 @@
   }
   .habit-count {
     text-align: center;
-    font-size: 8px;
+    font-size:calc(8px * var(--ui-scale, 1));
     letter-spacing: 0.25em;
     text-transform: uppercase;
     color: rgba(255,255,255,0.75);
@@ -3299,7 +3304,7 @@
     transform: scale(0.88);
   }
   .habit-label {
-    font-size: 8px;
+    font-size:calc(8px * var(--ui-scale, 1));
     letter-spacing: 0.2em;
     text-transform: uppercase;
     color: rgba(255,255,255,0.75);
@@ -3346,7 +3351,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 20px;
+    font-size:calc(20px * var(--ui-scale, 1));
     transition: background 0.22s ease, border-color 0.22s ease, box-shadow 0.22s ease, transform 0.12s ease;
     position: relative;
     filter: grayscale(0.6);
@@ -3439,7 +3444,7 @@
     display: flex;
     align-items: center;
     gap: 8px;
-    font-size: 9px;
+    font-size:calc(9px * var(--ui-scale, 1));
     letter-spacing: 0.35em;
     text-transform: uppercase;
     color: var(--ac-85);
@@ -3456,7 +3461,7 @@
   }
   .history-empty {
     text-align: center;
-    font-size: 9px;
+    font-size:calc(9px * var(--ui-scale, 1));
     letter-spacing: 0.25em;
     text-transform: uppercase;
     color: rgba(255,255,255,0.3);
@@ -3472,7 +3477,7 @@
     border: 1px solid var(--ac-12);
   }
   .history-day-label {
-    font-size: 8px;
+    font-size:calc(8px * var(--ui-scale, 1));
     letter-spacing: 0.22em;
     text-transform: uppercase;
     color: #fff;
@@ -3508,7 +3513,7 @@
   }
   .history-habit-dot svg { width: 10px; height: 10px; }
   .history-habit-count {
-    font-size: 8px;
+    font-size:calc(8px * var(--ui-scale, 1));
     letter-spacing: 0.2em;
     text-transform: uppercase;
     color: rgba(255,255,255,0.4);
@@ -3518,14 +3523,14 @@
   }
   .history-habit-count.full { color: var(--accent); }
   .history-mood-chip {
-    font-size: 20px;
+    font-size:calc(20px * var(--ui-scale, 1));
     line-height: 1;
     flex-shrink: 0;
     width: 28px;
     text-align: center;
   }
   .history-mood-label {
-    font-size: 8px;
+    font-size:calc(8px * var(--ui-scale, 1));
     letter-spacing: 0.22em;
     text-transform: uppercase;
     color: #fff;
@@ -3567,7 +3572,7 @@
     justify-content: space-between;
   }
   .daily-event-time {
-    font-size: 10px; letter-spacing: 0.22em;
+    font-size:calc(10px * var(--ui-scale, 1)); letter-spacing: 0.22em;
     color: var(--accent); text-transform: uppercase;
   }
   .daily-event-allday .daily-event-time { color: rgba(255,255,255,0.35); }
@@ -3588,7 +3593,7 @@
     min-width: 0;
   }
   .daily-event-title {
-    font-size: 13px; color: rgba(255,255,255,0.9);
+    font-size:calc(13px * var(--ui-scale, 1)); color: rgba(255,255,255,0.9);
     letter-spacing: 0.03em; line-height: 1.35;
     font-weight: 400;
     flex: 1; min-width: 0;
@@ -3601,7 +3606,7 @@
     margin: 0 14px;
   }
   .daily-event-location {
-    font-size: 9px; color: #ffffff;
+    font-size:calc(9px * var(--ui-scale, 1)); color: #ffffff;
     letter-spacing: 0.15em; line-height: 1.4;
     text-transform: uppercase;
     display: flex; align-items: center; gap: 5px;
@@ -3615,7 +3620,7 @@
     flex-shrink: 0; margin: 0 6px;
   }
   .daily-empty {
-    font-size: 9px; letter-spacing: 0.25em;
+    font-size:calc(9px * var(--ui-scale, 1)); letter-spacing: 0.25em;
     color: #fff; text-transform: uppercase;
     text-align: center; padding: 2rem 0;
   }
@@ -3672,12 +3677,12 @@
     overflow: hidden;
   }
   .daily-todo-card-title {
-    font-size: 8px; letter-spacing: 0.32em;
+    font-size:calc(8px * var(--ui-scale, 1)); letter-spacing: 0.32em;
     color: var(--accent); text-transform: uppercase;
     font-weight: 500;
   }
   .daily-todo-card-count {
-    font-size: 8px; letter-spacing: 0.15em;
+    font-size:calc(8px * var(--ui-scale, 1)); letter-spacing: 0.15em;
     color: rgba(255,255,255,0.9);
     padding-left: 8px;
     border-left: 1px solid rgba(255,255,255,0.9);
@@ -3708,15 +3713,15 @@
   .daily-todo.done .daily-todo-check svg { opacity: 1; }
   .daily-todo-body { flex: 1; display: flex; flex-direction: column; gap: 2px; }
   .daily-todo-text {
-    font-size: 12px; color: rgba(255,255,255,0.85); letter-spacing: 0.03em; line-height: 1.4;
+    font-size:calc(12px * var(--ui-scale, 1)); color: rgba(255,255,255,0.85); letter-spacing: 0.03em; line-height: 1.4;
   }
   .daily-todo.done .daily-todo-text { text-decoration: line-through; color: rgba(255,255,255,0.3); }
   .daily-todo-list-tag {
-    font-size: 7px; letter-spacing: 0.2em;
+    font-size:calc(7px * var(--ui-scale, 1)); letter-spacing: 0.2em;
     color: rgba(255,255,255,0.25); text-transform: uppercase;
   }
   .daily-section-label {
-    font-size: 8px; letter-spacing: 0.3em;
+    font-size:calc(8px * var(--ui-scale, 1)); letter-spacing: 0.3em;
     color: rgba(255,255,255,0.2); text-transform: uppercase;
     padding: 6px 2px 2px;
   }
@@ -3739,14 +3744,14 @@
     opacity: 0.25;
   }
   .pf-empty-title {
-    font-size: 11px;
+    font-size:calc(11px * var(--ui-scale, 1));
     letter-spacing: 0.3em;
     text-transform: uppercase;
     color: rgba(255,255,255,0.7);
     font-weight: 500;
   }
   .pf-empty-hint {
-    font-size: 10px;
+    font-size:calc(10px * var(--ui-scale, 1));
     letter-spacing: 0.15em;
     color: rgba(255,255,255,0.35);
     text-align: center;
@@ -3813,7 +3818,7 @@
     justify-content: center;
     gap: 8px;
     color: rgba(255,255,255,0.25);
-    font-size: 11px;
+    font-size:calc(11px * var(--ui-scale, 1));
     letter-spacing: 0.05em;
     text-transform: uppercase;
     text-align: center;
@@ -3827,7 +3832,7 @@
     position: absolute;
     bottom: 6px;
     left: 8px;
-    font-size: 10px;
+    font-size:calc(10px * var(--ui-scale, 1));
     letter-spacing: 0.05em;
     text-transform: uppercase;
     color: rgba(255,255,255,1);
@@ -3838,7 +3843,7 @@
     position: absolute;
     bottom: 6px;
     right: 8px;
-    font-size: 8px;
+    font-size:calc(8px * var(--ui-scale, 1));
     letter-spacing: 0.08em;
     color: rgba(255,255,255,1);
     text-shadow: 0 1px 3px rgba(0,0,0,0.8);
@@ -3883,7 +3888,7 @@
     color: rgba(255,255,255,0.8);
     border-radius: 4px;
     padding: 5px 11px;
-    font-size: 9px;
+    font-size:calc(9px * var(--ui-scale, 1));
     letter-spacing: 0.28em;
     text-transform: uppercase;
     cursor: pointer;
@@ -3932,7 +3937,7 @@
     flex-shrink: 0;
   }
   .cam-log-title {
-    font-size: 9px;
+    font-size:calc(9px * var(--ui-scale, 1));
     letter-spacing: 0.3em;
     color: var(--accent-hi, #d4ae78);
     text-transform: uppercase;
@@ -3941,7 +3946,7 @@
     gap: 7px;
   }
   .cam-log-range {
-    font-size: 8px;
+    font-size:calc(8px * var(--ui-scale, 1));
     letter-spacing: 0.18em;
     color: rgba(255,255,255,0.85);
     text-transform: uppercase;
@@ -3958,7 +3963,7 @@
     border: 1px solid rgba(255,255,255,0.12);
     border-radius: 20px;
     padding: 3px 10px;
-    font-size: 8px;
+    font-size:calc(8px * var(--ui-scale, 1));
     letter-spacing: 0.15em;
     text-transform: uppercase;
     color: rgba(255,255,255,0.5);
@@ -3984,7 +3989,7 @@
   .cam-log-scroll::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.12); border-radius: 3px; }
   .cam-log-empty {
     color: rgba(255,255,255,0.3);
-    font-size: 11px;
+    font-size:calc(11px * var(--ui-scale, 1));
     letter-spacing: 0.1em;
     text-align: center;
     padding: 24px 0;
@@ -3993,7 +3998,7 @@
     margin-bottom: 14px;
   }
   .cam-log-day-label {
-    font-size: 8px;
+    font-size:calc(8px * var(--ui-scale, 1));
     letter-spacing: 0.28em;
     color: rgba(255,255,255,0.85);
     text-transform: uppercase;
@@ -4022,14 +4027,14 @@
     box-shadow: none;
   }
   .cam-log-time {
-    font-size: 12px;
+    font-size:calc(12px * var(--ui-scale, 1));
     color: rgba(255,255,255,0.75);
     letter-spacing: 0.06em;
     flex-shrink: 0;
     min-width: 46px;
   }
   .cam-log-cam {
-    font-size: 10px;
+    font-size:calc(10px * var(--ui-scale, 1));
     letter-spacing: 0.1em;
     color: var(--accent-hi, #d4ae78);
     flex-shrink: 0;
@@ -4037,7 +4042,7 @@
     text-transform: uppercase;
   }
   .cam-log-state {
-    font-size: 10px;
+    font-size:calc(10px * var(--ui-scale, 1));
     letter-spacing: 0.08em;
     color: rgba(255,255,255,0.45);
     text-transform: uppercase;
@@ -4049,7 +4054,7 @@
     padding: 24px 0;
     gap: 8px;
     color: rgba(255,255,255,0.3);
-    font-size: 10px;
+    font-size:calc(10px * var(--ui-scale, 1));
     letter-spacing: 0.2em;
   }
   @keyframes cam-log-spin {
@@ -4101,7 +4106,7 @@
     position: static;
   }
   #cam-fullscreen-label {
-    font-size: 14px;
+    font-size:calc(14px * var(--ui-scale, 1));
     font-weight: 500;
     letter-spacing: 0.07em;
     text-transform: uppercase;
@@ -4211,13 +4216,13 @@
     gap: 20px;
   }
   .pf-counter {
-    font-size: 10px;
+    font-size:calc(10px * var(--ui-scale, 1));
     letter-spacing: 0.25em;
     color: #fff;
     text-transform: uppercase;
   }
   .pf-shuffle {
-    font-size: 9px;
+    font-size:calc(9px * var(--ui-scale, 1));
     letter-spacing: 0.2em;
     color: #fff;
     text-transform: uppercase;
@@ -4509,7 +4514,7 @@
     font-family: inherit;
   }
   .wfs-temp-big {
-    font-size: clamp(5rem, 18vw, 9rem);
+    font-size:calc(clamp(5rem, 18vw, 9rem) * var(--ui-scale, 1));
     font-weight: 300;
     color: #fff;
     line-height: 1;
@@ -4524,7 +4529,7 @@
     letter-spacing: 0;
   }
   .wfs-condition {
-    font-size: 14px;
+    font-size:calc(14px * var(--ui-scale, 1));
     letter-spacing: 0.35em;
     text-transform: uppercase;
     color: #fff;
@@ -4532,7 +4537,7 @@
     margin-bottom: 0.6rem;
   }
   .wfs-hilo {
-    font-size: 16px;
+    font-size:calc(16px * var(--ui-scale, 1));
     letter-spacing: 0.2em;
     color: #fff;
   }
@@ -4582,7 +4587,7 @@
     flex-shrink: 0;
   }
   .wfs-stat-label {
-    font-size: 10px;
+    font-size:calc(10px * var(--ui-scale, 1));
     letter-spacing: 0.25em;
     text-transform: uppercase;
     color: rgba(255,255,255,0.6);
@@ -4594,7 +4599,7 @@
     gap: 4px;
   }
   .wfs-stat-value {
-    font-size: 15px;
+    font-size:calc(15px * var(--ui-scale, 1));
     color: #fff;
     letter-spacing: 0.04em;
     font-weight: 500;
@@ -4636,7 +4641,7 @@
     text-align: center;
   }
   .wfs-weather-card .wfs-temp-big {
-    font-size: clamp(2.8rem, 7vw, 4.5rem);
+    font-size:calc(clamp(2.8rem, 7vw, 4.5rem) * var(--ui-scale, 1));
     margin-bottom: 0;
     line-height: 1;
     text-shadow: 0 2px 20px rgba(0,0,0,0.4);
@@ -4646,15 +4651,15 @@
     animation: wfs-float 4s ease-in-out infinite;
   }
   .wfs-weather-card .wfs-condition {
-    font-size: 11px;
+    font-size:calc(11px * var(--ui-scale, 1));
     margin-top: 0;
     margin-bottom: 0;
   }
   .wfs-weather-card .wfs-hilo {
-    font-size: 13px;
+    font-size:calc(13px * var(--ui-scale, 1));
   }
   .wfs-extra-card-title {
-    font-size: 9px;
+    font-size:calc(9px * var(--ui-scale, 1));
     letter-spacing: 0.22em;
     text-transform: uppercase;
     color: #fff;
@@ -4683,13 +4688,13 @@
     gap: 2px;
   }
   .wfs-sun-time-label {
-    font-size: 8px;
+    font-size:calc(8px * var(--ui-scale, 1));
     letter-spacing: 0.18em;
     text-transform: uppercase;
     color: rgba(255,255,255,0.6);
   }
   .wfs-sun-time-val {
-    font-size: 13px;
+    font-size:calc(13px * var(--ui-scale, 1));
     color: #fff;
     font-weight: 500;
     letter-spacing: 0.02em;
@@ -4714,14 +4719,14 @@
     gap: 10px;
   }
   .wfs-aqi-number {
-    font-size: 22px;
+    font-size:calc(22px * var(--ui-scale, 1));
     font-weight: 600;
     color: #fff;
     line-height: 1;
     letter-spacing: -0.02em;
   }
   .wfs-aqi-unit {
-    font-size: 10px;
+    font-size:calc(10px * var(--ui-scale, 1));
     letter-spacing: 0.22em;
     text-transform: uppercase;
     color: rgba(255,255,255,0.5);
@@ -4733,7 +4738,7 @@
     flex-shrink: 0;
   }
   .wfs-aqi-quality {
-    font-size: 11px;
+    font-size:calc(11px * var(--ui-scale, 1));
     font-weight: 600;
     color: #fff;
     padding-left: 6px;
@@ -4741,7 +4746,7 @@
     line-height: 1.2;
   }
   .wfs-aqi-quality-text {
-    font-size: 9px;
+    font-size:calc(9px * var(--ui-scale, 1));
     color: rgba(255,255,255,0.6);
     line-height: 1.35;
   }
@@ -4784,20 +4789,20 @@
     width: 100%;
   }
   .wfs-moon-value {
-    font-size: 10px;
+    font-size:calc(10px * var(--ui-scale, 1));
     font-weight: 600;
     color: #fff;
     letter-spacing: 0.04em;
     text-transform: capitalize;
   }
   .wfs-aqi-pm-label {
-    font-size: 10px;
+    font-size:calc(10px * var(--ui-scale, 1));
     letter-spacing: 0.18em;
     text-transform: uppercase;
     color: rgba(255,255,255,0.45);
   }
   .wfs-aqi-pm-value {
-    font-size: 10px;
+    font-size:calc(10px * var(--ui-scale, 1));
     font-weight: 600;
     color: #fff;
     letter-spacing: 0.04em;
@@ -4805,7 +4810,7 @@
 
   /* 7-day forecast bar */
   .wfs-forecast-title {
-    font-size: 11px;
+    font-size:calc(11px * var(--ui-scale, 1));
     letter-spacing: 0.35em;
     text-transform: uppercase;
     color: #fff;
@@ -4841,7 +4846,7 @@
     border-color: rgba(255,255,255,0.13);
   }
   .wfs-fc-day {
-    font-size: 10px;
+    font-size:calc(10px * var(--ui-scale, 1));
     letter-spacing: 0.2em;
     text-transform: uppercase;
     color: #fff;
@@ -4883,7 +4888,7 @@
   }
   /* Hi temp — above the bar */
   .wfs-fc-hi {
-    font-size: clamp(1.1rem, 2vw, 1.6rem);
+    font-size:calc(clamp(1.1rem, 2vw, 1.6rem) * var(--ui-scale, 1));
     font-weight: 300;
     color: #fff;
     line-height: 1;
@@ -4893,7 +4898,7 @@
   }
   /* Lo temp — below the bar, same size, white */
   .wfs-fc-lo {
-    font-size: clamp(1.1rem, 2vw, 1.6rem);
+    font-size:calc(clamp(1.1rem, 2vw, 1.6rem) * var(--ui-scale, 1));
     font-weight: 300;
     color: #fff;
     line-height: 1;
@@ -4931,7 +4936,7 @@
   }
 
   .therm-current-temp {
-    font-size: 12px;
+    font-size:calc(12px * var(--ui-scale, 1));
     letter-spacing: 0.35em;
     color: var(--accent);
     text-transform: uppercase;
@@ -4957,7 +4962,7 @@
     justify-content: center;
   }
   .therm-room-tab {
-    font-size: 11px;
+    font-size:calc(11px * var(--ui-scale, 1));
     letter-spacing: 0.2em;
     text-transform: uppercase;
     padding: 7px 18px;
@@ -5094,7 +5099,7 @@
     text-align: center;
   }
   .therm-set-label {
-    font-size: 11px;
+    font-size:calc(11px * var(--ui-scale, 1));
     letter-spacing: 0.3em;
     color: rgba(255,255,255,0.4);
     text-transform: uppercase;
@@ -5108,7 +5113,7 @@
     margin-bottom: 0;
   }
   .therm-mode-badge {
-    font-size: 10px;
+    font-size:calc(10px * var(--ui-scale, 1));
     letter-spacing: 0.25em;
     text-transform: uppercase;
     padding: 4px 13px;
@@ -5167,7 +5172,7 @@
     min-width: 76px;
   }
   .therm-mode-btn span {
-    font-size: 10px;
+    font-size:calc(10px * var(--ui-scale, 1));
     letter-spacing: 0.2em;
     text-transform: uppercase;
     color: rgba(255,255,255,0.45);
@@ -5253,13 +5258,13 @@
   }
   .aqi-room-header svg { opacity: 0.75; flex-shrink: 0; }
   .aqi-room-name {
-    font-size: 15px;
+    font-size:calc(15px * var(--ui-scale, 1));
     letter-spacing: 0.08em;
     text-transform: uppercase;
     color: rgba(255,255,255,0.85);
   }
   .aqi-badge {
-    font-size: 11px;
+    font-size:calc(11px * var(--ui-scale, 1));
     letter-spacing: 0.08em;
     padding: 4px 12px;
     border-radius: 20px;
@@ -5296,12 +5301,12 @@
   .aqi-metric-icon svg { display: block; }
   .aqi-metric-icon--temp     { background: #D85A30; }
   .aqi-metric-icon--humidity { background: #378ADD; }
-  .aqi-metric-icon--co2      { background: #1D9E75; font-size: 10px; font-weight: 600; }
+  .aqi-metric-icon--co2      { background: #1D9E75; font-size:calc(10px * var(--ui-scale, 1)); font-weight: 600; }
   .aqi-metric-icon--tvoc     { background: #7F77DD; }
   .aqi-metric-icon--pm25     { background: #D4537E; }
   .aqi-metric-icon--nox      { background: #C9A227; }
   .aqi-metric-label {
-    font-size: 11px;
+    font-size:calc(11px * var(--ui-scale, 1));
     letter-spacing: 0.1em;
     text-transform: uppercase;
     color: rgba(255,255,255,0.55);
@@ -5309,7 +5314,7 @@
     white-space: nowrap;
   }
   .aqi-metric-value {
-    font-size: 16px;
+    font-size:calc(16px * var(--ui-scale, 1));
     color: #fff;
     letter-spacing: 0.03em;
   }
@@ -5329,7 +5334,7 @@
     min-width: 0;
   }
   .aqi-chart-label {
-    font-size: 11px;
+    font-size:calc(11px * var(--ui-scale, 1));
     letter-spacing: 0.1em;
     text-transform: uppercase;
     color: rgba(255,255,255,0.5);
@@ -5410,7 +5415,7 @@
 
   /* Sidebar section label */
   .ov2-section-label {
-    font-size: 7px;
+    font-size:calc(7px * var(--ui-scale, 1));
     letter-spacing: 0.3em;
     text-transform: uppercase;
     color: #fff;
@@ -5429,7 +5434,7 @@
     border-bottom: 1px solid var(--ac-08);
     color: #fff;
     cursor: pointer;
-    font-size: 10px;
+    font-size:calc(10px * var(--ui-scale, 1));
     letter-spacing: 0.18em;
     text-transform: uppercase;
     text-align: left;
@@ -5468,7 +5473,7 @@
     white-space: nowrap;
   }
   .ov2-ctrl-count {
-    font-size: 10px;
+    font-size:calc(10px * var(--ui-scale, 1));
     letter-spacing: 0.18em;
     color: var(--accent);
     opacity: 0;
@@ -5479,7 +5484,7 @@
     opacity: 1;
   }
   .ov2-ctrl-arrow {
-    font-size: 10px;
+    font-size:calc(10px * var(--ui-scale, 1));
     opacity: 0.5;
     flex-shrink: 0;
   }
@@ -5495,19 +5500,19 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    font-size: 9px;
+    font-size:calc(9px * var(--ui-scale, 1));
     letter-spacing: 0.12em;
     color: rgba(255,255,255,0.6);
   }
   .ov2-sensor-name {
     text-transform: uppercase;
     letter-spacing: 0.2em;
-    font-size: 7.5px;
+    font-size:calc(7.5px * var(--ui-scale, 1));
     color: rgba(255,255,255,0.4);
   }
   .ov2-sensor-val {
     color: rgba(255,255,255,0.85);
-    font-size: 10px;
+    font-size:calc(10px * var(--ui-scale, 1));
   }
 
   /* Right main area */
@@ -5541,7 +5546,7 @@
   }
   .ov2-hero-title {
     font-family: inherit;
-    font-size: var(--greeting-fs, 3.5rem);
+    font-size: calc(var(--greeting-fs, 3.5rem) * var(--ui-scale, 1));
     font-weight: 300;
     letter-spacing: 0.2em;
     margin-bottom: 2rem;
@@ -5597,7 +5602,7 @@
     flex-direction: column;
   }
   .ov2-music-track {
-    font-size: 9px;
+    font-size:calc(9px * var(--ui-scale, 1));
     letter-spacing: 0.1em;
     color: rgba(255,255,255,0.8);
     white-space: nowrap;
@@ -5606,7 +5611,7 @@
     max-width: 140px;
   }
   .ov2-music-artist {
-    font-size: 8px;
+    font-size:calc(8px * var(--ui-scale, 1));
     letter-spacing: 0.2em;
     color: var(--accent);
     text-transform: uppercase;
@@ -5836,7 +5841,7 @@
     position: absolute;
     top: 8px;
     left: 1rem;
-    font-size: 10px;
+    font-size:calc(10px * var(--ui-scale, 1));
     font-weight: 600;
     letter-spacing: 0.15em;
     text-transform: uppercase;
@@ -5858,13 +5863,13 @@
     border-left: 1px solid rgba(255,255,255,0.15);
   }
   .ov3-aqi-pm-label {
-    font-size: 10px;
+    font-size:calc(10px * var(--ui-scale, 1));
     letter-spacing: 0.18em;
     text-transform: uppercase;
     color: rgba(255,255,255,0.45);
   }
   .ov3-aqi-pm-value {
-    font-size: 12px;
+    font-size:calc(12px * var(--ui-scale, 1));
     font-weight: 600;
     color: rgba(255,255,255,0.85);
     letter-spacing: 0.02em;
@@ -5916,7 +5921,7 @@
   }
   .ov3-energy-unit,
   .ov3-aqi-unit {
-    font-size: 8px;
+    font-size:calc(8px * var(--ui-scale, 1));
     letter-spacing: 0.18em;
     color: rgba(255,255,255,0.85);
     text-transform: uppercase;
@@ -5939,13 +5944,13 @@
     border-left: 1px solid rgba(255,255,255,0.12);
   }
   .ov3-energy-stat-label {
-    font-size: 10px;
+    font-size:calc(10px * var(--ui-scale, 1));
     letter-spacing: 0.18em;
     text-transform: uppercase;
     color: rgba(255,255,255,0.4);
   }
   .ov3-energy-stat-value {
-    font-size: 12px;
+    font-size:calc(12px * var(--ui-scale, 1));
     font-weight: 600;
     color: rgba(255,255,255,0.82);
     letter-spacing: 0.02em;
@@ -6017,13 +6022,13 @@
     border-left: 1px solid rgba(255,255,255,0.15);
   }
   .ov3-garden-stat-label {
-    font-size: 10px;
+    font-size:calc(10px * var(--ui-scale, 1));
     letter-spacing: 0.18em;
     text-transform: uppercase;
     color: rgba(255,255,255,0.45);
   }
   .ov3-garden-stat-value {
-    font-size: 12px;
+    font-size:calc(12px * var(--ui-scale, 1));
     font-weight: 600;
     color: rgba(255,255,255,0.85);
     letter-spacing: 0.02em;
@@ -6082,7 +6087,7 @@
   }
   .ov3-garden-irr-btn:focus { outline: none; }
   .ov3-garden-irr-label {
-    font-size: 9px;
+    font-size:calc(9px * var(--ui-scale, 1));
     letter-spacing: 0.18em;
     text-transform: uppercase;
     color: rgba(255,255,255,0.55);
@@ -6131,7 +6136,7 @@
     flex-shrink: 0;
   }
   .ov3-floors-active-name {
-    font-size: 9px;
+    font-size:calc(9px * var(--ui-scale, 1));
     letter-spacing: 0.28em;
     text-transform: uppercase;
     color: #fff;
@@ -6177,13 +6182,13 @@
     border-left: 1px solid rgba(255,255,255,0.12);
   }
   .ov3-floors-stat-label {
-    font-size: 10px;
+    font-size:calc(10px * var(--ui-scale, 1));
     letter-spacing: 0.18em;
     text-transform: uppercase;
     color: rgba(255,255,255,0.4);
   }
   .ov3-floors-stat-value {
-    font-size: 12px;
+    font-size:calc(12px * var(--ui-scale, 1));
     font-weight: 600;
     color: rgba(255,255,255,0.85);
     letter-spacing: 0.02em;
@@ -6264,7 +6269,7 @@
   }
   .ov3-music-fs-btn:active { opacity: 0.6; }
   .ov3-music-idle {
-    font-size: 10px;
+    font-size:calc(10px * var(--ui-scale, 1));
     letter-spacing: 0.1em;
     color: rgba(255,255,255,0.35);
     text-transform: uppercase;
@@ -6281,7 +6286,7 @@
     overflow: hidden;
   }
   .ov3-music-artist {
-    font-size: 10px;
+    font-size:calc(10px * var(--ui-scale, 1));
     font-weight: 500;
     color: #fff;
     letter-spacing: 0.04em;
@@ -6293,7 +6298,7 @@
     min-width: 0;
   }
   .ov3-music-track {
-    font-size: 10px;
+    font-size:calc(10px * var(--ui-scale, 1));
     letter-spacing: 0.04em;
     color: rgba(255,255,255,0.55);
     white-space: nowrap;
@@ -6304,7 +6309,7 @@
     min-width: 0;
   }
   .ov3-music-sep {
-    font-size: 10px;
+    font-size:calc(10px * var(--ui-scale, 1));
     color: rgba(255,255,255,0.3);
     padding: 0 4px;
     flex-shrink: 0;
@@ -6368,7 +6373,7 @@
   .ov3-music-time-row {
     display: flex;
     justify-content: space-between;
-    font-size: 8px;
+    font-size:calc(8px * var(--ui-scale, 1));
     letter-spacing: 0.1em;
     color: rgba(255,255,255,0.4);
   }
@@ -6406,7 +6411,7 @@
     display: flex;
     align-items: center;
     gap: 6px;
-    font-size: 11px;
+    font-size:calc(11px * var(--ui-scale, 1));
     font-weight: 400;
     letter-spacing: 0.1em;
     color: rgba(255,255,255,0.65);
@@ -6431,7 +6436,7 @@
     border: 1px solid var(--ac-6);
     border-radius: 20px;
     padding: 4px 14px;
-    font-size: 9px;
+    font-size:calc(9px * var(--ui-scale, 1));
     letter-spacing: 0.25em;
     color: #fff;
     text-transform: uppercase;
@@ -6500,7 +6505,7 @@
   .ov3-ac-slide.mode-fan  .ov3-ac-icon-wrap { background: rgba(80,190,160,0.2);  }
   .ov3-ac-slide.mode-dry  .ov3-ac-icon-wrap { background: rgba(200,165,60,0.2);  }
   .ov3-ac-name {
-    font-size: 10px;
+    font-size:calc(10px * var(--ui-scale, 1));
     letter-spacing: 0.1em;
     font-weight: 500;
     color: rgba(255,255,255,0.9);
@@ -6568,7 +6573,7 @@
     flex-shrink: 0;
   }
   .ov3-ac-tgt-label {
-    font-size: 7.5px;
+    font-size:calc(7.5px * var(--ui-scale, 1));
     letter-spacing: 0.22em;
     text-transform: uppercase;
     color: rgba(255,255,255,0.3);
@@ -6581,7 +6586,7 @@
     border: 1px solid rgba(255,255,255,0.12);
     background: rgba(255,255,255,0.05);
     color: rgba(255,255,255,0.6);
-    font-size: 16px;
+    font-size:calc(16px * var(--ui-scale, 1));
     line-height: 1;
     display: flex;
     align-items: center;
@@ -6627,7 +6632,7 @@
     border: 1px solid rgba(255,255,255,0.1);
     background: rgba(255,255,255,0.04);
     color: rgba(255,255,255,0.35);
-    font-size: 8px;
+    font-size:calc(8px * var(--ui-scale, 1));
     letter-spacing: 0.1em;
     text-transform: uppercase;
     padding: 0 4px;
@@ -6667,7 +6672,7 @@
     border: 1px solid rgba(255,255,255,0.1);
     background: rgba(255,255,255,0.04);
     color: rgba(255,255,255,0.35);
-    font-size: 7.5px;
+    font-size:calc(7.5px * var(--ui-scale, 1));
     letter-spacing: 0.12em;
     text-transform: uppercase;
     padding: 0 2px;
@@ -6764,7 +6769,7 @@
   .ov3-pur-slide.is-on .ov3-pur-icon-wrap { background: rgba(80,200,180,0.22); }
   .ov3-pur-slide.is-on .ov3-pur-icon-wrap svg { stroke: #50c8b4; }
   .ov3-pur-name {
-    font-size: 10px;
+    font-size:calc(10px * var(--ui-scale, 1));
     letter-spacing: 0.1em;
     font-weight: 500;
     color: rgba(255,255,255,0.9);
@@ -6893,14 +6898,14 @@
     opacity: 0.8;
   }
   .ov3-wx-desc {
-    font-size: 11px;
+    font-size:calc(11px * var(--ui-scale, 1));
     letter-spacing: 0.2em;
     text-transform: uppercase;
     color: rgba(255,255,255,0.85);
     margin-top: 2px;
   }
   .ov3-wx-hilo {
-    font-size: 10px;
+    font-size:calc(10px * var(--ui-scale, 1));
     letter-spacing: 0.12em;
     color: rgba(255,255,255,0.7);
     margin-top: 3px;
@@ -6918,7 +6923,7 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    font-size: 11px;
+    font-size:calc(11px * var(--ui-scale, 1));
     letter-spacing: 0.08em;
   }
   .ov3-wx-stat-label {
@@ -6927,13 +6932,13 @@
     gap: 8px;
     color: rgba(255,255,255,0.5);
     text-transform: uppercase;
-    font-size: 10px;
+    font-size:calc(10px * var(--ui-scale, 1));
     letter-spacing: 0.12em;
   }
   .ov3-wx-stat-value {
     color: rgba(255,255,255,0.9);
     font-weight: 500;
-    font-size: 11px;
+    font-size:calc(11px * var(--ui-scale, 1));
   }
   /* Swipeable forecast scroll container */
   .ov3-wx-scroll {
@@ -7014,13 +7019,13 @@
     display: flex;
     align-items: center;
     gap: 5px;
-    font-size: 10px;
+    font-size:calc(10px * var(--ui-scale, 1));
     letter-spacing: 0.08em;
     color: rgba(255,255,255,0.65);
   }
   /* 5-day forecast — seamless single box */
   .ov3-wx-forecast-title {
-    font-size: 9px;
+    font-size:calc(9px * var(--ui-scale, 1));
     letter-spacing: 0.3em;
     text-transform: uppercase;
     color: rgba(255,255,255,0.9);
@@ -7048,7 +7053,7 @@
     border-left: none;
   }
   .ov3-wx-fday-name {
-    font-size: 9px;
+    font-size:calc(9px * var(--ui-scale, 1));
     letter-spacing: 0.15em;
     text-transform: uppercase;
     color: rgba(255,255,255,0.75);
@@ -7056,13 +7061,13 @@
   }
   .ov3-wx-fday svg { width: 26px; height: 26px; }
   .ov3-wx-fday-hi {
-    font-size: 13px;
+    font-size:calc(13px * var(--ui-scale, 1));
     font-weight: 300;
     color: rgba(255,255,255,0.9);
     letter-spacing: 0.02em;
   }
   .ov3-wx-fday-lo {
-    font-size: 10px;
+    font-size:calc(10px * var(--ui-scale, 1));
     color: rgba(255,255,255,0.45);
     margin-top: -4px;
   }
@@ -7091,13 +7096,13 @@
     min-width: 38px;
   }
   .ov3-wx-hour-time {
-    font-size: 8px;
+    font-size:calc(8px * var(--ui-scale, 1));
     letter-spacing: 0.15em;
     color: rgba(255,255,255,0.5);
     text-transform: uppercase;
   }
   .ov3-wx-hour-temp {
-    font-size: 10px;
+    font-size:calc(10px * var(--ui-scale, 1));
     color: rgba(255,255,255,0.9);
     letter-spacing: 0.04em;
   }
@@ -7149,7 +7154,7 @@
     border: 1px solid rgba(255,255,255,0.12);
     border-radius: 10px;
     color: rgba(255,255,255,0.65);
-    font-size: 8px;
+    font-size:calc(8px * var(--ui-scale, 1));
     letter-spacing: 0.18em;
     text-transform: uppercase;
     cursor: pointer;
@@ -7194,7 +7199,7 @@
     right: 0;
     bottom: 0;
     min-height: 10px;
-    font-size: 9px;
+    font-size:calc(9px * var(--ui-scale, 1));
     letter-spacing: 0.2em;
     text-transform: uppercase;
     color: rgba(255,255,255,0.4);
@@ -7254,7 +7259,7 @@
     flex-shrink: 0;
   }
   .ov3-events-label {
-    font-size: 9px;
+    font-size:calc(9px * var(--ui-scale, 1));
     font-weight: 500;
     letter-spacing: 0.28em;
     text-transform: uppercase;
@@ -7295,7 +7300,7 @@
     min-width: 0;
   }
   .ov3-events-event-time {
-    font-size: 9px;
+    font-size:calc(9px * var(--ui-scale, 1));
     letter-spacing: 0.18em;
     color: var(--accent);
     text-transform: uppercase;
@@ -7306,7 +7311,7 @@
     color: rgba(255,255,255,0.35);
   }
   .ov3-events-event-title {
-    font-size: 11px;
+    font-size:calc(11px * var(--ui-scale, 1));
     color: rgba(255,255,255,0.88);
     letter-spacing: 0.02em;
     flex: 1;
@@ -7323,7 +7328,7 @@
     margin: 0 8px;
   }
   .ov3-events-event-location {
-    font-size: 9px;
+    font-size:calc(9px * var(--ui-scale, 1));
     color: var(--accent);
     letter-spacing: 0.1em;
     flex-shrink: 0;
@@ -7333,7 +7338,7 @@
     max-width: 35%;
   }
   .ov3-events-empty {
-    font-size: 9px;
+    font-size:calc(9px * var(--ui-scale, 1));
     letter-spacing: 0.25em;
     color: rgba(255,255,255,0.3);
     text-transform: uppercase;
@@ -7341,7 +7346,7 @@
     padding: 1.5rem 0;
   }
   .ov3-events-day-label {
-    font-size: 8px;
+    font-size:calc(8px * var(--ui-scale, 1));
     letter-spacing: 0.2em;
     text-transform: uppercase;
     color: rgba(255,255,255,0.9);
@@ -7442,7 +7447,7 @@
     text-align: center;
   }
   .ac-wx-desc {
-    font-size: 7px;
+    font-size:calc(7px * var(--ui-scale, 1));
     letter-spacing: 0.26em;
     color: rgba(255,255,255,0.55);
     text-transform: uppercase;
@@ -7451,7 +7456,7 @@
   .ac-inner-date {
     width: 100%;
     text-align: center;
-    font-size: 11px;
+    font-size:calc(11px * var(--ui-scale, 1));
     letter-spacing: 0.35em;
     color: #ffffff;
     text-transform: uppercase;
@@ -7511,7 +7516,7 @@
   }
 
   /* ─── DIGIT CLOCK ───────────────────────────────────────────────────────── */
-  :root { --dc-h: clamp(110px, 26vw, 200px); }
+  :root { --dc-h: calc(clamp(110px, 26vw, 200px) * var(--ui-scale, 1)); }
 
   .flip-clock-wrap {
     display: flex;
@@ -7628,14 +7633,14 @@
     height: clamp(28px, 5vw, 46px) !important;
   }
   .fc-temp {
-    font-size: clamp(1.4rem, 3.2vw, 2.6rem);
+    font-size:calc(clamp(1.4rem, 3.2vw, 2.6rem) * var(--ui-scale, 1));
     font-weight: 300;
     color: #fff;
     letter-spacing: 0.04em;
     line-height: 1;
   }
   .fc-label {
-    font-size: clamp(8px, 1.2vw, 11px);
+    font-size:calc(clamp(8px, 1.2vw, 11px) * var(--ui-scale, 1));
     letter-spacing: 0.28em;
     color: rgba(255,255,255,0.5);
     text-transform: uppercase;
@@ -7670,7 +7675,7 @@
     height: clamp(18px, 2.8vw, 26px);
   }
   .fc-stat-count {
-    font-size: clamp(0.9rem, 2vw, 1.5rem);
+    font-size:calc(clamp(0.9rem, 2vw, 1.5rem) * var(--ui-scale, 1));
     font-weight: 400;
     color: #fff;
     line-height: 1;
@@ -7690,7 +7695,7 @@
     flex: 1;
   }
   .fc-date {
-    font-size: clamp(13px, 2vw, 18px);
+    font-size:calc(clamp(13px, 2vw, 18px) * var(--ui-scale, 1));
     letter-spacing: 0.28em;
     text-transform: uppercase;
     color: #ffffff;
@@ -7802,7 +7807,7 @@
   }
   .settings-rail-btn:active svg { transform: scale(0.9); }
   .settings-rail-label {
-    font-size: 9px;
+    font-size:calc(9px * var(--ui-scale, 1));
     letter-spacing: 0.06em;
     text-transform: uppercase;
     font-weight: 500;
@@ -7842,13 +7847,13 @@
     justify-content: center;
   }
   .settings-cat-header-title {
-    font-size: 18px;
+    font-size:calc(18px * var(--ui-scale, 1));
     font-weight: 600;
     color: #fff;
     letter-spacing: 0.01em;
   }
   .settings-cat-header-subtitle {
-    font-size: 11px;
+    font-size:calc(11px * var(--ui-scale, 1));
     color: rgba(255,255,255,0.4);
     margin-top: 2px;
     letter-spacing: 0.02em;
@@ -7868,12 +7873,12 @@
     border-color: rgba(239,90,90,0.25);
   }
   .settings-about-danger-title {
-    font-size: 13px;
+    font-size:calc(13px * var(--ui-scale, 1));
     font-weight: 600;
     color: #fff;
   }
   .settings-about-danger-subtitle {
-    font-size: 11px;
+    font-size:calc(11px * var(--ui-scale, 1));
     color: rgba(255,255,255,0.4);
     margin-top: 3px;
     max-width: 460px;
@@ -7901,7 +7906,7 @@
     to   { opacity: 1; transform: translateY(0); }
   }
   .settings-section-title {
-    font-size: 9px;
+    font-size:calc(9px * var(--ui-scale, 1));
     letter-spacing: 0.28em;
     color: #fff;
     padding: 12px 16px 10px;
@@ -7916,7 +7921,7 @@
     opacity: 1 !important;
   }
   .settings-hint {
-    font-size: 9.5px;
+    font-size:calc(9.5px * var(--ui-scale, 1));
     letter-spacing: 0.06em;
     color: rgba(255,255,255,0.35);
     line-height: 1.5;
@@ -7951,7 +7956,7 @@
     width: 44px;
     text-align: center;
     padding: 3px 4px;
-    font-size: 11px;
+    font-size:calc(11px * var(--ui-scale, 1));
     background: rgba(255,255,255,0.06);
     border: 1px solid var(--ac-25);
     border-radius: 8px;
@@ -7977,9 +7982,35 @@
   }
   .settings-item:hover { background: rgba(255,255,255,0.03); }
   .settings-item.settings-sub { padding-left: 28px; }
-  .settings-item.settings-sub .settings-label { color: rgba(255,255,255,0.5); font-size: 11px; }
+  .settings-item.settings-sub .settings-label { color: rgba(255,255,255,0.5); font-size:calc(11px * var(--ui-scale, 1)); }
+  .ui-scale-stepper {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  .ui-scale-btn {
+    width: 2.25rem;
+    height: 2.25rem;
+    border-radius: 0.5rem;
+    border: 1px solid var(--ac-25);
+    background: rgba(255,255,255,0.06);
+    color: #fff;
+    font-size: 1.25rem;
+    line-height: 1;
+    padding: 0;
+    cursor: pointer;
+    font-family: inherit;
+  }
+  .ui-scale-btn:disabled { opacity: 0.35; }
+  .ui-scale-value {
+    min-width: 3rem;
+    text-align: center;
+    font-size: 0.75rem;
+    letter-spacing: 0.04em;
+    color: rgba(255,255,255,0.9);
+  }
   .settings-label {
-    font-size: 12px;
+    font-size:calc(12px * var(--ui-scale, 1));
     color: rgba(255,255,255,0.8);
     letter-spacing: 0.03em;
   }
@@ -8047,7 +8078,7 @@
     border: 1px solid var(--ac-25);
     border-radius: 8px;
     color: rgba(255,255,255,0.9);
-    font-size: 12px;
+    font-size:calc(12px * var(--ui-scale, 1));
     letter-spacing: 0.1em;
     padding: 5px 10px;
     width: 120px;
@@ -8078,7 +8109,7 @@
   .startup-mode-option:hover { background: rgba(255,255,255,0.04); }
   .startup-mode-option input[type="radio"] { display: none; }
   .startup-mode-label {
-    font-size: 12px;
+    font-size:calc(12px * var(--ui-scale, 1));
     color: rgba(255,255,255,0.6);
     letter-spacing: 0.04em;
     transition: color 0.2s;
@@ -8122,7 +8153,7 @@
     border-radius: 5px;
     color: rgba(255,255,255,0.6);
     font-family: sans-serif;
-    font-size: 10px;
+    font-size:calc(10px * var(--ui-scale, 1));
     letter-spacing: 0.08em;
     padding: 5px 10px;
     cursor: pointer;
@@ -8158,7 +8189,7 @@
     border: 1px solid var(--ac-25);
     border-radius: 8px;
     color: #fff;
-    font-size: 10px;
+    font-size:calc(10px * var(--ui-scale, 1));
     letter-spacing: 0.12em;
     padding: 7px 14px;
     cursor: pointer;
@@ -8169,7 +8200,7 @@
   .settings-version {
     margin-top: 10px;
     text-align: center;
-    font-size: 9px;
+    font-size:calc(9px * var(--ui-scale, 1));
     letter-spacing: 0.15em;
     color: #fff;
     text-transform: uppercase;
@@ -8178,7 +8209,7 @@
     display: block;
     margin-top: 4px;
     text-align: center;
-    font-size: 8.5px;
+    font-size:calc(8.5px * var(--ui-scale, 1));
     letter-spacing: 0.12em;
     color: rgba(255,255,255,0.45);
     text-transform: uppercase;
@@ -8196,7 +8227,7 @@
     border-radius: 8px;
     background: var(--accent);
     color: #000;
-    font-size: 8px;
+    font-size:calc(8px * var(--ui-scale, 1));
     letter-spacing: 0.08em;
     text-transform: uppercase;
     vertical-align: middle;
@@ -8342,7 +8373,7 @@
     line-height: 1;
   }
   .sfs-stat-label {
-    font-size: 8px;
+    font-size:calc(8px * var(--ui-scale, 1));
     letter-spacing: 0.28em;
     color: rgba(255,255,255,0.85);
     text-transform: uppercase;
@@ -8402,7 +8433,7 @@
     align-items: center;
   }
   .sfs-chart-title {
-    font-size: 8px;
+    font-size:calc(8px * var(--ui-scale, 1));
     letter-spacing: 0.28em;
     color: rgba(255,255,255,0.85);
     text-transform: uppercase;
@@ -8411,7 +8442,7 @@
     display: flex;
     align-items: center;
     gap: 10px;
-    font-size: 9px;
+    font-size:calc(9px * var(--ui-scale, 1));
     letter-spacing: 0.1em;
     color: #ffffff;
   }
@@ -8437,7 +8468,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 9px;
+    font-size:calc(9px * var(--ui-scale, 1));
     letter-spacing: 0.2em;
     color: rgba(255,255,255,0.3);
     text-transform: uppercase;
@@ -8446,7 +8477,7 @@
     display: flex;
     justify-content: space-between;
     padding: 0 2px;
-    font-size: 8px;
+    font-size:calc(8px * var(--ui-scale, 1));
     letter-spacing: 0.08em;
     color: #ffffff;
   }
@@ -9371,7 +9402,7 @@ html[dir="rtl"] #favorites-popover::before {
       <!-- Since Last Clean — number only -->
       <div class="litter-action-btn" style="cursor:default; pointer-events:none;">
         <div class="pet-card-icon">
-          <span id="litter-gauge-num" style="font-size:22px;font-weight:600;color:var(--accent);letter-spacing:0.05em;line-height:1;">—</span>
+          <span id="litter-gauge-num" style="font-size:calc(22px * var(--ui-scale, 1));font-weight:600;color:var(--accent);letter-spacing:0.05em;line-height:1;">—</span>
         </div>
         <div class="pet-card-text" data-i18n="Since Last Clean">Since Last Clean</div>
       </div>
@@ -9711,7 +9742,7 @@ const _HE = {
   "Screens": "מסכים",
   "Behavior": "התנהגות",
   "About": "אודות",
-  "Theme, background, fonts, and language": "ערכת נושא, רקע, גופנים ושפה",
+  "Theme, background, text size, fonts, and language": "ערכת נושא, רקע, גודל טקסט, גופנים ושפה",
   "THEME": "ערכת נושא",
   "BACKGROUND": "רקע",
   "Themed": "ערכת נושא",
@@ -9723,6 +9754,11 @@ const _HE = {
   "Vivid": "עז",
   "Subtle": "עדין",
   "FONTS": "גופנים",
+  "TEXT SIZE": "גודל טקסט",
+  "Scale": "קנה מידה",
+  "Smaller text": "טקסט קטן יותר",
+  "Larger text": "טקסט גדול יותר",
+  "Scales every text size by the same amount. Relative sizes stay the same.": "משנה את כל גדלי הטקסט באותו יחס. היחס בין האלמנטים נשמר.",
   "What shows on screen, and where": "מה מוצג על המסך, ואיפה",
   "TOP-LEFT ELEMENTS": "רכיבים בפינה העליונה (התחלה)",
   "CENTER ELEMENTS": "רכיבים במרכז",
@@ -10488,7 +10524,7 @@ function openWeatherPopup() {
 
   // Show popup immediately, forecast will fill in async
   document.getElementById("wx-popup-forecast").innerHTML =
-    `<div style="font-size:9px;letter-spacing:0.15em;color:rgba(255,255,255,0.3);padding:8px 0;">${fmtLoading()}</div>`;
+    `<div style="font-size:calc(9px * var(--ui-scale, 1));letter-spacing:0.15em;color:rgba(255,255,255,0.3);padding:8px 0;">${fmtLoading()}</div>`;
   document.getElementById("weather-overlay").classList.add("open");
   haptic("light");
 
@@ -10536,7 +10572,7 @@ function _renderWxForecast(forecast, unit, icons) {
   const fRow = document.getElementById("wx-popup-forecast");
   if (!fRow) return;
   if (!forecast.length) {
-    fRow.innerHTML = `<div style="font-size:9px;letter-spacing:0.15em;color:rgba(255,255,255,0.3);padding:8px 0;">${t("No forecast available")}</div>`;
+    fRow.innerHTML = `<div style="font-size:calc(9px * var(--ui-scale, 1));letter-spacing:0.15em;color:rgba(255,255,255,0.3);padding:8px 0;">${t("No forecast available")}</div>`;
     return;
   }
   const days = forecast.slice(1, 6);
@@ -11768,7 +11804,7 @@ function _wfsUpdateSunDot(progress) {
 function _wfsFetchForecast(unit, icons) {
   const fRow = document.getElementById("wfs-forecast-row");
   if (!fRow) return;
-  fRow.innerHTML = `<div style="font-size:9px;letter-spacing:0.15em;color:rgba(255,255,255,0.3);padding:8px 0;width:100%;text-align:center;">${fmtLoading()}</div>`;
+  fRow.innerHTML = `<div style="font-size:calc(9px * var(--ui-scale, 1));letter-spacing:0.15em;color:rgba(255,255,255,0.3);padding:8px 0;width:100%;text-align:center;">${fmtLoading()}</div>`;
 
   if (!_ws || !_wsReady) return;
   const msgId = _wsNextId();
@@ -11797,7 +11833,7 @@ function _wfsFetchForecast(unit, icons) {
     }
 
     if (!forecast.length) {
-      fRow.innerHTML = `<div style="font-size:9px;letter-spacing:0.15em;color:rgba(255,255,255,0.3);padding:8px 0;width:100%;text-align:center;">${t("No forecast available")}</div>`;
+      fRow.innerHTML = `<div style="font-size:calc(9px * var(--ui-scale, 1));letter-spacing:0.15em;color:rgba(255,255,255,0.3);padding:8px 0;width:100%;text-align:center;">${t("No forecast available")}</div>`;
       return;
     }
 
@@ -11849,7 +11885,7 @@ function _wfsFetchForecast(unit, icons) {
 function _wfsFetchHourly(unit, icons) {
   const container = document.getElementById("wfs-hourly-row");
   if (!container) return;
-  container.innerHTML = `<div style="font-size:9px;letter-spacing:0.15em;color:rgba(255,255,255,0.3);padding:8px 0;width:100%;text-align:center;">${fmtLoading()}</div>`;
+  container.innerHTML = `<div style="font-size:calc(9px * var(--ui-scale, 1));letter-spacing:0.15em;color:rgba(255,255,255,0.3);padding:8px 0;width:100%;text-align:center;">${fmtLoading()}</div>`;
 
   if (!_ws || !_wsReady) return;
   const msgId = _wsNextId();
@@ -11864,7 +11900,7 @@ function _wfsFetchHourly(unit, icons) {
     const forecast = response[CONFIG.weather.entity]?.forecast || [];
 
     if (!forecast.length) {
-      container.innerHTML = `<div style="font-size:9px;letter-spacing:0.15em;color:rgba(255,255,255,0.3);padding:8px 0;width:100%;text-align:center;">${t("No hourly forecast available")}</div>`;
+      container.innerHTML = `<div style="font-size:calc(9px * var(--ui-scale, 1));letter-spacing:0.15em;color:rgba(255,255,255,0.3);padding:8px 0;width:100%;text-align:center;">${t("No hourly forecast available")}</div>`;
       return;
     }
 
@@ -12683,7 +12719,7 @@ function openSourceDropdown(dropdownId) {
       isPlaying ? "playing" : ""
     ].filter(Boolean).join(" ");
     return `<div class="${classes}" onclick="selectMusicSource('${escapeHtml(entity)}')">
-      <span class="np-src-dot"></span>${label}${isPlaying ? '<span style="margin-left:auto;font-size:7px;letter-spacing:0.15em;color:var(--accent);padding-left:12px">▶</span>' : ''}
+      <span class="np-src-dot"></span>${label}${isPlaying ? '<span style="margin-left:auto;font-size:calc(7px * var(--ui-scale, 1));letter-spacing:0.15em;color:var(--accent);padding-left:12px">▶</span>' : ''}
     </div>`;
   }).join("");
 
@@ -16072,7 +16108,7 @@ async function _loadMotionLog() {
     if (rangeEl) rangeEl.textContent = `${filtered.length} event${filtered.length !== 1 ? "s" : ""} · last 24 h`;
 
   } catch (err) {
-    scroll.innerHTML = `<div class="cam-log-empty">${t("Could not load history.")}<br><span style="font-size:9px;opacity:0.5">${err}</span></div>`;
+    scroll.innerHTML = `<div class="cam-log-empty">${t("Could not load history.")}<br><span style="font-size:calc(9px * var(--ui-scale, 1));opacity:0.5">${err}</span></div>`;
   }
 }
 
@@ -16852,7 +16888,7 @@ function _dailyRenderEvents() {
       if (futureDates.length) {
         const nextD = futureDates[0];
         const nextLabel = nextD.toLocaleDateString([], { weekday: "long", month: "long", day: "numeric" });
-        nextEventHtml = `<div class="daily-empty" style="font-size:8px;margin-top:4px;letter-spacing:0.2em;color:#ffffff">NEXT EVENT ON ${nextLabel.toUpperCase()}</div>`;
+        nextEventHtml = `<div class="daily-empty" style="font-size:calc(8px * var(--ui-scale, 1));margin-top:4px;letter-spacing:0.2em;color:#ffffff">NEXT EVENT ON ${nextLabel.toUpperCase()}</div>`;
       }
     }
     list.innerHTML = `<div class="daily-empty">${fmtNoEvents()}</div>${nextEventHtml}`;
@@ -18337,7 +18373,7 @@ const _AQI_METRIC_ICONS = {
 /** _aqiMetricIcon — builds one metric tile's icon badge markup: either an
  * outline SVG icon (temp/humidity/tvoc/pm25/nox) or the CO2 text badge. */
 function _aqiMetricIcon(key) {
-  if (key === "co2") return `<span class="aqi-metric-icon aqi-metric-icon--co2">CO<sub style="font-size:8px;">2</sub></span>`;
+  if (key === "co2") return `<span class="aqi-metric-icon aqi-metric-icon--co2">CO<sub style="font-size:calc(8px * var(--ui-scale, 1));">2</sub></span>`;
   const def = _AQI_METRIC_ICONS[key];
   if (!def) return "";
   return `<span class="aqi-metric-icon aqi-metric-icon--${def.cls}"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">${def.svg}</svg></span>`;
@@ -19055,7 +19091,7 @@ const OV3_SWIPE_EXCLUDE_SELECTOR = ".popup-overlay.open, #daily-overlay, #thermo
       animation: exitHintFlash 0.7s ease-in-out infinite alternate;
     }
     #exit-gesture-hint span {
-      font-size: 9px;
+      font-size:calc(9px * var(--ui-scale, 1));
       letter-spacing: 0.2em;
       color: rgba(255,255,255,0.75);
       text-transform: uppercase;
@@ -21172,6 +21208,7 @@ const SETTINGS_DEFAULTS = {
   sensorPanels:        {},     // keyed by floor label → true/false
   dashFont:            'Montserrat',
   dashFontWeight:      300,
+  uiScale:             1,   // 0.8–1.5, multiplies every font-size together
   timeOfDayThemes:     { morning: null, afternoon: null, evening: null, night: null },
   exitGesture:         "swipe-down",  // "swipe-down" | "swipe-up" | "pinch"
   screensaverEnabled:  false,
@@ -21216,6 +21253,39 @@ function getGreeting() {
   return `${label}${name}`;
 }
 
+const UI_SCALE_MIN = 0.8;
+const UI_SCALE_MAX = 1.5;
+const UI_SCALE_STEP = 0.1;
+
+function _uiScale() {
+  const n = Number(_settings && _settings.uiScale);
+  if (!Number.isFinite(n)) return 1;
+  const stepped = Math.round(n * 10) / 10;
+  return Math.min(UI_SCALE_MAX, Math.max(UI_SCALE_MIN, stepped));
+}
+
+function applyUiScale() {
+  const scale = _uiScale();
+  if (_settings && _settings.uiScale !== scale) {
+    _settings.uiScale = scale;
+    saveSettings();
+  }
+  const prev = document.documentElement.style.getPropertyValue("--ui-scale");
+  document.documentElement.style.setProperty("--ui-scale", String(scale));
+  if (prev !== String(scale)) _ov3GreetingLastLabel = null;
+  const label = document.getElementById("st-ui-scale-value");
+  if (label) label.textContent = Math.round(scale * 100) + "%";
+  const minus = document.getElementById("st-ui-scale-minus");
+  const plus = document.getElementById("st-ui-scale-plus");
+  if (minus) minus.disabled = scale <= UI_SCALE_MIN;
+  if (plus) plus.disabled = scale >= UI_SCALE_MAX;
+}
+
+function stepUiScale(dir) {
+  const next = Math.round((_uiScale() + dir * UI_SCALE_STEP) * 10) / 10;
+  applySetting("uiScale", Math.min(UI_SCALE_MAX, Math.max(UI_SCALE_MIN, next)));
+}
+
 function updateGreeting() {
   const text = getGreeting();
   // Container is capped at 600px or 90vw, whichever is smaller — same as hero-stats.
@@ -21245,6 +21315,7 @@ function applyBgMode() {
 }
 
 function applyAllSettings() {
+  applyUiScale();
   // Greeting with personalised name
   updateGreeting();
 
@@ -21662,9 +21733,9 @@ function openSettings() {
         </label>`)
       ].join('');
       return `
-      <div class="settings-section-title" onclick="toggleSettingsSection(this)" style="font-size:11px">
+      <div class="settings-section-title" onclick="toggleSettingsSection(this)" style="font-size:calc(11px * var(--ui-scale, 1))">
         <span data-i18n="${escapeHtml(label)}">${escapeHtml(t(label))}</span>
-        <span style="opacity:0.4;font-size:9px;letter-spacing:0.1em;font-weight:400;margin-left:auto;padding-right:8px">${hours}</span>
+        <span style="opacity:0.4;font-size:calc(9px * var(--ui-scale, 1));letter-spacing:0.1em;font-weight:400;margin-left:auto;padding-right:8px">${hours}</span>
         <span class="settings-section-chevron"><svg width="12" height="12" aria-hidden="true"><use href="#icon-chevron-down"/></svg></span>
       </div>
       <div class="settings-section-body">
@@ -21727,6 +21798,7 @@ function openSettings() {
   const pNameEl = document.getElementById("st-personalised-name");
   if (pNameEl) pNameEl.value = _settings.personalisedName || "";
 
+  applyUiScale();
   document.getElementById("settings-overlay").classList.add("open");
 
   _syncFontUI();
@@ -22560,7 +22632,7 @@ _applyDailyI18n();
           <div class="wfs-aqi-center">
             <div class="wfs-aqi-number" id="wfs-aqi-number">—</div>
             <div class="wfs-aqi-unit">AQI</div>
-            <div class="wfs-aqi-quality" id="wfs-aqi-quality" style="font-size:10px; border-left:none; padding-left:0; letter-spacing:0.08em;">—</div>
+            <div class="wfs-aqi-quality" id="wfs-aqi-quality" style="font-size:calc(10px * var(--ui-scale, 1)); border-left:none; padding-left:0; letter-spacing:0.08em;">—</div>
             <div id="wfs-aqi-trend" style="display:flex;align-items:center;justify-content:center;margin-top:4px;"></div>
           </div>
         </div>
@@ -23063,7 +23135,7 @@ _applyDailyI18n();
     <span class="settings-cat-header-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg></span>
     <div>
       <div class="settings-cat-header-title" data-i18n="Appearance">Appearance</div>
-      <div class="settings-cat-header-subtitle" data-i18n="Theme, background, fonts, and language">Theme, background, fonts, and language</div>
+      <div class="settings-cat-header-subtitle" data-i18n="Theme, background, text size, fonts, and language">Theme, background, text size, fonts, and language</div>
     </div>
   </div>
 <div class="settings-section-title" onclick="toggleSettingsSection(this)">
@@ -23148,6 +23220,23 @@ _applyDailyI18n();
     </div>
 
     
+
+<hr class="settings-divider">
+    <div class="settings-section-title" onclick="toggleSettingsSection(this)">
+      <span data-i18n="TEXT SIZE">TEXT SIZE</span>
+      <span class="settings-section-chevron"><svg width="12" height="12" aria-hidden="true"><use href="#icon-chevron-down"/></svg></span>
+    </div>
+    <div class="settings-section-body">
+      <p class="settings-hint" data-i18n="Scales every text size by the same amount. Relative sizes stay the same.">Scales every text size by the same amount. Relative sizes stay the same.</p>
+      <div class="settings-item">
+        <span class="settings-label" data-i18n="Scale">Scale</span>
+        <div class="ui-scale-stepper">
+          <button type="button" class="ui-scale-btn" id="st-ui-scale-minus" onclick="stepUiScale(-1)" title="Smaller text" data-i18n-title="Smaller text" aria-label="Smaller text">−</button>
+          <span class="ui-scale-value" id="st-ui-scale-value">100%</span>
+          <button type="button" class="ui-scale-btn" id="st-ui-scale-plus" onclick="stepUiScale(1)" title="Larger text" data-i18n-title="Larger text" aria-label="Larger text">+</button>
+        </div>
+      </div>
+    </div>
 
 <hr class="settings-divider">
     <div class="settings-section-title" onclick="toggleSettingsSection(this)">
@@ -23245,7 +23334,7 @@ _applyDailyI18n();
       <label class="settings-check"><input type="checkbox" id="st-clock-format" onchange="applySetting('clockFormat', this.checked ? '12h' : '24h'); tickClock(); if(document.getElementById('clock-overlay')?.classList.contains('open')){_fcInit&&_fcInit();}"><span class="settings-check-mark"><svg width="10" height="10" aria-hidden="true"><use href="#icon-check"/></svg></span></label>
     </div>
     <div class="settings-item settings-sub">
-      <span class="settings-label" style="font-size:10px;opacity:0.5" data-i18n="Checked for 12-hour (AM/PM), unchecked for 24-hour">Checked for 12-hour (AM/PM), unchecked for 24-hour</span>
+      <span class="settings-label" style="font-size:calc(10px * var(--ui-scale, 1));opacity:0.5" data-i18n="Checked for 12-hour (AM/PM), unchecked for 24-hour">Checked for 12-hour (AM/PM), unchecked for 24-hour</span>
     </div>
     </div>
 
@@ -23354,7 +23443,7 @@ _applyDailyI18n();
         <label class="settings-toggle"><input type="checkbox" id="st-clock-format-ov3" onchange="applySetting('clockFormat', this.checked ? '12h' : '24h'); tickClock(); if(document.getElementById('clock-overlay')?.classList.contains('open')){_fcInit&&_fcInit();}"><span class="settings-knob"></span></label>
       </div>
       <div class="settings-item settings-sub">
-        <span class="settings-label" style="font-size:10px;opacity:0.5" data-i18n="Toggle on for 12-hour (AM/PM), off for 24-hour">Toggle on for 12-hour (AM/PM), off for 24-hour</span>
+        <span class="settings-label" style="font-size:calc(10px * var(--ui-scale, 1));opacity:0.5" data-i18n="Toggle on for 12-hour (AM/PM), off for 24-hour">Toggle on for 12-hour (AM/PM), off for 24-hour</span>
       </div>
       <div class="settings-item">
         <span class="settings-label" data-i18n="Personalised Name">Personalised Name</span>
@@ -25681,7 +25770,7 @@ _applyDailyI18n();
     padding: 1.2rem 1.8rem;
     background: linear-gradient(to bottom, rgba(0,0,0,0.7) 0%, transparent 100%);
     color: rgba(255,255,255,0.85);
-    font-size: 13px;
+    font-size:calc(13px * var(--ui-scale, 1));
     letter-spacing: 0.08em;
     text-transform: uppercase;
   }
@@ -25691,7 +25780,7 @@ _applyDailyI18n();
     gap: 8px;
   }
   #doorbell-time {
-    font-size: 13px;
+    font-size:calc(13px * var(--ui-scale, 1));
     opacity: 0.85;
     letter-spacing: 0.08em;
   }
@@ -25714,7 +25803,7 @@ _applyDailyI18n();
     align-items: center;
     gap: 12px;
     color: rgba(255,255,255,0.35);
-    font-size: 13px;
+    font-size:calc(13px * var(--ui-scale, 1));
     letter-spacing: 0.12em;
     text-transform: uppercase;
     position: absolute;
