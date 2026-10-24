@@ -198,6 +198,10 @@ Remember to clear the cache/hard refresh so the new file changes apply in the br
 <details>
 <summary>View version history</summary>
 
+New in v4.3.2
+- Overview stats can stay hidden until a Home Assistant condition matches
+- High visibility marks a stat with a tinted pill, in the alarm-badge style
+
 New in v4.3.1
 - Text size control scales all type together, from 80% to 150%
 

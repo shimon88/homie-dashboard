@@ -26,7 +26,7 @@
 <head>
 <meta charset="UTF-8">
 <!-- DASHBOARD VERSION — update this when releasing a new version -->
-<script>const DASHBOARD_VERSION = "4.3.1";</script>
+<script>const DASHBOARD_VERSION = "4.3.2";</script>
 <!-- GITHUB REPO — used only to check for the latest tagged release in Settings -->
 <script>const GITHUB_REPO = "shimon88/homie-dashboard";</script>
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
@@ -487,6 +487,39 @@
   }
   .stat-value.on  { color: var(--accent-hi); }
   .stat-value.off { color: rgba(255,255,255,0.7); }
+
+  /* Column count follows visible stats (max 5). Row classes replace the
+     fixed 5-column nth-child dividers so a hidden stat does not leave a hole. */
+  #hero-stats .stat:nth-child(n),
+  #ov2-stats .stat:nth-child(n) {
+    border-inline-start: 1px solid var(--ac-4);
+    border-top: none;
+    padding-top: 0.6rem;
+  }
+  #hero-stats .stat.stat-row-start:nth-child(n),
+  #ov2-stats .stat.stat-row-start:nth-child(n) {
+    border-inline-start: none;
+  }
+  #hero-stats .stat.stat-next-row:nth-child(n),
+  #ov2-stats .stat.stat-next-row:nth-child(n) {
+    border-top: 1px solid var(--ac-4);
+    padding-top: 0.8rem;
+  }
+  /* Same language as the alarm "triggered" badge: tinted pill, hairline,
+     colored type. The stat cell and its dividers stay untouched. */
+  #hero-stats .stat.stat-high .stat-value,
+  #ov2-stats .stat.stat-high .stat-value {
+    display: inline-block;
+    margin-top: 1px;
+    padding: 2px 10px;
+    border-radius: 20px;
+    background: rgba(230, 57, 70, 0.18);
+    border: 1px solid rgba(230, 57, 70, 0.45);
+    color: #ff8a94;
+    font-weight: 600 !important;
+    letter-spacing: 0.08em;
+    text-shadow: none;
+  }
 
   /* Indoor AQI's summary row has 6 tiles instead of the home screen's 5 —
      override the column count and fix up the divider math accordingly. */
@@ -9939,6 +9972,7 @@ const _STATUS_HE = {
   live: "בשידור",
   detected: "זוהה",
   clear: "פנוי",
+  done: "סיימה",
 };
 function tStatus(word) {
   if (!_isHebrewLocale()) return word;
@@ -12120,17 +12154,118 @@ function tickClock() {
 const activeControls = CONFIG.controls;
 
 /**
- * renderHomeStats — builds the stat grid HTML.
+ * homeStatIsOn — active test shared by stat colour, visibility, and high visibility.
+ * cover: open/opening. Everything else: on, locked, armed_away, armed_home, running.
+ */
+function homeStatIsOn(entity, val) {
+  const domain = String(entity || "").split(".")[0];
+  if (domain === "cover") return ["open", "opening"].includes(val);
+  return ["on", "locked", "armed_away", "armed_home", "running"].includes(val);
+}
+
+/**
+ * homeStatCondMet — true when every condition matches a cached HA state.
+ * cond is one object or an array (all must match). See CONFIG.homeStats.
+ * A missing state does not match.
+ */
+function homeStatCondMet(cond, stat) {
+  if (cond == null || cond === true) return true;
+  if (cond === false) return false;
+  const list = Array.isArray(cond) ? cond : [cond];
+  return list.every(c => homeStatOneCond(c, stat));
+}
+
+function homeStatOneCond(c, stat) {
+  if (!c || typeof c !== "object") return false;
+  const entity = c.entity || stat.entity;
+  if (!entity) return false;
+  const d = haGetCached(entity);
+  if (!d || d.state == null) return false;
+  const state = String(d.state);
+  if (c.state != null) {
+    const allowed = (Array.isArray(c.state) ? c.state : [c.state]).map(String);
+    if (!allowed.includes(state)) return false;
+  }
+  if (c.state_not != null) {
+    const blocked = (Array.isArray(c.state_not) ? c.state_not : [c.state_not]).map(String);
+    if (blocked.includes(state)) return false;
+  }
+  if (typeof c.on === "boolean" && homeStatIsOn(entity, state) !== c.on) return false;
+  return c.state != null || c.state_not != null || typeof c.on === "boolean";
+}
+
+function homeStatVisible(stat) {
+  if (!stat || stat.visible == null) return true;
+  return homeStatCondMet(stat.visible, stat);
+}
+
+/**
+ * homeStatHighVis — tinted alert pill on the value, same language as the alarm badge.
+ * true: on while this stat is active; always on when the stat has no onValue.
+ * object/array: same condition shape as visible.
+ */
+function homeStatHighVis(stat) {
+  const hv = stat && stat.highVisibility;
+  if (hv == null || hv === false) return false;
+  if (hv === true) {
+    if (!stat.onValue) return true;
+    const d = haGetCached(stat.entity);
+    if (!d || d.state == null) return false;
+    return homeStatIsOn(stat.entity, String(d.state));
+  }
+  return homeStatCondMet(hv, stat);
+}
+
+function _homeStatId(label) {
+  return String(label).replace(/\s/g, "_");
+}
+
+function _visibleHomeStats() {
+  return (CONFIG.homeStats || []).filter(homeStatVisible);
+}
+
+function _homeStatCols(count) {
+  return Math.min(5, Math.max(count, 1));
+}
+
+function _statGridEl(prefix) {
+  return document.getElementById(prefix === "ov2hs" ? "ov2-stats" : "hero-stats");
+}
+
+/**
+ * renderHomeStats — builds the stat grid HTML for the stats that pass visible.
  * prefix: 'hs' for screen 1 (default), 'ov2hs' for screen 2.
  */
 function renderHomeStats(prefix) {
-  prefix = prefix || 'hs';
-  return CONFIG.homeStats.map(s => `
-    <div class="stat">
+  prefix = prefix || "hs";
+  const stats = _visibleHomeStats();
+  const cols = _homeStatCols(stats.length);
+  return stats.map((s, i) => {
+    const id = _homeStatId(s.label);
+    const cls = ["stat"];
+    if (i % cols === 0) cls.push("stat-row-start");
+    if (i >= cols) cls.push("stat-next-row");
+    if (homeStatHighVis(s)) cls.push("stat-high");
+    return `<div class="${cls.join(" ")}" id="${prefix}-cell-${id}">
       <div class="stat-label">${escapeHtml(s.label)}</div>
-      <div class="stat-value" id="${prefix}-${s.label.replace(/\s/g,'_')}">—</div>
-    </div>
-  `).join('');
+      <div class="stat-value" id="${prefix}-${id}">—</div>
+    </div>`;
+  }).join("");
+}
+
+/** Rebuild the grid only when the visible set or column count changes. */
+function _mountHomeStats(prefix) {
+  const el = _statGridEl(prefix);
+  if (!el) return false;
+  const stats = _visibleHomeStats();
+  const cols = _homeStatCols(stats.length);
+  const sig = cols + ":" + stats.map(s => _homeStatId(s.label)).join("|");
+  if (el.dataset.statSig !== sig) {
+    el.dataset.statSig = sig;
+    el.style.gridTemplateColumns = `repeat(${cols}, 1fr)`;
+    el.innerHTML = renderHomeStats(prefix);
+  }
+  return true;
 }
 
 /**
@@ -12138,21 +12273,19 @@ function renderHomeStats(prefix) {
  * prefix: 'hs' for screen 1, 'ov2hs' for screen 2.
  */
 function _refreshStatGrid(prefix) {
-  for (const s of CONFIG.homeStats) {
-    if (!s.entity) continue;
+  if (!_mountHomeStats(prefix)) return;
+  for (const s of CONFIG.homeStats || []) {
+    if (!homeStatVisible(s) || !s.entity) continue;
     const d = haGetCached(s.entity);
-    const el = document.getElementById(`${prefix}-${s.label.replace(/\s/g,'_')}`);
+    const id = _homeStatId(s.label);
+    const el = document.getElementById(`${prefix}-${id}`);
+    const cell = document.getElementById(`${prefix}-cell-${id}`);
+    if (cell) cell.classList.toggle("stat-high", homeStatHighVis(s));
     if (!el || !d) continue;
     const val = d.state;
     let display, cls = "";
     if (s.onValue) {
-      const domain = s.entity.split(".")[0];
-      let isOn;
-      if (domain === "cover") {
-        isOn = ["open","opening"].includes(val);
-      } else {
-        isOn = ["on","locked","armed_away","armed_home","running"].includes(val);
-      }
+      const isOn = homeStatIsOn(s.entity, val);
       display = tStatus(isOn ? s.onValue : s.offValue);
       // invertColor: some stats show their "themed" state on the raw-off
       // value instead of raw-on (e.g. Cameras — "Privacy" should read as
@@ -12160,7 +12293,7 @@ function _refreshStatGrid(prefix) {
       const themed = s.invertColor ? !isOn : isOn;
       cls = themed ? "on" : "off";
     } else {
-      display = val + (s.unit || "");
+      display = tStatus(val) + (s.unit || "");
     }
     el.textContent = display;
     el.className = "stat-value " + cls;
@@ -15553,7 +15686,7 @@ async function refreshAll() {
  */
 function init() {
   updateGreeting();
-  document.getElementById("hero-stats").innerHTML = renderHomeStats('hs');
+  _refreshStatGrid('hs');
   buildSensorRow();
   buildControls(activeControls);
   tickClock(); // populate values while still hidden — revealed by fonts.ready in <head>
@@ -19272,7 +19405,7 @@ function _ensureOv2Built() {
 
   // Stats grid — use ov2hs prefix so IDs don't clash with screen 1's hs-* elements
   const stats = document.getElementById("ov2-stats");
-  if (stats) { stats.innerHTML = renderHomeStats('ov2hs'); _refreshStatGrid('ov2hs'); }
+  if (stats) _refreshStatGrid('ov2hs');
 
   // Build control list in sidebar
   _buildOv2Controls();

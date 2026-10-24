@@ -1,5 +1,5 @@
 /* ═══════════════════════════════════════════════════════════════════════════
- * HOMIE DASHBOARD CONFIGURATION v4.3.1
+ * HOMIE DASHBOARD CONFIGURATION v4.3.2
  * ═══════════════════════════════════════════════════════════════════════════
  * This is the main configuration file. Edit the sections below to customise the dashboard for your home.
  * Both homie-dashboard.html and config.js must be in the same folder.
@@ -191,6 +191,25 @@ const CONFIG = {
    *   out (e.g. Cameras below: the switch being "on" means Privacy Mode is
    *   engaged, which should look neutral, while "off" — cameras live — is
    *   the state that should be themed).
+   *
+   * visible — hide this stat unless the condition matches. Omit it to always
+   *   show the stat. A condition is an object, or an array of objects (every
+   *   one must match). Unknown entities stay hidden until a state arrives.
+   *     entity    — HA entity. Defaults to this stat's entity.
+   *     state     — raw state must equal this string, or one of a list.
+   *     state_not — raw state must not equal this string, or any of a list.
+   *     on        — true/false. Same active test as onValue
+   *                 (on, open, opening, locked, armed_away, armed_home, running).
+   *   Example — show the door only while it is open:
+   *     visible: { on: true }
+   *   Example — show only while another entity is on:
+   *     visible: { entity: "input_boolean.guest_mode", state: "on" }
+   *
+   * highVisibility — tinted red pill on the value, same style as the alarm badge.
+   *   true — on while this stat is in its active/on state.
+   *          Stats with no onValue stay in this style whenever they are visible.
+   *   condition — same shape as visible; the style is on while it matches.
+   *   Example: highVisibility: true
    *
    * If a stat shows "—", verify the entity ID at HA → Developer Tools → States.
         * ──────────────────────────────────────────────────────────────────── */
