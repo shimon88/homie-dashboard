@@ -1,5 +1,5 @@
 /* ═══════════════════════════════════════════════════════════════════════════
- * HOMIE DASHBOARD CONFIGURATION v4.3.3
+ * HOMIE DASHBOARD CONFIGURATION v4.4.0
  * ═══════════════════════════════════════════════════════════════════════════
  * This is the main configuration file. Edit the sections below to customise the dashboard for your home.
  * Both homie-dashboard.html and config.js must be in the same folder.
@@ -418,6 +418,23 @@ const CONFIG = {
     cameraEntity: "YOUR_DOORBELL_CAMERA_ENTITY",
     label:        "Doorbell · Front Door",
   },
+
+  /* ── FLOATING CAMERA ─────────────────────────────────────────────────────
+   * Small live feed in the corner. One window. The newest matching trigger
+   * wins. A sensor that stays "on" keeps the feed up. After it turns off,
+   * or after a doorbell / button / automation pulse, the feed stays for
+   * `seconds` (default 20) then hides. Tap the picture to enlarge. Close
+   * hides it until the next trigger.
+   *
+   * label         — text on the feed
+   * cameraEntity  — HA camera entity_id
+   * triggerEntity — binary_sensor, input_boolean, button, event, or automation
+   * seconds       — how long the feed lingers after the trigger ends
+   * ─────────────────────────────────────────────────────────────────────── */
+  cameraFloat: [
+    // { label: "Doorbell", cameraEntity: "YOUR_DOORBELL_CAMERA_ENTITY", triggerEntity: "YOUR_DOORBELL_VISITOR_ENTITY", seconds: 30 },
+    // { label: "Driveway", cameraEntity: "YOUR_DRIVEWAY_CAMERA_ENTITY", triggerEntity: "YOUR_DRIVEWAY_PERSON_ENTITY", seconds: 20 },
+  ],
 
 
   /* ── PET STATS ───────────────────────────────────────────────────────────

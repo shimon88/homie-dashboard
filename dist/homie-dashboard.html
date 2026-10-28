@@ -26,7 +26,7 @@
 <head>
 <meta charset="UTF-8">
 <!-- DASHBOARD VERSION — update this when releasing a new version -->
-<script>const DASHBOARD_VERSION = "4.3.3";</script>
+<script>const DASHBOARD_VERSION = "4.4.0";</script>
 <!-- GITHUB REPO — used only to check for the latest tagged release in Settings -->
 <script>const GITHUB_REPO = "shimon88/homie-dashboard";</script>
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
@@ -10327,6 +10327,10 @@ function _wsConnect() {
                 openDoorbellCamera();
               }
             }
+            // Floating camera: one small feed, chosen by CONFIG.cameraFloat triggers
+            if (typeof window._cameraFloatOnState === "function") {
+              window._cameraFloatOnState(newState, msg.event.data?.old_state);
+            }
             refreshAllUI();
           }
         }
@@ -19217,7 +19221,7 @@ function switchOverview(idx) {
 
 /* Elements where a horizontal drag should NOT switch overview screens —
  * shared by both the touch and mouse-drag handlers below. */
-const OV3_SWIPE_EXCLUDE_SELECTOR = ".popup-overlay.open, #daily-overlay, #thermostat-overlay, #photoframe-overlay, #nowplaying-fs-overlay, .sensor-row, .ov2-sensor-strip, .ov3-wx-hourly, .ov3-wx-scroll, .ov3-floors-scroll, .ov3-garden-scroll, .ov3-sec-scroll, .mush-ac-card, #ov3-ac-viewport, #ov3-ac-card, #ov3-pur-viewport, #ov3-pur-card";
+const OV3_SWIPE_EXCLUDE_SELECTOR = ".popup-overlay.open, #daily-overlay, #thermostat-overlay, #photoframe-overlay, #nowplaying-fs-overlay, #camera-float, .sensor-row, .ov2-sensor-strip, .ov3-wx-hourly, .ov3-wx-scroll, .ov3-floors-scroll, .ov3-garden-scroll, .ov3-sec-scroll, .mush-ac-card, #ov3-ac-viewport, #ov3-ac-card, #ov3-pur-viewport, #ov3-pur-card";
 
 /* ─────────────────────────────────────────────────────────────────────────────
  * Swipe gesture — swipe left anywhere on the screen to go to screen 2,
@@ -25977,6 +25981,320 @@ _applyDailyI18n();
     clearInterval(_presenceRefreshTimer);
     _presenceRefreshTimer = null;
   };
+})();
+</script>
+
+<!-- ─── FLOATING CAMERA ─── -->
+<div id="camera-float" aria-hidden="true">
+  <div id="camera-float-frame">
+    <img id="camera-float-feed" alt="" />
+    <div id="camera-float-offline">
+      <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="M23 7l-7 5 7 5V7z"/><rect x="1" y="5" width="15" height="14" rx="2"/>
+        <line x1="1" y1="1" x2="23" y2="23"/>
+      </svg>
+      <span data-i18n="Camera offline">Camera offline</span>
+    </div>
+    <div id="camera-float-bar">
+      <span id="camera-float-dot" aria-hidden="true"></span>
+      <span id="camera-float-label"></span>
+      <button type="button" id="camera-float-close" aria-label="Close" data-i18n-aria="Close">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true">
+          <line x1="6" y1="6" x2="18" y2="18"/><line x1="18" y1="6" x2="6" y2="18"/>
+        </svg>
+      </button>
+    </div>
+  </div>
+</div>
+
+<style>
+  #camera-float {
+    position: fixed;
+    z-index: 820;
+    right: 1.15rem;
+    bottom: 1.15rem;
+    width: calc(340px * var(--ui-scale, 1));
+    border-radius: 16px;
+    overflow: hidden;
+    background: #0c0c0e;
+    box-shadow: 0 18px 50px rgba(0,0,0,0.55), 0 0 0 1px rgba(255,255,255,0.14);
+    opacity: 0;
+    transform: translateY(10px) scale(0.98);
+    pointer-events: none;
+    transition: opacity 0.28s ease, transform 0.28s ease, width 0.28s ease;
+  }
+  #settings-overlay.open ~ #camera-float { z-index: 450; }
+  #camera-float.open {
+    opacity: 1;
+    transform: none;
+    pointer-events: auto;
+  }
+  #camera-float.expanded {
+    width: min(72vw, 960px);
+    right: 50%;
+    bottom: 8vh;
+    transform: translateX(50%);
+  }
+  #camera-float-frame {
+    position: relative;
+    aspect-ratio: 16 / 9;
+    background: #000;
+    cursor: pointer;
+  }
+  #camera-float-feed {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    display: block;
+    background: #000;
+  }
+  #camera-float-offline {
+    display: none;
+    position: absolute;
+    inset: 0;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    color: rgba(255,255,255,0.4);
+    font-size: calc(12px * var(--ui-scale, 1));
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+  #camera-float-feed.errored ~ #camera-float-offline,
+  #camera-float-feed:not([src]) ~ #camera-float-offline { display: flex; }
+  #camera-float-bar {
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 0.45rem 0.55rem 1.1rem;
+    background: linear-gradient(to bottom, rgba(0,0,0,0.72), transparent);
+    color: rgba(255,255,255,0.92);
+    font-size: calc(12px * var(--ui-scale, 1));
+    letter-spacing: 0.06em;
+    pointer-events: none;
+  }
+  #camera-float-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #ff4d4d;
+    box-shadow: 0 0 0 0 rgba(255,77,77,0.7);
+    animation: camera-float-pulse 1.6s ease-out infinite;
+    flex-shrink: 0;
+  }
+  @keyframes camera-float-pulse {
+    70% { box-shadow: 0 0 0 7px rgba(255,77,77,0); }
+    100% { box-shadow: 0 0 0 0 rgba(255,77,77,0); }
+  }
+  #camera-float-label {
+    flex: 1;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  #camera-float-close {
+    pointer-events: auto;
+    width: 28px;
+    height: 28px;
+    border: 0;
+    border-radius: 50%;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(0,0,0,0.45);
+    color: #fff;
+    cursor: pointer;
+  }
+</style>
+
+<script>
+(function () {
+  const ON = new Set(["on", "open", "opening", "detected", "occupied"]);
+  const float = document.getElementById("camera-float");
+  const feed = document.getElementById("camera-float-feed");
+  const labelEl = document.getElementById("camera-float-label");
+  const frame = document.getElementById("camera-float-frame");
+  const closeBtn = document.getElementById("camera-float-close");
+  if (!float || !feed) return;
+
+  let slots = [];
+  let entity = null;
+  let gen = 0;
+  let busy = false;
+  let expireTimer = null;
+  let fetchTimer = null;
+
+  function rules() {
+    const list = (typeof CONFIG !== "undefined" && Array.isArray(CONFIG.cameraFloat)) ? CONFIG.cameraFloat : [];
+    return list.filter(r => r && r.cameraEntity && r.triggerEntity
+      && !String(r.cameraEntity).startsWith("YOUR_")
+      && !String(r.triggerEntity).startsWith("YOUR_"));
+  }
+
+  function lingerMs(rule) {
+    const n = Number(rule.seconds);
+    return (Number.isFinite(n) && n > 0 ? n : 20) * 1000;
+  }
+
+  function refreshMs() {
+    const n = (typeof CONFIG !== "undefined" && CONFIG.cameraRefreshSeconds) || 1;
+    return Math.max(0.5, n) * 1000;
+  }
+
+  function kind(newState, oldState) {
+    if (!oldState) return null;
+    const domain = String(newState.entity_id || "").split(".")[0];
+    const newTs = newState.attributes?.last_triggered;
+    const oldTs = oldState.attributes?.last_triggered;
+    if (newTs && newTs !== oldTs) return "pulse";
+    if ((domain === "button" || domain === "event") && newState.state !== oldState.state) return "pulse";
+    const was = ON.has(oldState.state);
+    const now = ON.has(newState.state);
+    if (now && !was) return "rise";
+    if (!now && was) return "fall";
+    return null;
+  }
+
+  function desired() {
+    const now = Date.now();
+    let best = -1;
+    let bestAt = -1;
+    slots.forEach((slot, i) => {
+      if (!slot || slot.dismissed) return;
+      if (!slot.held && slot.until <= now) return;
+      if (slot.shownAt >= bestAt) { best = i; bestAt = slot.shownAt; }
+    });
+    return best;
+  }
+
+  function revokeFeed() {
+    const src = feed.src || "";
+    feed.removeAttribute("src");
+    feed.classList.remove("loaded", "errored");
+    if (src.startsWith("blob:")) URL.revokeObjectURL(src);
+  }
+
+  function hide() {
+    if (!float.classList.contains("open")) return;
+    float.classList.remove("open", "expanded");
+    float.setAttribute("aria-hidden", "true");
+    gen++;
+    entity = null;
+    busy = false;
+    revokeFeed();
+    clearInterval(fetchTimer);
+    fetchTimer = null;
+  }
+
+  function stopExpireIfIdle() {
+    if (slots.some(Boolean)) return;
+    clearInterval(expireTimer);
+    expireTimer = null;
+  }
+
+  function load() {
+    if (!entity || busy || !float.classList.contains("open")) return;
+    if (typeof BASE === "undefined" || typeof HA_TOKEN === "undefined") return;
+    const token = gen;
+    const cam = entity;
+    busy = true;
+    fetch(`${BASE}/api/camera_proxy/${cam}`, { headers: { Authorization: `Bearer ${HA_TOKEN}` } })
+      .then(r => r.ok ? r.blob() : Promise.reject(r.status))
+      .then(blob => {
+        if (token !== gen || cam !== entity) return;
+        const url = URL.createObjectURL(blob);
+        if (token !== gen || cam !== entity) { URL.revokeObjectURL(url); return; }
+        const buf = new Image();
+        buf.onload = () => {
+          if (token !== gen || cam !== entity) { URL.revokeObjectURL(url); return; }
+          const old = feed.src || "";
+          feed.src = url;
+          feed.classList.add("loaded");
+          feed.classList.remove("errored");
+          setTimeout(() => { if (old.startsWith("blob:")) URL.revokeObjectURL(old); }, 100);
+        };
+        buf.onerror = () => URL.revokeObjectURL(url);
+        buf.src = url;
+      })
+      .catch(() => {
+        if (token === gen && !feed.classList.contains("loaded")) feed.classList.add("errored");
+      })
+      .finally(() => { busy = false; });
+  }
+
+  function sync(announce) {
+    const idx = desired();
+    if (idx < 0) { hide(); stopExpireIfIdle(); return; }
+    const rule = rules()[idx];
+    if (!rule) { hide(); return; }
+    const changed = rule.cameraEntity !== entity;
+    const wasOpen = float.classList.contains("open");
+    entity = rule.cameraEntity;
+    if (labelEl) labelEl.textContent = rule.label || rule.cameraEntity;
+    if (!wasOpen || changed) {
+      if (changed) { gen++; busy = false; revokeFeed(); }
+      float.classList.add("open");
+      float.setAttribute("aria-hidden", "false");
+      if (announce && typeof _ssDismiss === "function") _ssDismiss();
+      if (announce && typeof haptic === "function") haptic("medium");
+      load();
+      if (!fetchTimer) fetchTimer = setInterval(load, refreshMs());
+    }
+    if (!expireTimer) expireTimer = setInterval(expire, 500);
+  }
+
+  function expire() {
+    const now = Date.now();
+    slots.forEach((slot, i) => {
+      if (slot && !slot.held && slot.until <= now) slots[i] = null;
+    });
+    sync(false);
+  }
+
+  window._cameraFloatOnState = function (newState, oldState) {
+    if (!newState?.entity_id) return;
+    const list = rules();
+    if (!list.length) return;
+    let hit = false;
+    list.forEach((rule, i) => {
+      if (rule.triggerEntity !== newState.entity_id) return;
+      const how = kind(newState, oldState);
+      if (!how) return;
+      hit = true;
+      if (how === "fall") {
+        const slot = slots[i];
+        if (!slot) return;
+        if (slot.dismissed) { slots[i] = null; return; }
+        slot.held = false;
+        slot.until = Date.now() + lingerMs(rule);
+        return;
+      }
+      slots[i] = { held: how === "rise", until: how === "rise" ? Infinity : Date.now() + lingerMs(rule), shownAt: Date.now(), dismissed: false };
+    });
+    if (hit) sync(true);
+  };
+
+  closeBtn?.addEventListener("click", (e) => {
+    e.stopPropagation();
+    const idx = desired();
+    if (idx >= 0 && slots[idx]) {
+      if (slots[idx].held) slots[idx].dismissed = true;
+      else slots[idx] = null;
+    }
+    hide();
+    stopExpireIfIdle();
+    if (typeof haptic === "function") haptic("light");
+  });
+
+  frame?.addEventListener("click", () => {
+    if (!float.classList.contains("open")) return;
+    float.classList.toggle("expanded");
+  });
 })();
 </script>
 

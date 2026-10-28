@@ -198,6 +198,9 @@ Remember to clear the cache/hard refresh so the new file changes apply in the br
 <details>
 <summary>View version history</summary>
 
+New in v4.4.0
+- Corner camera feed opens for a configured trigger, such as a doorbell ring or a person on the driveway
+
 New in v4.3.3
 - A control can show preset run buttons that start a script and count down a timer
 
