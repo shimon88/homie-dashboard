@@ -1,5 +1,5 @@
 /* ═══════════════════════════════════════════════════════════════════════════
- * HOMIE DASHBOARD CONFIGURATION v4.3.2
+ * HOMIE DASHBOARD CONFIGURATION v4.3.3
  * ═══════════════════════════════════════════════════════════════════════════
  * This is the main configuration file. Edit the sections below to customise the dashboard for your home.
  * Both homie-dashboard.html and config.js must be in the same folder.
@@ -508,6 +508,11 @@ const CONFIG = {
    *   noRoomGrouping: true — flat list even when subGroups is used
    *   twoColumnGrid: true  — two-column layout for many small cards
    *   isSceneChip: true    — turns subGroups into scene category launchers
+   *
+   * runFor on a subEntity — buttons under the toggle. Each entry needs
+   *   label and script (a script.* that starts a timed run).
+   * stopScript — script that cancels the run. stopLabel — its button text.
+   * timer — timer.* whose remaining time shows under the buttons.
         * ──────────────────────────────────────────────────────────────────── */
   controls: [
     {

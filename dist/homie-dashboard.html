@@ -26,7 +26,7 @@
 <head>
 <meta charset="UTF-8">
 <!-- DASHBOARD VERSION — update this when releasing a new version -->
-<script>const DASHBOARD_VERSION = "4.3.2";</script>
+<script>const DASHBOARD_VERSION = "4.3.3";</script>
 <!-- GITHUB REPO — used only to check for the latest tagged release in Settings -->
 <script>const GITHUB_REPO = "shimon88/homie-dashboard";</script>
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
@@ -1273,6 +1273,31 @@
     transition: transform 0.2s;
   }
   .popup-item.on .popup-toggle::after { transform: translateX(18px); }
+
+  /* Timed run buttons under a toggle (boiler presets). */
+  .popup-runfor { display: flex; flex-direction: column; gap: 8px; }
+  .popup-runfor-row { display: flex; gap: 6px; }
+  .popup-runfor-btn {
+    flex: 1;
+    padding: 8px 0;
+    border-radius: 8px;
+    border: 1px solid rgba(255,255,255,0.15);
+    background: rgba(255,255,255,0.05);
+    color: rgba(255,255,255,0.85);
+    font-size: calc(12px * var(--ui-scale, 1));
+    cursor: pointer;
+    touch-action: manipulation;
+  }
+  .popup-runfor-btn:active { background: var(--ac-12); }
+  .popup-runfor-stop { color: #ff8a80; }
+  .popup-runfor-remain {
+    display: none;
+    text-align: center;
+    font-size: calc(12px * var(--ui-scale, 1));
+    letter-spacing: 0.06em;
+    color: var(--accent-hi);
+  }
+  .popup-runfor-remain.visible { display: block; }
 
   /* ─── EXPANDABLE GROUP ROW (inline accordion inside flat popup lists) ─── */
   /* e.g. HW Circulation inside Bath popup. Cursor/select already handled by  */
@@ -13131,6 +13156,7 @@ function _openPopupOverlay(sizeClass) {
   if (sizeClass) {
     document.getElementById("popup")?.classList.add(sizeClass);
   }
+  _armRunFor(_popupCtrl);
 }
 
 /**
@@ -13138,9 +13164,12 @@ function _openPopupOverlay(sizeClass) {
  *
  * @param {number} i — index into activeControls
  */
+let _popupCtrl = null;
+
 async function openPopup(i) {
   haptic("light");
   const c = activeControls[i];
+  _popupCtrl = c;
   document.getElementById("popup-title").textContent = c.label;
   const list = document.getElementById("popup-list");
 
@@ -13345,10 +13374,10 @@ async function openPopup(i) {
           } else if (isPurifierControl) {
             html += buildMushroomPurifierCard(i, j, s);
           } else if (domain === "switch" || domain === "input_boolean" || domain === "fan") {
-            html += buildMushroomSwitchCard(i, j, s);
+            html += wrapRunFor(i, j, s, buildMushroomSwitchCard(i, j, s));
           } else {
-            html += `<div class="popup-item" id="sub-${i}-${j}" onclick="toggleSubEntity(event,${i},${j})">
-              <span class="popup-item-label">${escapeHtml(s.label)}</span><div class="popup-toggle"></div></div>`;
+            html += wrapRunFor(i, j, s, `<div class="popup-item" id="sub-${i}-${j}" onclick="toggleSubEntity(event,${i},${j})">
+              <span class="popup-item-label">${escapeHtml(s.label)}</span><div class="popup-toggle"></div></div>`);
           }
         }
       });
@@ -13366,8 +13395,8 @@ async function openPopup(i) {
       } else if (isPurifierControl) {
         html += buildMushroomPurifierCard(i, j, s);
       } else {
-        html += `<div class="popup-item" id="sub-${i}-${j}" onclick="toggleSubEntity(event,${i},${j})">
-          <span class="popup-item-label">${escapeHtml(s.label)}</span><div class="popup-toggle"></div></div>`;
+        html += wrapRunFor(i, j, s, `<div class="popup-item" id="sub-${i}-${j}" onclick="toggleSubEntity(event,${i},${j})">
+          <span class="popup-item-label">${escapeHtml(s.label)}</span><div class="popup-toggle"></div></div>`);
       }
     });
   }
@@ -13567,6 +13596,100 @@ function updateMushroomSwitchCard(i, j, isOn) {
   const statusEl = document.getElementById(`swstatus-${i}-${j}`);
   if (card)     card.classList.toggle("on", isOn);
   if (statusEl) statusEl.textContent = isOn ? fmtOn() : fmtOff();
+}
+
+/**
+ * wrapRunFor — adds preset-time buttons under a toggle when the sub-entity
+ * lists runFor scripts. Each script turns the device on for a fixed time.
+ */
+function wrapRunFor(i, j, s, innerHtml) {
+  const actions = s && s.runFor;
+  if (!actions || !actions.length) return innerHtml;
+  const btns = actions.map(a =>
+    `<button type="button" class="popup-runfor-btn" onclick='runEntityScript(event,${JSON.stringify(a.script)},${i},${j})'>${escapeHtml(a.label)}</button>`
+  ).join("");
+  const stop = s.stopScript
+    ? `<button type="button" class="popup-runfor-btn popup-runfor-stop" onclick='runEntityScript(event,${JSON.stringify(s.stopScript)},${i},${j})'>${escapeHtml(s.stopLabel || "Stop")}</button>`
+    : "";
+  return `<div class="popup-runfor">${innerHtml}<div class="popup-runfor-row">${btns}${stop}</div><div class="popup-runfor-remain" id="runfor-remain-${i}-${j}"></div></div>`;
+}
+
+function _controlHasRunFor(c) {
+  if (!c) return false;
+  const subs = [...(c.subEntities || [])];
+  (c.subGroups || []).forEach(g => (g.subEntities || []).forEach(s => subs.push(s)));
+  return subs.some(s => s.runFor && s.runFor.length);
+}
+
+let _runForTimer = null;
+
+function _stopRunForTick() {
+  if (_runForTimer) { clearInterval(_runForTimer); _runForTimer = null; }
+}
+
+function _armRunFor(c) {
+  _stopRunForTick();
+  if (!_controlHasRunFor(c)) return;
+  refreshOpenRunFor();
+  _runForTimer = setInterval(refreshOpenRunFor, 1000);
+}
+
+function _timerRemainText(state) {
+  if (!state || state.state !== "active") return "";
+  const fin = state.attributes && state.attributes.finishes_at;
+  if (fin) {
+    const ms = new Date(fin).getTime() - Date.now();
+    if (isNaN(ms) || ms <= 0) return "";
+    const total = Math.ceil(ms / 1000);
+    const h = Math.floor(total / 3600);
+    const m = Math.floor((total % 3600) / 60);
+    const sec = total % 60;
+    const pad = n => String(n).padStart(2, "0");
+    return h ? `${h}:${pad(m)}:${pad(sec)}` : `${pad(m)}:${pad(sec)}`;
+  }
+  return (state.attributes && state.attributes.remaining) || "";
+}
+
+function refreshOpenRunFor() {
+  if (!isPopupOpen()) return;
+  for (let ci = 0; ci < activeControls.length; ci++) {
+    const subs = activeControls[ci]._flatSubs || activeControls[ci].subEntities || [];
+    for (let j = 0; j < subs.length; j++) {
+      const s = subs[j];
+      if (!s || !s.runFor || !s.runFor.length) continue;
+      const remain = document.getElementById(`runfor-remain-${ci}-${j}`);
+      const timer = s.timer ? haGetCached(s.timer) : null;
+      const text = _timerRemainText(timer);
+      if (remain) {
+        remain.textContent = text;
+        remain.classList.toggle("visible", !!text);
+      }
+      const sw = s.entity ? haGetCached(s.entity) : null;
+      if (sw) {
+        const isOn = !["off", "closed", "unavailable", "unknown"].includes(sw.state);
+        updateMushroomSwitchCard(ci, j, isOn);
+        const row = document.getElementById(`sub-${ci}-${j}`);
+        if (row && row.classList.contains("popup-item")) row.classList.toggle("on", isOn);
+      }
+    }
+  }
+}
+
+async function runEntityScript(e, entity, i, j) {
+  e.stopPropagation();
+  e.preventDefault();
+  haptic("medium");
+  const c = activeControls[i];
+  const s = (c._flatSubs || c.subEntities || [])[j];
+  const stopping = !!(s && s.stopScript === entity);
+  updateMushroomSwitchCard(i, j, !stopping);
+  const row = document.getElementById(`sub-${i}-${j}`);
+  if (row && row.classList.contains("popup-item")) row.classList.toggle("on", !stopping);
+  if (stopping) {
+    const remain = document.getElementById(`runfor-remain-${i}-${j}`);
+    if (remain) { remain.textContent = ""; remain.classList.remove("visible"); }
+  }
+  await haService("script", "turn_on", { entity_id: entity });
 }
 
 /* ─── AC MODE ICONS & THEME HELPER ─────────────────────────────────────────
@@ -14545,10 +14668,10 @@ async function toggleRoomAccordion(roomId, ctrlIdx, startIdx, count) {
       else {
         const domain = s.entity ? s.entity.split(".")[0] : "";
         if (domain === "switch" || domain === "input_boolean" || domain === "fan")
-          parts.push(buildMushroomSwitchCard(ctrlIdx, j, s));
+          parts.push(wrapRunFor(ctrlIdx, j, s, buildMushroomSwitchCard(ctrlIdx, j, s)));
         else
-          parts.push(`<div class="popup-item" id="sub-${ctrlIdx}-${j}" onclick="toggleSubEntity(event,${ctrlIdx},${j})">
-            <span class="popup-item-label">${escapeHtml(s.label)}</span><div class="popup-toggle"></div></div>`);
+          parts.push(wrapRunFor(ctrlIdx, j, s, `<div class="popup-item" id="sub-${ctrlIdx}-${j}" onclick="toggleSubEntity(event,${ctrlIdx},${j})">
+            <span class="popup-item-label">${escapeHtml(s.label)}</span><div class="popup-toggle"></div></div>`));
       }
     }
     if (isLightControl) {
@@ -14701,6 +14824,8 @@ function closePopup(e) {
   document.getElementById("popup-overlay").classList.remove("open");
   _openAccordionRoomId = null;
   _gardenPopupOpen = false;
+  _popupCtrl = null;
+  _stopRunForTick();
   // Reset popup size modifiers for next open
   document.getElementById("popup")?.classList.remove("popup--compact", "popup--expanded", "popup--narrow", "popup--scene", "popup--garden");
 }
@@ -15551,6 +15676,7 @@ function refreshAllUI() {
     // Popup is open — live-refresh any visible AC cards from _acCardState
     // so external changes (remote, HA automations) show up inside the popup too.
     refreshOpenAcCards();
+    refreshOpenRunFor();
     // Irrigation popup — keep plant moisture + toggle states live while open.
     if (_gardenPopupOpen) _refreshGardenPopup();
   }

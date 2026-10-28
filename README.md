@@ -198,6 +198,9 @@ Remember to clear the cache/hard refresh so the new file changes apply in the br
 <details>
 <summary>View version history</summary>
 
+New in v4.3.3
+- A control can show preset run buttons that start a script and count down a timer
+
 New in v4.3.2
 - Overview stats can stay hidden until a Home Assistant condition matches
 - High visibility marks a stat with a tinted pill, in the alarm-badge style
