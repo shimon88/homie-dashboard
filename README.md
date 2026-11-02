@@ -198,6 +198,9 @@ Remember to clear the cache/hard refresh so the new file changes apply in the br
 <details>
 <summary>View version history</summary>
 
+New in v5.0.2
+- Shabbat Clock slot borders stay visible on a tablet. Each hour is a light track with a 2px gap between the 15-minute slots
+
 New in v5.0.1
 - Shabbat Clock menu icon is two candles
 - Scene icons for sun, light bulb, leave home, and arrive home: `ICONS.scenes.sun`, `bulb`, `leaveHome`, `arriveHome`

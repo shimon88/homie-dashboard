@@ -26,7 +26,7 @@
 <head>
 <meta charset="UTF-8">
 <!-- DASHBOARD VERSION — update this when releasing a new version -->
-<script>const DASHBOARD_VERSION = "5.0.1";</script>
+<script>const DASHBOARD_VERSION = "5.0.2";</script>
 <!-- GITHUB REPO — used only to check for the latest tagged release in Settings -->
 <script>const GITHUB_REPO = "shimon88/homie-dashboard";</script>
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
@@ -26116,14 +26116,19 @@ _applyDailyI18n();
   .shb-hours {
     display: grid;
     grid-template-columns: repeat(24, 1fr);
-    gap: 3px;
+    gap: 4px;
     direction: ltr;
     touch-action: none;
   }
+  .shb-hour { min-width: 0; }
   .shb-hour-cells {
     display: grid;
-    gap: 1px;
-    height: 32px;
+    gap: 2px;
+    height: 36px;
+    min-width: 0;
+    padding: 2px;
+    border-radius: 3px;
+    background: rgba(255,255,255,0.42);
   }
   .shb-hour-label {
     margin-top: 4px;
@@ -26139,14 +26144,15 @@ _applyDailyI18n();
     border: 0;
     padding: 0;
     margin: 0;
+    min-width: 0;
     cursor: pointer;
-    background: rgba(255,255,255,0.08);
+    background: #121212;
     border-radius: 1px;
     touch-action: manipulation;
   }
   .shb-cell.on { background: var(--accent-hi, #d4ae78); }
   .shb-cell:active { filter: brightness(1.35); }
-  .shb-cell.now { box-shadow: inset 0 0 0 1px #fff; position: relative; z-index: 1; }
+  .shb-cell.now { box-shadow: inset 0 0 0 2px #fff; position: relative; z-index: 1; }
   .shb-now {
     margin-top: 0.6rem;
     font-size: 0.7rem;
