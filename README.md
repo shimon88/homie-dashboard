@@ -198,6 +198,9 @@ Remember to clear the cache/hard refresh so the new file changes apply in the br
 <details>
 <summary>View version history</summary>
 
+New in v5.0.0
+- Shabbat Clock dashboard: 24-hour schedule for each Shabbat Clock integration timer (`shabbatClocks` in config.js). Tap a 15-minute slot, or slide across slots to paint them. A switch enables or disables that timer, and an air conditioner can set the mode and temperature used when the timer turns it on
+
 New in v4.4.0
 - Corner camera feed opens for a configured trigger, such as a doorbell ring or a person on the driveway
 
