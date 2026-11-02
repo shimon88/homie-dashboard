@@ -1,5 +1,5 @@
 /* ═══════════════════════════════════════════════════════════════════════════
- * HOMIE DASHBOARD CONFIGURATION v5.0.2
+ * HOMIE DASHBOARD CONFIGURATION v5.1.0
  * ═══════════════════════════════════════════════════════════════════════════
  * This is the main configuration file. Edit the sections below to customise the dashboard for your home.
  * Both homie-dashboard.html and config.js must be in the same folder.
@@ -394,6 +394,9 @@ const CONFIG = {
    * label         — display name shown in the bottom-left of each cell
    * motionEntity  — (optional) binary_sensor entity_id for motion detection;
    *                 cell glows red with a pulsing dot when motion is detected
+   * streamEntity  — (optional) full-quality camera. Snapshot fallback while open.
+   * go2rtcStream  — (optional) Frigate go2rtc stream name. Live video while open.
+   *                 The grid keeps using entity.
    *
    * cameraRefreshSeconds — how often each frame is fetched (default: 1)
    * ──────────────────────────────────────────────────────────────────────── */

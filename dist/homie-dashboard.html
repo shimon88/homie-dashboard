@@ -26,7 +26,7 @@
 <head>
 <meta charset="UTF-8">
 <!-- DASHBOARD VERSION — update this when releasing a new version -->
-<script>const DASHBOARD_VERSION = "5.0.2";</script>
+<script>const DASHBOARD_VERSION = "5.1.0";</script>
 <!-- GITHUB REPO — used only to check for the latest tagged release in Settings -->
 <script>const GITHUB_REPO = "shimon88/homie-dashboard";</script>
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
@@ -4144,10 +4144,21 @@
     opacity: 1;
     pointer-events: auto;
   }
-  #cam-fullscreen img {
+  #cam-fullscreen img,
+  #cam-fullscreen video {
     width: 100%;
     height: 100%;
     object-fit: contain;
+    background: #000;
+  }
+  #cam-fullscreen video {
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    pointer-events: none;
+  }
+  #cam-fullscreen video.playing {
+    opacity: 1;
   }
   #cam-fullscreen-info {
     position: absolute;
@@ -10291,6 +10302,13 @@ function _wsConnect() {
 
       /* ── Step 3: result messages ── */
       case "result":
+        if (_camStreamWaiters.has(msg.id)) {
+          const wait = _camStreamWaiters.get(msg.id);
+          _camStreamWaiters.delete(msg.id);
+          if (msg.success) wait.resolve(msg.result);
+          else wait.reject(msg.error);
+          break;
+        }
         if (msg.id === getStatesId && msg.success && Array.isArray(msg.result)) {
           // Seed the cache with the full state snapshot
           stateCache = new Map(msg.result.map(s => [s.entity_id, s]));
@@ -16143,6 +16161,168 @@ function _camMotionAgo(date) {
 }
 
 // ── Fullscreen ──
+const _camStreamWaiters = new Map();
+let _camMse = null;
+const _CAM_MSE_CODECS = ["avc1.640029", "avc1.64002A", "avc1.640033", "hvc1.1.6.L153.B0"];
+
+function _camWsCall(payload) {
+  return new Promise((resolve, reject) => {
+    if (!_ws || _ws.readyState !== 1) { reject(new Error("offline")); return; }
+    const id = _wsNextId();
+    const timer = setTimeout(() => {
+      if (!_camStreamWaiters.has(id)) return;
+      _camStreamWaiters.delete(id);
+      reject(new Error("timeout"));
+    }, 8000);
+    _camStreamWaiters.set(id, {
+      resolve: (v) => { clearTimeout(timer); resolve(v); },
+      reject: (e) => { clearTimeout(timer); reject(e); },
+    });
+    _ws.send(JSON.stringify(Object.assign({ id }, payload)));
+  });
+}
+
+function _camStopVideo() {
+  const session = _camMse;
+  _camMse = null;
+  if (session) {
+    session.closed = true;
+    try { session.ws?.close(); } catch (e) {}
+    if (session.url) URL.revokeObjectURL(session.url);
+  }
+  const video = document.getElementById("cam-fullscreen-video");
+  if (!video) return;
+  video.classList.remove("playing");
+  video.pause();
+  video.removeAttribute("src");
+  video.srcObject = null;
+  try { video.load(); } catch (e) {}
+}
+
+// Live fMP4 from Frigate's go2rtc, proxied by the Frigate integration.
+// onDrop runs if the stream ends after it started playing.
+function _camPlayMse(stream, onDrop) {
+  const video = document.getElementById("cam-fullscreen-video");
+  const MS = window.ManagedMediaSource || window.MediaSource;
+  if (!video || !MS) return Promise.reject(new Error("mse unsupported"));
+  const instance = (typeof CONFIG !== "undefined" && CONFIG.frigateInstance) || "frigate";
+  const path = `/api/frigate/${instance}/mse/api/ws?src=${encodeURIComponent(stream)}`;
+  return _camWsCall({ type: "auth/sign_path", path, expires: 60 }).then((res) => new Promise((resolve, reject) => {
+    const session = { ws: null, url: null, closed: false };
+    _camMse = session;
+    let started = false;
+    let failed = false;
+    const timer = setTimeout(() => fail(new Error("mse timeout")), 8000);
+    const fail = (err) => {
+      if (started || failed) return;
+      failed = true;
+      clearTimeout(timer);
+      reject(err);
+    };
+    const ms = new MS();
+    video.muted = true;
+    video.playsInline = true;
+    if (window.ManagedMediaSource && MS === window.ManagedMediaSource) {
+      video.disableRemotePlayback = true;
+      video.srcObject = ms;
+    } else {
+      session.url = URL.createObjectURL(ms);
+      video.src = session.url;
+    }
+    video.addEventListener("playing", () => {
+      if (session.closed || started) return;
+      started = true;
+      clearTimeout(timer);
+      video.classList.add("playing");
+      resolve();
+    }, { once: true });
+
+    ms.addEventListener("sourceopen", () => {
+      if (session.closed) return;
+      const ws = new WebSocket(BASE.replace(/^http/, "ws") + res.path);
+      session.ws = ws;
+      ws.binaryType = "arraybuffer";
+      let sb = null;
+      const queue = [];
+      // Keep about 5 s of buffer and stay within 1.5 s of the live edge.
+      const pump = () => {
+        if (!sb || sb.updating || session.closed) return;
+        if (queue.length) {
+          try { sb.appendBuffer(queue.shift()); } catch (e) { queue.length = 0; }
+          return;
+        }
+        if (!sb.buffered.length) return;
+        const end = sb.buffered.end(sb.buffered.length - 1);
+        const start0 = sb.buffered.start(0);
+        if (end - start0 > 10) {
+          try { sb.remove(start0, end - 5); } catch (e) {}
+          return;
+        }
+        if (video.currentTime < start0 || end - video.currentTime > 1.5) {
+          video.currentTime = Math.max(start0, end - 0.3);
+        }
+      };
+      ws.onopen = () => {
+        const codecs = _CAM_MSE_CODECS
+          .filter(c => MS.isTypeSupported(`video/mp4; codecs="${c}"`))
+          .join();
+        ws.send(JSON.stringify({ type: "mse", value: codecs }));
+      };
+      ws.onmessage = (ev) => {
+        if (session.closed) return;
+        if (typeof ev.data === "string") {
+          let msg;
+          try { msg = JSON.parse(ev.data); } catch { return; }
+          if (msg.type === "mse" && !sb) {
+            try {
+              sb = ms.addSourceBuffer(msg.value);
+              sb.mode = "segments";
+              sb.addEventListener("updateend", pump);
+            } catch (e) { fail(e); }
+          } else if (msg.type === "error") {
+            fail(new Error(msg.value));
+          }
+          return;
+        }
+        if (!sb) return;
+        if (queue.length > 60) queue.length = 0;
+        queue.push(ev.data);
+        pump();
+        if (video.paused) video.play().catch(() => {});
+      };
+      ws.onerror = () => fail(new Error("ws error"));
+      ws.onclose = () => {
+        if (session.closed) return;
+        if (!started) { fail(new Error("ws closed")); return; }
+        if (_camMse === session && typeof onDrop === "function") onDrop();
+      };
+    }, { once: true });
+  }));
+}
+
+function _camSyncFsMotion(cam, fsMicon) {
+  if (!fsMicon) return;
+  if (!cam.motionEntity) {
+    fsMicon.style.display = "none";
+    return;
+  }
+  fsMicon.style.display = "";
+  const d = haGetCached(cam.motionEntity);
+  fsMicon.classList.toggle("active", d?.state === "on");
+}
+
+function _camPoll(idx, entity, fsImg, tickMotion) {
+  if (_camFsIndex !== idx) return;
+  clearInterval(_camFullscreenInterval);
+  const pull = () => {
+    if (_camFsIndex !== idx) return;
+    _camRefreshOne(entity, fsImg);
+    tickMotion();
+  };
+  pull();
+  _camFullscreenInterval = setInterval(pull, _camRefreshMs());
+}
+
 function openCamFullscreen(idx) {
   const cams = _getCamEntities();
   const cam  = cams[idx];
@@ -16150,44 +16330,51 @@ function openCamFullscreen(idx) {
   const srcImg = document.getElementById(`cam-img-${idx}`);
   if (!srcImg?.classList.contains("loaded")) return; // only if live
   haptic("light");
+  _camStopVideo();
   _camFsIndex = idx;
   const fsImg   = document.getElementById("cam-fullscreen-img");
   const fsLabel = document.getElementById("cam-fullscreen-label");
-  fsImg.src           = srcImg.src;
+  const fsMicon = document.getElementById("cam-fs-motion-icon");
+  fsImg.onload = null;
+  fsImg.onerror = null;
+  fsImg.src = srcImg.src;
   fsImg.classList.add("loaded");
   fsLabel.textContent = cam.label || cam.entity;
-  // Motion icon in fullscreen
-  const fsMicon = document.getElementById("cam-fs-motion-icon");
-  if (fsMicon) {
-    if (cam.motionEntity) {
-      fsMicon.style.display = "";
-      const d = haGetCached(cam.motionEntity);
-      fsMicon.classList.toggle("active", d?.state === "on");
-    } else {
-      fsMicon.style.display = "none";
-    }
-  }
+  _camSyncFsMotion(cam, fsMicon);
   document.getElementById("cam-fullscreen").classList.add("open");
-  _camFullscreenInterval = setInterval(() => {
-    _camRefreshOne(cam.entity, fsImg);
-    // Keep motion icon in sync
-    if (cam.motionEntity && fsMicon) {
-      const d = haGetCached(cam.motionEntity);
-      fsMicon.classList.toggle("active", d?.state === "on");
-    }
-  }, _camRefreshMs());
-}
 
+  const snapEntity = cam.streamEntity || cam.entity;
+  const tickMotion = () => _camSyncFsMotion(cam, fsMicon);
+  const fallback = () => {
+    if (_camFsIndex !== idx) return;
+    _camStopVideo();
+    _camPoll(idx, snapEntity, fsImg, tickMotion);
+  };
+  if (!cam.go2rtcStream) { fallback(); return; }
+
+  _camFullscreenInterval = setInterval(tickMotion, 1000);
+  _camPlayMse(cam.go2rtcStream, fallback).then(() => {
+    if (_camFsIndex !== idx) _camStopVideo();
+  }).catch(fallback);
+}
 
 function closeCamFullscreen() {
   clearInterval(_camFullscreenInterval);
   _camFullscreenInterval = null;
   _camFsIndex = -1;
+  _camStopVideo();
   const fs    = document.getElementById("cam-fullscreen");
   const fsImg = document.getElementById("cam-fullscreen-img");
   fs.classList.remove("open");
-  if (fsImg.src.startsWith("blob:")) URL.revokeObjectURL(fsImg.src);
-  fsImg.src = "";
+  if (!fsImg) return;
+  fsImg.onload = null;
+  fsImg.onerror = null;
+  const src = fsImg.src || "";
+  const shared = src.startsWith("blob:") &&
+    [...document.querySelectorAll("#cam-grid img")].some(img => img.src === src);
+  if (src.startsWith("blob:") && !shared) URL.revokeObjectURL(src);
+  fsImg.removeAttribute("src");
+  fsImg.classList.remove("loaded");
 }
 
 // ── Open / Close ──
@@ -22832,6 +23019,7 @@ _applyDailyI18n();
 
 <div id="cam-fullscreen" onclick="closeCamFullscreen()">
   <img id="cam-fullscreen-img" src="" alt="">
+  <video id="cam-fullscreen-video" muted autoplay playsinline></video>
   <div id="cam-fullscreen-info">
     <div class="cam-motion-icon" id="cam-fs-motion-icon" style="display:none;">
       <svg width="28" height="28" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><circle cx="13" cy="3.5" r="1.8"/><path d="M9.5 8.5L7 21h2l1.5-6 2 3v6h2v-7l-2-3 .5-3.5L15 13h4v-2h-3.5l-2-4.5L9.5 8.5z"/><line x1="3" y1="3" x2="21" y2="21" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>

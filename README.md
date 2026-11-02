@@ -198,6 +198,9 @@ Remember to clear the cache/hard refresh so the new file changes apply in the br
 <details>
 <summary>View version history</summary>
 
+New in v5.1.0
+- An open camera plays full-quality live video. The grid stays on low-quality snapshots. Set `go2rtcStream` to the Frigate stream name
+
 New in v5.0.2
 - Shabbat Clock slot borders stay visible on a tablet. Each hour is a light track with a 2px gap between the 15-minute slots
 
