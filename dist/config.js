@@ -1,5 +1,5 @@
 /* ═══════════════════════════════════════════════════════════════════════════
- * HOMIE DASHBOARD CONFIGURATION v4.4.0
+ * HOMIE DASHBOARD CONFIGURATION v5.0.0
  * ═══════════════════════════════════════════════════════════════════════════
  * This is the main configuration file. Edit the sections below to customise the dashboard for your home.
  * Both homie-dashboard.html and config.js must be in the same folder.
@@ -793,6 +793,20 @@ const CONFIG = {
       { entity: "YOUR_DINING_ANIMAL_SEEN_ENTITY",  room: "Dining", type: "animal" },
     ],
   },
+
+  /* ── SHABBAT CLOCK ───────────────────────────────────────────────────────
+   * 24-hour schedule for Shabbat Clock integration timers
+   * (https://github.com/shimon88/home-assistant-24h-timer-integration).
+   * Opened from the Dashboards launcher. Tap or slide the slots. Each air
+   * conditioner can set the mode and temperature used when the timer turns it on.
+   *
+   * Each entry:
+   *   entity — the timer sensor, e.g. sensor.shabbat_clock_living_room
+   *   label  — display name (optional; defaults to the sensor's friendly name)
+   * ────────────────────────────────────────────────────────────────────── */
+  shabbatClocks: [
+    // { entity: "sensor.YOUR_SHABBAT_CLOCK_ENTITY", label: "Living room AC" },
+  ],
 
 };
 

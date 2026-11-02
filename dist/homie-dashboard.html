@@ -26,7 +26,7 @@
 <head>
 <meta charset="UTF-8">
 <!-- DASHBOARD VERSION — update this when releasing a new version -->
-<script>const DASHBOARD_VERSION = "4.4.0";</script>
+<script>const DASHBOARD_VERSION = "5.0.0";</script>
 <!-- GITHUB REPO — used only to check for the latest tagged release in Settings -->
 <script>const GITHUB_REPO = "shimon88/homie-dashboard";</script>
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
@@ -8701,6 +8701,10 @@ html[dir="rtl"] #favorites-popover::before {
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="4.5" r="2"/><path d="M12 6.5v5.5l-3.2 7.2M12 12l3.2 7.2M8.7 10 5 12.4M15.3 10 19 12.4"/></svg>
             <span class="launcher-label" data-label data-i18n="Presence">Presence</span>
           </button>
+          <button class="topbar-btn" id="shabbat-open-btn" onclick="openShabbatClocks()" title="Shabbat Clock" data-i18n-title="Shabbat Clock">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>
+            <span class="launcher-label" data-label data-i18n="Shabbat Clock">Shabbat Clock</span>
+          </button>
           <button class="topbar-btn" id="aqi-fs-open-btn" onclick="openIndoorAQI()" title="Indoor AQI" data-i18n-title="Indoor AQI">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9.59 4.59A2 2 0 1 1 11 8H2"/><path d="M12.59 19.41A2 2 0 1 0 14 16H2"/><path d="M17.73 7.73A2.5 2.5 0 1 1 19.5 12H2"/></svg>
             <span class="launcher-label" data-label data-i18n="Indoor AQI">Indoor AQI</span>
@@ -9829,6 +9833,20 @@ const _HE = {
   "Checked for 12-hour (AM/PM), unchecked for 24-hour": "מסומן לשעון 12 שעות, לא מסומן ל-24 שעות",
   "Personalised Name": "שם אישי",
   "Indoor Presence": "נוכחות בבית",
+  "Shabbat Clock": "שעון שבת",
+  "No Shabbat clocks configured. Add entries to shabbatClocks in config.js.": "לא הוגדרו שעוני שבת. הוסיפו פריטים ל-shabbatClocks בקובץ config.js.",
+  "Enabled": "מופעל",
+  "Disabled": "מנוטרל",
+  "Shabbat mode": "מצב שבת",
+  "Now": "עכשיו",
+  "Controls": "שולט על",
+  "Unavailable": "לא זמין",
+  "Cool": "קירור",
+  "Heat": "חימום",
+  "Heat/Cool": "חימום/קירור",
+  "Dry": "ייבוש",
+  "Fan": "מאוורר",
+  "Auto": "אוטומטי",
   "Toggle on for 12-hour (AM/PM), off for 24-hour": "פעיל לשעון 12 שעות, כבוי ל-24 שעות",
   "Startup screen, overview pages, and screensaver": "מסך פתיחה, דפי סקירה ושומר מסך",
   "STARTUP": "הפעלה",
@@ -10330,6 +10348,10 @@ function _wsConnect() {
             // Floating camera: one small feed, chosen by CONFIG.cameraFloat triggers
             if (typeof window._cameraFloatOnState === "function") {
               window._cameraFloatOnState(newState, msg.event.data?.old_state);
+            }
+            // Shabbat clock overlay: refresh when one of its timers changes
+            if (typeof window._shabbatOnState === "function") {
+              window._shabbatOnState(newState.entity_id);
             }
             refreshAllUI();
           }
@@ -18344,6 +18366,7 @@ document.addEventListener('keydown', e => {
   if (document.getElementById("solar-fs-overlay")?.classList.contains("open"))    closeSolarFS();
   if (document.getElementById("aqi-fs-overlay")?.classList.contains("open"))      closeIndoorAQI();
   if (document.getElementById("presence-overlay")?.classList.contains("open"))   closePresenceTimeline();
+  if (document.getElementById("shabbat-overlay")?.classList.contains("open"))    closeShabbatClocks();
   if (document.getElementById("dashboards-hub-overlay")?.classList.contains("open")) closeDashboardsHub();
   if (document.getElementById("system-stats-overlay")?.classList.contains("open")) closeSystemStats();
   if (document.getElementById("favorites-popover")?.classList.contains("open")) closeFavoritesPopover();
@@ -19319,6 +19342,7 @@ const OV3_SWIPE_EXCLUDE_SELECTOR = ".popup-overlay.open, #daily-overlay, #thermo
     { id: "solar-fs-overlay",    close: () => closeSolarFS()      },
     { id: "aqi-fs-overlay",      close: () => closeIndoorAQI()    },
     { id: "presence-overlay",    close: () => closePresenceTimeline() },
+    { id: "shabbat-overlay",      close: () => closeShabbatClocks() },
     { id: "dashboards-hub-overlay", close: () => closeDashboardsHub() },
     { id: "system-stats-overlay",   close: () => closeSystemStats() },
     { id: "settings-overlay",    close: () => closeSettings()     },
@@ -21608,6 +21632,7 @@ function applyAllSettings() {
     "solar-fs-open-btn":   "showSolarFSButton",
     "aqi-fs-open-btn":     "showAqiFSButton",
     "presence-open-btn":   "showPresenceButton",
+    "shabbat-open-btn":    "showShabbatButton",
     "system-open-btn":     "showSystemButton",
     "security-btn":        "showSecurityButton",
   };
@@ -24634,6 +24659,7 @@ _applyDailyI18n();
     "aqi-fs-open-btn":     { category: "Comfort & Energy",     color: "#4fd1a5" },
     "cameras-open-btn":    { category: "Security & Presence",  color: "#7f8fa6" },
     "presence-open-btn":   { category: "Security & Presence",  color: "#f0a840" },
+    "shabbat-open-btn":    { category: "Home Life",            color: "#e3c27a" },
     "daily-open-btn":      { category: "Home Life",            color: "#9b7fe8" },
     "pet-btn":             { category: "Home Life",            color: "#6fbf73" },
     "clock-open-btn":      { category: "Home Life",            color: "#a0a8b8" },
@@ -25980,6 +26006,490 @@ _applyDailyI18n();
     document.getElementById("presence-overlay")?.classList.remove("open");
     clearInterval(_presenceRefreshTimer);
     _presenceRefreshTimer = null;
+  };
+})();
+</script>
+
+<!-- ─── SHABBAT CLOCK OVERLAY ─── -->
+<div id="shabbat-overlay">
+  <div id="shabbat-header">
+    <div id="shabbat-title">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>
+      <span data-i18n="Shabbat Clock">Shabbat Clock</span>
+    </div>
+  </div>
+  <div id="shabbat-body"></div>
+</div>
+
+<style>
+  #shabbat-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 300;
+    background: var(--bg-overlay);
+    display: flex;
+    flex-direction: column;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+    isolation: isolate;
+    font-family: 'Montserrat', sans-serif;
+    color: #fff;
+  }
+  #shabbat-overlay.open { opacity: 1; pointer-events: auto; }
+
+  #shabbat-header {
+    display: flex;
+    align-items: center;
+    padding: 1.4rem 1.8rem 1rem;
+    flex-shrink: 0;
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+  }
+  #shabbat-title {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 0.9rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--text-primary, #fff);
+  }
+  #shabbat-title svg { stroke: var(--accent-hi, #d4ae78); flex-shrink: 0; }
+
+  #shabbat-body {
+    flex: 1;
+    min-height: 0;
+    overflow-y: auto;
+    padding: 1.1rem 1.8rem 1.6rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.9rem;
+  }
+  .shb-card {
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.07);
+    border-left: 3px solid var(--accent-hi, #d4ae78);
+    border-radius: 10px;
+    padding: 0.8rem 1rem 0.9rem;
+  }
+  .shb-card--off { border-left-color: rgba(255,255,255,0.2); }
+  .shb-card--off .shb-bar,
+  .shb-card--off .shb-now,
+  .shb-card--off .shb-controls { opacity: 0.45; }
+  .shb-enable {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.64rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.55);
+  }
+  .shb-card:not(.shb-card--off) .shb-enable { color: var(--accent-hi, #d4ae78); }
+  .shb-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+  .shb-name { font-size: 0.95rem; font-weight: 500; }
+  .shb-pills { display: flex; gap: 6px; flex-wrap: wrap; }
+  .shb-pill {
+    font-size: 0.64rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    padding: 3px 9px;
+    border-radius: 999px;
+    background: rgba(255,255,255,0.07);
+    color: rgba(255,255,255,0.6);
+  }
+  .shb-pill.on {
+    background: rgba(212,174,120,0.18);
+    color: var(--accent-hi, #d4ae78);
+  }
+  .shb-bar { margin-top: 0.9rem; }
+  .shb-hours {
+    display: grid;
+    grid-template-columns: repeat(24, 1fr);
+    gap: 3px;
+    direction: ltr;
+    touch-action: none;
+  }
+  .shb-hour-cells {
+    display: grid;
+    gap: 1px;
+    height: 32px;
+  }
+  .shb-hour-label {
+    margin-top: 4px;
+    text-align: center;
+    font-size: 0.55rem;
+    line-height: 1;
+    color: rgba(255,255,255,0.38);
+    font-variant-numeric: tabular-nums;
+  }
+  .shb-hour.now .shb-hour-label { color: #fff; font-weight: 600; }
+  .shb-cell {
+    appearance: none;
+    border: 0;
+    padding: 0;
+    margin: 0;
+    cursor: pointer;
+    background: rgba(255,255,255,0.08);
+    border-radius: 1px;
+    touch-action: manipulation;
+  }
+  .shb-cell.on { background: var(--accent-hi, #d4ae78); }
+  .shb-cell:active { filter: brightness(1.35); }
+  .shb-cell.now { box-shadow: inset 0 0 0 1px #fff; position: relative; z-index: 1; }
+  .shb-now {
+    margin-top: 0.6rem;
+    font-size: 0.7rem;
+    color: rgba(255,255,255,0.5);
+  }
+  .shb-now b { font-weight: 500; color: #fff; }
+  .shb-controls {
+    margin-top: 0.7rem;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    font-size: 0.7rem;
+    color: rgba(255,255,255,0.7);
+  }
+  .shb-climate {
+    margin-top: 0.35rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+  .shb-modes { display: flex; flex-wrap: wrap; gap: 4px; }
+  .shb-mode {
+    appearance: none;
+    border: 1px solid rgba(255,255,255,0.14);
+    background: transparent;
+    color: rgba(255,255,255,0.65);
+    border-radius: 999px;
+    padding: 4px 9px;
+    font: inherit;
+    font-size: 0.62rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    cursor: pointer;
+  }
+  .shb-mode.on {
+    border-color: var(--accent-hi, #d4ae78);
+    color: var(--accent-hi, #d4ae78);
+    background: rgba(212,174,120,0.16);
+  }
+  .shb-temp { display: inline-flex; align-items: center; gap: 6px; font-size: 0.9rem; color: #fff; }
+  .shb-temp button {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    border: 1px solid rgba(255,255,255,0.16);
+    background: transparent;
+    color: #fff;
+    cursor: pointer;
+    font-size: 1rem;
+    line-height: 1;
+  }
+  .shb-ctrl-extra { color: rgba(255,255,255,0.4); }
+  .shb-empty {
+    padding: 2rem;
+    text-align: center;
+    font-size: 0.8rem;
+    color: rgba(255,255,255,0.45);
+  }
+</style>
+
+<script>
+(function () {
+  let _shabbatTimer = null;
+
+  function _shabbatSectors(slots) {
+    return slots.map(s => ({ hour: s.hour, minute: s.minute, on: !!s.isActive }));
+  }
+
+  function _shabbatClocks() {
+    return Array.isArray(CONFIG.shabbatClocks)
+      ? CONFIG.shabbatClocks.filter(c => c && c.entity)
+      : [];
+  }
+
+  function _shabbatRenderCard(cfg) {
+    const st = haGetCached(cfg.entity);
+    const label = cfg.label || st?.attributes?.friendly_name || cfg.entity;
+    if (!st) {
+      return `
+        <div class="shb-card shb-card--off">
+          <div class="shb-head">
+            <span class="shb-name">${escapeHtml(label)}</span>
+            <span class="shb-pills"><span class="shb-pill">${t("Unavailable")}</span></span>
+          </div>
+        </div>`;
+    }
+
+    const a = st.attributes || {};
+    const slots = Array.isArray(a.time_slots) ? a.time_slots : [];
+    const sectors = _shabbatSectors(slots);
+    const now = new Date();
+    const nowMinute = Math.floor(now.getMinutes() / 15) * 15;
+    const nowIdx = sectors.findIndex(s => s.hour === now.getHours() && s.minute === nowMinute);
+    const nowOn = !!sectors[nowIdx]?.on;
+    const enabled = a.enabled !== false;
+    const homeOn = a.home_status === true;
+
+    const hours = [];
+    for (let hour = 0; hour < 24; hour++) {
+      const group = sectors.filter(s => s.hour === hour);
+      if (!group.length) continue;
+      const cells = group.map(s => {
+        const i = sectors.indexOf(s);
+        return `<button type="button" class="shb-cell${s.on ? " on" : ""}${i === nowIdx ? " now" : ""}" data-entity="${escapeHtml(cfg.entity)}" data-hour="${s.hour}" data-minute="${s.minute}" data-on="${s.on ? 1 : 0}" aria-label="${s.hour}:${String(s.minute).padStart(2, "0")}"></button>`;
+      }).join("");
+      const current = group.some(s => sectors.indexOf(s) === nowIdx);
+      hours.push(`<div class="shb-hour${current ? " now" : ""}"><div class="shb-hour-cells" style="grid-template-columns:repeat(${group.length},1fr)">${cells}</div><div class="shb-hour-label">${hour}</div></div>`);
+    }
+
+    const controls = (Array.isArray(a.controlled_entities) ? a.controlled_entities : []).map(eid => {
+      const name = haGetCached(eid)?.attributes?.friendly_name || eid;
+      if (!eid.startsWith("climate.")) return `<div class="shb-load">${escapeHtml(name)}</div>`;
+      const view = _shabbatClimateView(cfg.entity, eid);
+      const modes = view.modes.map(mode => {
+        const label = _SHB_MODES[mode] || mode;
+        return `<button type="button" class="shb-mode${mode === view.mode ? " on" : ""}" onclick='_shabbatSetClimate(${JSON.stringify(cfg.entity)}, ${JSON.stringify(eid)}, ${JSON.stringify(mode)}, ${view.temperature})'>${t(label)}</button>`;
+      }).join("");
+      const shown = Number.isInteger(view.temperature) ? view.temperature : view.temperature.toFixed(1);
+      return `<div class="shb-load"><div>${escapeHtml(name)}</div><div class="shb-climate"><div class="shb-modes">${modes}</div><div class="shb-temp"><button type="button" aria-label="-" onclick='_shabbatSetClimate(${JSON.stringify(cfg.entity)}, ${JSON.stringify(eid)}, ${JSON.stringify(view.mode)}, ${view.temperature - view.step})'>−</button><span>${shown}°</span><button type="button" aria-label="+" onclick='_shabbatSetClimate(${JSON.stringify(cfg.entity)}, ${JSON.stringify(eid)}, ${JSON.stringify(view.mode)}, ${view.temperature + view.step})'>+</button></div></div></div>`;
+    }).join("");
+
+    return `
+      <div class="shb-card${enabled ? "" : " shb-card--off"}">
+        <div class="shb-head">
+          <span class="shb-name">${escapeHtml(label)}</span>
+          <span class="shb-pills">
+            <label class="shb-enable">
+              ${t(enabled ? "Enabled" : "Disabled")}
+              <span class="settings-toggle">
+                <input type="checkbox"${enabled ? " checked" : ""} onchange='_shabbatSetEnabled(${JSON.stringify(cfg.entity)}, this.checked)'>
+                <span class="settings-knob"></span>
+              </span>
+            </label>
+            <span class="shb-pill${homeOn ? " on" : ""}">${t("Shabbat mode")}: ${tStatus(homeOn ? "on" : "off")}</span>
+          </span>
+        </div>
+        <div class="shb-bar">
+          <div class="shb-hours" style="grid-template-columns:repeat(${hours.length || 24},1fr)">${hours.join("")}</div>
+        </div>
+        <div class="shb-now">${t("Now")}: <b>${tStatus(nowOn ? "on" : "off")}</b></div>
+        ${controls ? `<div class="shb-controls"><div class="shb-ctrl-extra">${t("Controls")}</div>${controls}</div>` : ""}
+      </div>`;
+  }
+
+  function _shabbatRefresh() {
+    if (_shabbatDrag) return;
+    const body = document.getElementById("shabbat-body");
+    if (!body) return;
+    const clocks = _shabbatClocks();
+    body.innerHTML = clocks.length
+      ? clocks.map(_shabbatRenderCard).join("")
+      : `<div class="shb-empty">${t("No Shabbat clocks configured. Add entries to shabbatClocks in config.js.")}</div>`;
+  }
+
+  let _shabbatDrag = null;
+
+  function _shabbatCells(entityId) {
+    return [...document.querySelectorAll("#shabbat-body button.shb-cell")]
+      .filter(el => el.dataset.entity === entityId);
+  }
+
+  function _shabbatCellAt(event, entityId) {
+    const cells = _shabbatCells(entityId);
+    const bar = cells[0]?.closest(".shb-hours");
+    if (!bar) return null;
+    const rect = bar.getBoundingClientRect();
+    const hit = document.elementFromPoint(event.clientX, rect.top + rect.height / 2);
+    const cell = hit?.closest?.("button.shb-cell");
+    if (!cell || cell.dataset.entity !== entityId) return null;
+    return cell;
+  }
+
+  function _shabbatApplyDrag() {
+    const cells = _shabbatCells(_shabbatDrag.entityId);
+    const lo = Math.min(_shabbatDrag.startIndex, _shabbatDrag.lastIndex);
+    const hi = Math.max(_shabbatDrag.startIndex, _shabbatDrag.lastIndex);
+    cells.forEach((el, i) => {
+      const on = i >= lo && i <= hi ? _shabbatDrag.paint : el.dataset.on === "1";
+      el.classList.toggle("on", on);
+    });
+  }
+
+  document.addEventListener("pointerdown", (event) => {
+    const cell = event.target.closest?.("#shabbat-body button.shb-cell");
+    if (!cell || (event.button != null && event.button !== 0)) return;
+    event.preventDefault();
+    const cells = _shabbatCells(cell.dataset.entity);
+    _shabbatDrag = {
+      pointerId: event.pointerId,
+      entityId: cell.dataset.entity,
+      paint: !cell.classList.contains("on"),
+      startIndex: cells.indexOf(cell),
+      lastIndex: cells.indexOf(cell),
+      moved: false,
+    };
+    cell.setPointerCapture?.(event.pointerId);
+    if (typeof haptic === "function") haptic("light");
+  });
+
+  document.addEventListener("pointermove", (event) => {
+    if (!_shabbatDrag || event.pointerId !== _shabbatDrag.pointerId) return;
+    const cell = _shabbatCellAt(event, _shabbatDrag.entityId);
+    if (!cell) return;
+    const index = _shabbatCells(_shabbatDrag.entityId).indexOf(cell);
+    if (index < 0 || index === _shabbatDrag.lastIndex) return;
+    _shabbatDrag.moved = true;
+    _shabbatDrag.lastIndex = index;
+    _shabbatApplyDrag();
+  });
+
+  function _shabbatEndDrag(event) {
+    if (!_shabbatDrag || event.pointerId !== _shabbatDrag.pointerId) return;
+    const drag = _shabbatDrag;
+    _shabbatDrag = null;
+    const cells = _shabbatCells(drag.entityId);
+    if (!drag.moved) {
+      const cell = cells[drag.startIndex];
+      if (cell) _shabbatToggleSlot(drag.entityId, Number(cell.dataset.hour), Number(cell.dataset.minute));
+      return;
+    }
+    const lo = Math.min(drag.startIndex, drag.lastIndex);
+    const hi = Math.max(drag.startIndex, drag.lastIndex);
+    const stored = haGetCached(drag.entityId)?.attributes?.time_slots || [];
+    const changed = [];
+    for (let i = lo; i <= hi; i++) {
+      const hour = Number(cells[i].dataset.hour);
+      const minute = Number(cells[i].dataset.minute);
+      const slot = stored.find(s => s.hour === hour && s.minute === minute);
+      if (slot && !!slot.isActive !== drag.paint) {
+        slot.isActive = drag.paint;
+        changed.push({ hour, minute, isActive: drag.paint });
+      }
+    }
+    if (typeof haptic === "function") haptic("medium");
+    _shabbatRefresh();
+    if (changed.length) {
+      haService("shabbat_clock", "set_slots", { entity_id: drag.entityId, slots: changed });
+    }
+  }
+
+  document.addEventListener("pointerup", _shabbatEndDrag);
+  document.addEventListener("pointercancel", (event) => {
+    if (!_shabbatDrag || event.pointerId !== _shabbatDrag.pointerId) return;
+    _shabbatDrag = null;
+    _shabbatRefresh();
+  });
+
+  const _SHB_MODES = {
+    cool: "Cool",
+    heat: "Heat",
+    heat_cool: "Heat/Cool",
+    dry: "Dry",
+    fan_only: "Fan",
+    auto: "Auto",
+  };
+
+  function _shabbatClimateView(clockId, targetId) {
+    const saved = haGetCached(clockId)?.attributes?.entity_settings?.[targetId] || {};
+    const climate = haGetCached(targetId);
+    let min = Number(climate?.attributes?.min_temp);
+    let max = Number(climate?.attributes?.max_temp);
+    if (!Number.isFinite(min) || !Number.isFinite(max) || max - min < 5 || max < 10) {
+      min = 16;
+      max = 30;
+    }
+    const rawStep = Number(climate?.attributes?.target_temp_step);
+    const step = rawStep > 0 && rawStep <= 1 ? rawStep : 1;
+    const modes = (climate?.attributes?.hvac_modes || ["cool", "heat", "dry", "fan_only", "heat_cool"])
+      .filter(mode => mode && mode !== "off");
+    let mode = saved.hvac_mode;
+    if (!modes.includes(mode)) {
+      mode = climate && climate.state !== "off" && modes.includes(climate.state)
+        ? climate.state
+        : (modes[0] || "cool");
+    }
+    let temperature = Number(saved.temperature);
+    if (!Number.isFinite(temperature)) temperature = Number(climate?.attributes?.temperature);
+    if (!Number.isFinite(temperature)) temperature = 24;
+    temperature = Math.min(max, Math.max(min, temperature));
+    temperature = Math.round(temperature / step) * step;
+    temperature = Math.round(temperature * 10) / 10;
+    return { min, max, step, modes, mode, temperature };
+  }
+
+  window._shabbatSetClimate = function (clockId, targetId, mode, temperature) {
+    if (typeof haptic === "function") haptic("medium");
+    const view = _shabbatClimateView(clockId, targetId);
+    const nextMode = view.modes.includes(mode) ? mode : view.mode;
+    const nextTemp = Math.round(Math.min(view.max, Math.max(view.min, Number(temperature))) * 10) / 10;
+    const st = haGetCached(clockId);
+    if (st?.attributes) {
+      const settings = { ...(st.attributes.entity_settings || {}) };
+      settings[targetId] = { ...(settings[targetId] || {}), hvac_mode: nextMode, temperature: nextTemp };
+      st.attributes.entity_settings = settings;
+    }
+    _shabbatRefresh();
+    haService("shabbat_clock", "set_entity_settings", {
+      entity_id: clockId,
+      target_entity_id: targetId,
+      hvac_mode: nextMode,
+      temperature: nextTemp,
+    });
+  };
+
+  window._shabbatToggleSlot = function (entityId, hour, minute) {
+    if (typeof haptic === "function") haptic("medium");
+    const st = haGetCached(entityId);
+    const slots = st?.attributes?.time_slots;
+    const slot = Array.isArray(slots) ? slots.find(s => s.hour === hour && s.minute === minute) : null;
+    if (slot) slot.isActive = !slot.isActive;
+    _shabbatRefresh();
+    haService("shabbat_clock", "set_slots", {
+      entity_id: entityId,
+      slots: [{ hour, minute, isActive: !!slot?.isActive }],
+    });
+  };
+
+  window._shabbatSetEnabled = function (entityId, enabled) {
+    if (typeof haptic === "function") haptic("medium");
+    const st = haGetCached(entityId);
+    if (st?.attributes) st.attributes.enabled = !!enabled;
+    _shabbatRefresh();
+    haService("shabbat_clock", "set_enabled", { entity_id: entityId, enabled: !!enabled });
+  };
+
+  window._shabbatOnState = function (entityId) {
+    if (!document.getElementById("shabbat-overlay")?.classList.contains("open")) return;
+    if (_shabbatClocks().some(c => c.entity === entityId)) _shabbatRefresh();
+  };
+
+  window.openShabbatClocks = function () {
+    if (typeof haptic === "function") haptic("light");
+    if (typeof _closeLauncher === "function") _closeLauncher();
+    document.getElementById("shabbat-overlay")?.classList.add("open");
+    _shabbatRefresh();
+    clearInterval(_shabbatTimer);
+    _shabbatTimer = setInterval(_shabbatRefresh, 30000);
+    window._showSwipeDownHint?.();
+  };
+
+  window.closeShabbatClocks = function () {
+    if (typeof haptic === "function") haptic("light");
+    document.getElementById("shabbat-overlay")?.classList.remove("open");
+    clearInterval(_shabbatTimer);
+    _shabbatTimer = null;
   };
 })();
 </script>
