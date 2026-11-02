@@ -198,6 +198,9 @@ Remember to clear the cache/hard refresh so the new file changes apply in the br
 <details>
 <summary>View version history</summary>
 
+New in v5.1.1
+- Security dialog drops a sensor from the blocking list once that sensor is closed. Alarmo keeps the last blocked arm until the next arm attempt
+
 New in v5.1.0
 - An open camera plays full-quality live video. The grid stays on low-quality snapshots. Set `go2rtcStream` to the Frigate stream name
 

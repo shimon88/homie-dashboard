@@ -26,7 +26,7 @@
 <head>
 <meta charset="UTF-8">
 <!-- DASHBOARD VERSION — update this when releasing a new version -->
-<script>const DASHBOARD_VERSION = "5.1.0";</script>
+<script>const DASHBOARD_VERSION = "5.1.1";</script>
 <!-- GITHUB REPO — used only to check for the latest tagged release in Settings -->
 <script>const GITHUB_REPO = "shimon88/homie-dashboard";</script>
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
@@ -10340,6 +10340,10 @@ function _wsConnect() {
             _stateCacheSeenAt.set(newState.entity_id, Date.now());
             // Keep alarm badge in sync with live WS events
             if (newState.entity_id === CONFIG.alarmEntity) refreshAlarmUI(newState.state);
+            else if (document.getElementById("security-overlay")?.classList.contains("open")) {
+              const blockers = _alarmOpenSensorEntries(haGetCached(CONFIG.alarmEntity)?.attributes);
+              if (blockers.some(([id]) => id === newState.entity_id)) renderAlarmOpenSensors();
+            }
             // Only sync AC/purifier derived state when popup is closed
             const popupOpen = document.getElementById("popup-overlay")
               ?.classList.contains("open");
@@ -14908,6 +14912,26 @@ function _alarmOpenSensorEntries(attrs) {
   return [];
 }
 
+// Alarmo writes open_sensors on a blocked arm and leaves that list until the
+// next arm attempt. A closed door stays in the attribute. Keep a row only
+// while the sensor's own state still blocks arming. Missing or unavailable
+// stays listed: Alarmo can still refuse to arm on those.
+function _alarmSensorBlocksNow(entityId) {
+  const d = haGetCached(entityId);
+  if (!d || d.state == null) return true;
+  const val = String(d.state);
+  if (val === "unavailable" || val === "unknown") return true;
+  const domain = String(entityId).split(".")[0];
+  if (domain === "cover") return val === "open" || val === "opening";
+  if (domain === "lock") return val === "unlocked" || val === "open" || val === "opening";
+  if (domain === "binary_sensor" || domain === "input_boolean" || domain === "switch") return val === "on";
+  return val === "on" || val === "open" || val === "opening" || val === "unlocked";
+}
+
+function _alarmLiveOpenSensorEntries(attrs) {
+  return _alarmOpenSensorEntries(attrs).filter(([id]) => _alarmSensorBlocksNow(id));
+}
+
 function _alarmSensorLabel(entityId) {
   const name = haGetCached(entityId)?.attributes?.friendly_name;
   if (name) return name;
@@ -14918,7 +14942,7 @@ function _alarmSensorLabel(entityId) {
 function renderAlarmOpenSensors() {
   const el = document.getElementById("alarm-open-sensors");
   if (!el) return;
-  const entries = _alarmOpenSensorEntries(haGetCached(CONFIG.alarmEntity)?.attributes);
+  const entries = _alarmLiveOpenSensorEntries(haGetCached(CONFIG.alarmEntity)?.attributes);
   if (!entries.length) {
     el.hidden = true;
     el.replaceChildren();
@@ -14994,7 +15018,7 @@ async function openSecurity() {
   setAlarmFeedback("", "");
   const data = await haGet(CONFIG.alarmEntity);
   if (data) {
-    const missing = _alarmOpenSensorEntries(data.attributes)
+    const missing = _alarmLiveOpenSensorEntries(data.attributes)
       .map(([id]) => id)
       .filter(id => !haGetCached(id));
     if (missing.length) await Promise.all(missing.map(id => haGet(id)));
