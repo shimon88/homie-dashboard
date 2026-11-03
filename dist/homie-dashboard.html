@@ -26,7 +26,7 @@
 <head>
 <meta charset="UTF-8">
 <!-- DASHBOARD VERSION — update this when releasing a new version -->
-<script>const DASHBOARD_VERSION = "5.1.1";</script>
+<script>const DASHBOARD_VERSION = "5.1.2";</script>
 <!-- GITHUB REPO — used only to check for the latest tagged release in Settings -->
 <script>const GITHUB_REPO = "shimon88/homie-dashboard";</script>
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
@@ -12232,12 +12232,18 @@ const activeControls = CONFIG.controls;
 
 /**
  * homeStatIsOn — active test shared by stat colour, visibility, and high visibility.
- * cover: open/opening. Everything else: on, locked, armed_away, armed_home, running.
+ * cover: open/opening.
+ * alarm_control_panel: any armed_* state, plus arming, pending, and triggered.
+ * Everything else: on, locked, running.
  */
 function homeStatIsOn(entity, val) {
   const domain = String(entity || "").split(".")[0];
-  if (domain === "cover") return ["open", "opening"].includes(val);
-  return ["on", "locked", "armed_away", "armed_home", "running"].includes(val);
+  const state = String(val || "");
+  if (domain === "cover") return ["open", "opening"].includes(state);
+  if (domain === "alarm_control_panel") {
+    return state === "arming" || state === "pending" || state === "triggered" || state.startsWith("armed_");
+  }
+  return ["on", "locked", "running"].includes(state);
 }
 
 /**
@@ -12280,16 +12286,19 @@ function homeStatVisible(stat) {
  * homeStatHighVis — tinted alert pill on the value, same language as the alarm badge.
  * true: on while this stat is active; always on when the stat has no onValue.
  * object/array: same condition shape as visible.
+ * alarm_control_panel with no highVisibility: pill while armed. false turns it off.
  */
 function homeStatHighVis(stat) {
   const hv = stat && stat.highVisibility;
-  if (hv == null || hv === false) return false;
-  if (hv === true) {
+  if (hv === false) return false;
+  const alarm = String(stat && stat.entity || "").split(".")[0] === "alarm_control_panel";
+  if (hv === true || (hv == null && alarm)) {
     if (!stat.onValue) return true;
     const d = haGetCached(stat.entity);
     if (!d || d.state == null) return false;
     return homeStatIsOn(stat.entity, String(d.state));
   }
+  if (hv == null) return false;
   return homeStatCondMet(hv, stat);
 }
 
@@ -14897,8 +14906,8 @@ const ALARM_STATE_LABELS = {
 };
 
 function alarmStateBadgeClass(state) {
-  if (state === "armed_home")  return "alarm-badge--armed_home";
-  if (state === "armed_away")  return "alarm-badge--armed_away";
+  if (state === "armed_away" || state === "armed_vacation") return "alarm-badge--armed_away";
+  if (typeof state === "string" && state.startsWith("armed_")) return "alarm-badge--armed_home";
   if (state === "arming" || state === "pending") return "alarm-badge--arming";
   if (state === "triggered")   return "alarm-badge--triggered";
   return "alarm-badge--disarmed";

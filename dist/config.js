@@ -1,5 +1,5 @@
 /* ═══════════════════════════════════════════════════════════════════════════
- * HOMIE DASHBOARD CONFIGURATION v5.1.1
+ * HOMIE DASHBOARD CONFIGURATION v5.1.2
  * ═══════════════════════════════════════════════════════════════════════════
  * This is the main configuration file. Edit the sections below to customise the dashboard for your home.
  * Both homie-dashboard.html and config.js must be in the same folder.
@@ -199,13 +199,14 @@ const CONFIG = {
    *     state     — raw state must equal this string, or one of a list.
    *     state_not — raw state must not equal this string, or any of a list.
    *     on        — true/false. Same active test as onValue
-   *                 (on, open, opening, locked, armed_away, armed_home, running).
+   *                 (on, open, opening, locked, running, or any armed alarm state).
    *   Example — show the door only while it is open:
    *     visible: { on: true }
    *   Example — show only while another entity is on:
    *     visible: { entity: "input_boolean.guest_mode", state: "on" }
    *
    * highVisibility — tinted red pill on the value, same style as the alarm badge.
+   *   An alarm stat uses this pill while armed. Set false to turn that off.
    *   true — on while this stat is in its active/on state.
    *          Stats with no onValue stay in this style whenever they are visible.
    *   condition — same shape as visible; the style is on while it matches.
