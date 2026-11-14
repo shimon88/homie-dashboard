@@ -521,6 +521,21 @@ const CONFIG = {
    *   climate.*       → AC card (mode, fan speed, temperature)
    *   cover.*         → blind/curtain card (open, close, stop, position)
    *   fan.*           → purifier card (power, fan speed)
+   *   vacuum.*        → vacuum card. A vacuum entity opens the popup even
+   *                     with no subEntities. Optional keys:
+   *                       battery   — sensor that reports the percent
+   *                       cleanMode — select set before any room. Narwal
+   *                                   marks this unavailable once a room is on.
+   *                       rooms     — { label, entity } room switches
+   *                     // {
+   *                     //   label: "Vacuum",
+   *                     //   entity: "vacuum.YOUR_VACUUM",
+   *                     //   battery: "sensor.YOUR_VACUUM_BATTERY",
+   *                     //   cleanMode: "select.YOUR_VACUUM_CLEAN_MODE",
+   *                     //   rooms: [
+   *                     //     { label: "Kitchen", entity: "switch.YOUR_KITCHEN_SELECTED" },
+   *                     //   ],
+   *                     // },
    *   switch.* / input_boolean.* / group.* / everything else → on/off toggle
    *   (group.* toggles the whole group — list lights as light.* for per-light control)
    *

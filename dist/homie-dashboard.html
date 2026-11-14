@@ -873,6 +873,122 @@
     max-width: 420px;
     width: min(420px, 90vw);
   }
+  /* Vacuum popup: mode first, then rooms. The list scrolls on a short tablet. */
+  .popup--vacuum {
+    max-width: 460px;
+    width: min(460px, 92vw);
+    max-height: 88vh;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    padding: 1.35rem 1.25rem 1.1rem;
+  }
+  .popup--vacuum .popup-title { margin-bottom: 0.8rem; flex: none; }
+  .popup--vacuum .popup-list {
+    overflow-y: auto;
+    min-height: 0;
+    gap: 14px;
+  }
+  .vac-status {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    font-size: calc(13px * var(--ui-scale, 1));
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.7);
+  }
+  .vac-card.is-on .vac-status { color: var(--ac-85); }
+  .vac-battery { color: var(--ac-6); letter-spacing: 0.06em; }
+  .vac-step-head {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 8px;
+    font-size: calc(11px * var(--ui-scale, 1));
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.55);
+  }
+  .vac-num {
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--ac-2);
+    color: var(--accent);
+    font-size: calc(11px * var(--ui-scale, 1));
+    letter-spacing: 0;
+  }
+  .vac-modes, .vac-rooms { display: grid; gap: 8px; }
+  .vac-modes { grid-template-columns: 1fr 1fr; }
+  .vac-rooms { grid-template-columns: 1fr 1fr 1fr; }
+  .vac-choice {
+    padding: 10px 8px;
+    border-radius: 10px;
+    border: 1px solid rgba(255,255,255,0.15);
+    background: rgba(255,255,255,0.05);
+    color: rgba(255,255,255,0.8);
+    font-size: calc(13px * var(--ui-scale, 1));
+    line-height: 1.25;
+    cursor: pointer;
+    touch-action: manipulation;
+  }
+  .vac-choice.is-on {
+    background: var(--ac-18);
+    border-color: var(--ac-5);
+    color: #fff;
+  }
+  .vac-mode-step.is-locked .vac-choice {
+    opacity: 0.45;
+    cursor: default;
+  }
+  .vac-hint {
+    margin-top: 8px;
+    font-size: calc(12px * var(--ui-scale, 1));
+    line-height: 1.35;
+    color: rgba(255,255,255,0.55);
+  }
+  .vac-hint.is-locked { color: #f0c040; }
+  .vac-clear {
+    margin-inline-start: auto;
+    border: 0;
+    background: transparent;
+    color: var(--accent);
+    font-size: calc(12px * var(--ui-scale, 1));
+    letter-spacing: 0.04em;
+    text-transform: none;
+    cursor: pointer;
+    padding: 4px 0;
+  }
+  .vac-clear[hidden] { display: none; }
+  .vac-actions { display: flex; flex-direction: column; gap: 8px; }
+  .vac-start {
+    width: 100%;
+    padding: 12px;
+    border-radius: 12px;
+    border: 1px solid var(--ac-5);
+    background: var(--ac-18);
+    color: #fff;
+    font-size: calc(14px * var(--ui-scale, 1));
+    cursor: pointer;
+    touch-action: manipulation;
+  }
+  .vac-secondary { display: flex; gap: 8px; }
+  .vac-secondary button {
+    flex: 1;
+    padding: 10px 4px;
+    border-radius: 10px;
+    border: 1px solid rgba(255,255,255,0.15);
+    background: rgba(255,255,255,0.05);
+    color: rgba(255,255,255,0.8);
+    font-size: calc(12px * var(--ui-scale, 1));
+    cursor: pointer;
+    touch-action: manipulation;
+  }
+  .vac-secondary button.is-hidden { display: none; }
   /* These target the popup's own #pg-garden-card / #pg-irrigation-card ids
      (not the ancestor .popup--garden class) so the styling can't "flash"
      back to OV3's green gradient — that class is stripped the instant the
@@ -10014,7 +10130,29 @@ const _HE = {
   "PM2.5 — last 24 hours": "PM2.5 — 24 שעות אחרונות",
   "TVOC — last 24 hours": "TVOC — 24 שעות אחרונות",
   "Picture uses a photo from <code>photos/background/</code> instead of the themed gradient. Add images to <code>BACKGROUND_IMAGES</code> in config.js.": "תמונה משתמשת בקובץ מתוך <code>photos/background/</code> במקום הרקע הצבעוני. הוסיפו נתיבים ל-<code>BACKGROUND_IMAGES</code> בקובץ config.js.",
-  "Add photos to the <code>photos/</code> folder and list them in <code>PHOTO_FRAME_IMAGES</code> inside config.js.": "הוסיפו תמונות לתיקייה <code>photos/</code> ורשמו אותן ב-<code>PHOTO_FRAME_IMAGES</code> בקובץ config.js."
+  "Add photos to the <code>photos/</code> folder and list them in <code>PHOTO_FRAME_IMAGES</code> inside config.js.": "הוסיפו תמונות לתיקייה <code>photos/</code> ורשמו אותן ב-<code>PHOTO_FRAME_IMAGES</code> בקובץ config.js.",
+  "Cleaning": "מנקה",
+  "Docked": "בעגינה",
+  "Idle": "במנוחה",
+  "Paused": "מושהה",
+  "Returning": "חוזר",
+  "Error": "שגיאה",
+  "Mode": "מצב",
+  "Rooms": "חדרים",
+  "Vacuum": "שאיבה",
+  "Mop": "שטיפה",
+  "Vacuum then mop": "שאיבה ואז שטיפה",
+  "Vacuum and mop": "שאיבה ושטיפה",
+  "Choose a mode, then rooms. Choosing a room locks the mode.": "בחרו מצב, ואז חדרים. בחירת חדר נועלת את המצב.",
+  "Mode locked. Clear rooms to change it.": "המצב נעול. בטלו את החדרים כדי לשנות אותו.",
+  "Clear": "ביטול",
+  "Clean all": "נקה הכל",
+  "Clean 1 room": "נקה חדר אחד",
+  "Clean N rooms": "נקה N חדרים",
+  "Pause": "השהה",
+  "Stop": "עצור",
+  "Dock": "עגינה",
+  "Locate": "אתר"
 };
 function t(key) {
   const lang = getLocale().split('-')[0].toLowerCase();
@@ -12548,9 +12686,15 @@ function buildSensorRow() {
  * @param {Array} controls — array of control objects (from activeControls)
  * Chips with subEntities or subGroups open a popup; others toggle directly.
  */
+function chipOpensPopup(c) {
+  if (!c) return false;
+  if (c.subEntities || c.subGroups) return true;
+  return typeof c.entity === "string" && c.entity.startsWith("vacuum.");
+}
+
 function buildControls(controls) {
   const list = controls || CONFIG.controls;
-  const hasPopup = c => c.subEntities || c.subGroups;
+  const hasPopup = chipOpensPopup;
   const chips = list.map((c, i) => `
     <button class="chip${c.on ? " on" : ""}" id="chip-${i}" onclick="${hasPopup(c) ? `openPopup(${i})` : `toggleControl(${i})`}" data-ctrl-index="${i}">
       <div class="dot"></div>${escapeHtml(c.label)}${c.showCount ? `<span class="chip-count" id="chip-count-${i}" style="display:none"></span>` : ''}${hasPopup(c) ? ' ›' : ''}
@@ -12591,6 +12735,7 @@ function entityIsOn(state, entity) {
   const domain = entity.split(".")[0];
   if (domain === "cover")   return ["open","opening"].includes(state);
   if (domain === "climate") return state !== "off";
+  if (domain === "vacuum")  return ["cleaning","paused","returning"].includes(state);
   return ["on","running"].includes(state);
 }
 
@@ -13266,6 +13411,237 @@ function _openPopupOverlay(sizeClass) {
  */
 let _popupCtrl = null;
 
+let _vacuumPopupOpen = false;
+let _vacuumModeMemory = "";
+
+const VACUUM_STATE_KEY = {
+  cleaning: "Cleaning",
+  docked: "Docked",
+  idle: "Idle",
+  paused: "Paused",
+  returning: "Returning",
+  error: "Error",
+};
+const VACUUM_MODE_KEY = {
+  vacuum: "Vacuum",
+  mop: "Mop",
+  vacuum_then_mop: "Vacuum then mop",
+  vacuum_and_mop: "Vacuum and mop",
+};
+const VACUUM_MODE_FALLBACK = ["vacuum", "mop", "vacuum_then_mop", "vacuum_and_mop"];
+
+function _vacuumCtrl() {
+  const c = _popupCtrl;
+  if (!c || typeof c.entity !== "string" || !c.entity.startsWith("vacuum.")) return null;
+  return c;
+}
+
+function _vacuumStateLabel(state) {
+  const key = VACUUM_STATE_KEY[state];
+  return key ? t(key) : (state || "—");
+}
+
+function _vacuumModeLabel(opt) {
+  const key = VACUUM_MODE_KEY[opt];
+  return key ? t(key) : opt;
+}
+
+function _vacuumModeOptions(c) {
+  const d = c.cleanMode ? haGetCached(c.cleanMode) : null;
+  const opts = d && d.attributes && Array.isArray(d.attributes.options) ? d.attributes.options : null;
+  if (opts && opts.length) c._vacModeOptions = opts.slice();
+  return c._vacModeOptions || VACUUM_MODE_FALLBACK;
+}
+
+function _vacuumModeValue(c) {
+  const d = c.cleanMode ? haGetCached(c.cleanMode) : null;
+  if (d && d.state && d.state !== "unavailable" && d.state !== "unknown") {
+    _vacuumModeMemory = d.state;
+  }
+  return _vacuumModeMemory;
+}
+
+function _vacuumRoomsOn(c) {
+  return (c.rooms || []).filter(r => {
+    const d = haGetCached(r.entity);
+    return d && d.state === "on";
+  });
+}
+
+function _vacuumModeLocked(c) {
+  if (_vacuumRoomsOn(c).length > 0) return true;
+  const d = c.cleanMode ? haGetCached(c.cleanMode) : null;
+  return !!(d && (d.state === "unavailable" || d.state === "unknown"));
+}
+
+function _vacuumStartLabel(n) {
+  if (!n) return t("Clean all");
+  if (n === 1) return t("Clean 1 room");
+  return t("Clean N rooms").replace("N", String(n));
+}
+
+function _vacuumBatteryText(c) {
+  if (!c.battery) return "";
+  const d = haGetCached(c.battery);
+  if (!d || d.state === "unavailable" || d.state === "unknown") return "";
+  const n = parseFloat(d.state);
+  if (isNaN(n)) return "";
+  const unit = (d.attributes && d.attributes.unit_of_measurement) || "%";
+  return Math.round(n) + unit;
+}
+
+function _buildVacuumPopupHtml(c) {
+  const modes = c.cleanMode ? _vacuumModeOptions(c) : [];
+  const modeHtml = modes.map(opt =>
+    `<button type="button" class="vac-choice" data-vac-mode="${escapeHtml(opt)}">${escapeHtml(_vacuumModeLabel(opt))}</button>`
+  ).join("");
+  const rooms = c.rooms || [];
+  const roomHtml = rooms.map((r, i) =>
+    `<button type="button" class="vac-choice" data-vac-room="${i}">${escapeHtml(r.label)}</button>`
+  ).join("");
+  const modeBlock = c.cleanMode ? `
+    <div class="vac-step vac-mode-step" id="vac-mode-step">
+      <div class="vac-step-head"><span class="vac-num">1</span><span>${escapeHtml(t("Mode"))}</span></div>
+      <div class="vac-modes">${modeHtml}</div>
+      <div class="vac-hint" id="vac-hint"></div>
+    </div>` : "";
+  const roomBlock = rooms.length ? `
+    <div class="vac-step">
+      <div class="vac-step-head">
+        <span class="vac-num">${c.cleanMode ? "2" : "1"}</span>
+        <span>${escapeHtml(t("Rooms"))}</span>
+        <button type="button" class="vac-clear" id="vac-clear" hidden>${escapeHtml(t("Clear"))}</button>
+      </div>
+      <div class="vac-rooms">${roomHtml}</div>
+    </div>` : "";
+  return `
+    <div class="vac-card" id="vac-card">
+      <div class="vac-status">
+        <span id="vac-state"></span>
+        <span class="vac-battery" id="vac-battery"></span>
+      </div>
+      ${modeBlock}
+      ${roomBlock}
+      <div class="vac-actions">
+        <button type="button" class="vac-start" id="vac-start" data-vac-act="start"></button>
+        <div class="vac-secondary">
+          <button type="button" data-vac-act="pause" data-vac-feat="4">${escapeHtml(t("Pause"))}</button>
+          <button type="button" data-vac-act="stop" data-vac-feat="8">${escapeHtml(t("Stop"))}</button>
+          <button type="button" data-vac-act="return_to_base" data-vac-feat="16">${escapeHtml(t("Dock"))}</button>
+          <button type="button" data-vac-act="locate" data-vac-feat="512">${escapeHtml(t("Locate"))}</button>
+        </div>
+      </div>
+    </div>`;
+}
+
+function _wireVacuumPopup() {
+  const root = document.getElementById("vac-card");
+  if (!root || root.dataset.wired) return;
+  root.dataset.wired = "1";
+  root.addEventListener("click", (e) => {
+    const modeBtn = e.target.closest("[data-vac-mode]");
+    if (modeBtn) { vacuumSetMode(modeBtn.dataset.vacMode); return; }
+    const roomBtn = e.target.closest("[data-vac-room]");
+    if (roomBtn) { vacuumToggleRoom(Number(roomBtn.dataset.vacRoom)); return; }
+    const act = e.target.closest("[data-vac-act]");
+    if (act) { vacuumAct(act.dataset.vacAct); return; }
+    if (e.target.closest("#vac-clear")) vacuumClearRooms();
+  });
+}
+
+function _refreshVacuumPopup() {
+  if (!_vacuumPopupOpen) return;
+  const c = _vacuumCtrl();
+  const root = document.getElementById("vac-card");
+  if (!c || !root) return;
+
+  const vac = haGetCached(c.entity);
+  const state = vac ? vac.state : "unknown";
+  const stateEl = document.getElementById("vac-state");
+  const batEl = document.getElementById("vac-battery");
+  if (stateEl) stateEl.textContent = _vacuumStateLabel(state);
+  if (batEl) batEl.textContent = _vacuumBatteryText(c);
+  root.classList.toggle("is-on", ["cleaning", "paused", "returning"].includes(state));
+
+  const locked = _vacuumModeLocked(c);
+  const mode = _vacuumModeValue(c);
+  const step = document.getElementById("vac-mode-step");
+  if (step) step.classList.toggle("is-locked", locked);
+  root.querySelectorAll("[data-vac-mode]").forEach(btn => {
+    btn.classList.toggle("is-on", btn.dataset.vacMode === mode);
+    btn.disabled = locked;
+  });
+  const hint = document.getElementById("vac-hint");
+  if (hint) {
+    hint.classList.toggle("is-locked", locked);
+    hint.textContent = locked
+      ? t("Mode locked. Clear rooms to change it.")
+      : t("Choose a mode, then rooms. Choosing a room locks the mode.");
+  }
+
+  const onRooms = _vacuumRoomsOn(c);
+  root.querySelectorAll("[data-vac-room]").forEach(btn => {
+    const room = (c.rooms || [])[Number(btn.dataset.vacRoom)];
+    const d = room ? haGetCached(room.entity) : null;
+    btn.classList.toggle("is-on", !!(d && d.state === "on"));
+  });
+  const clearBtn = document.getElementById("vac-clear");
+  if (clearBtn) clearBtn.hidden = onRooms.length === 0;
+
+  const startBtn = document.getElementById("vac-start");
+  if (startBtn) startBtn.textContent = _vacuumStartLabel(onRooms.length);
+
+  const feats = vac && vac.attributes ? Number(vac.attributes.supported_features) || 0 : 0;
+  root.querySelectorAll("[data-vac-feat]").forEach(btn => {
+    const bit = Number(btn.dataset.vacFeat);
+    btn.classList.toggle("is-hidden", (feats & bit) !== bit);
+  });
+}
+
+async function vacuumSetMode(opt) {
+  const c = _vacuumCtrl();
+  if (!c || !c.cleanMode || !opt || _vacuumModeLocked(c)) return;
+  haptic("medium");
+  _vacuumModeMemory = opt;
+  const d = haGetCached(c.cleanMode);
+  if (d) stateCache.set(c.cleanMode, { ...d, state: opt });
+  _refreshVacuumPopup();
+  await haService("select", "select_option", { entity_id: c.cleanMode, option: opt });
+}
+
+async function vacuumToggleRoom(idx) {
+  const c = _vacuumCtrl();
+  const room = c && (c.rooms || [])[idx];
+  if (!room) return;
+  const d = haGetCached(room.entity);
+  const on = !!(d && d.state === "on");
+  haptic("medium");
+  stateCache.set(room.entity, { ...(d || {}), entity_id: room.entity, state: on ? "off" : "on", attributes: (d && d.attributes) || {} });
+  _refreshVacuumPopup();
+  await haService("switch", on ? "turn_off" : "turn_on", room.entity);
+}
+
+async function vacuumClearRooms() {
+  const c = _vacuumCtrl();
+  if (!c) return;
+  const on = _vacuumRoomsOn(c);
+  if (!on.length) return;
+  haptic("medium");
+  on.forEach(r => {
+    const d = haGetCached(r.entity);
+    stateCache.set(r.entity, { ...(d || {}), entity_id: r.entity, state: "off", attributes: (d && d.attributes) || {} });
+  });
+  _refreshVacuumPopup();
+  await Promise.all(on.map(r => haService("switch", "turn_off", r.entity)));
+}
+
+async function vacuumAct(service) {
+  const c = _vacuumCtrl();
+  if (!c || !service) return;
+  haptic(service === "start" ? "heavy" : "medium");
+  await haService("vacuum", service, c.entity);
+}
+
 async function openPopup(i) {
   haptic("light");
   const c = activeControls[i];
@@ -13307,6 +13683,22 @@ async function openPopup(i) {
       list.innerHTML = _buildGardenPopupHtml(c);
       _wireGardenPopupScroll();
       _refreshGardenPopup();
+    });
+    return;
+  }
+
+  // ── Vacuum chip: mode first, then rooms. A selected room locks the mode. ──
+  if (c.entity && c.entity.startsWith("vacuum.")) {
+    const ids = [c.entity, c.battery, c.cleanMode, ...(c.rooms || []).map(r => r.entity)].filter(Boolean);
+    await Promise.all(ids.map(id => haGet(id)));
+    list.innerHTML = "";
+    _openPopupOverlay("popup--vacuum");
+    _vacuumPopupOpen = true;
+    _vacuumModeMemory = "";
+    requestAnimationFrame(() => {
+      list.innerHTML = _buildVacuumPopupHtml(c);
+      _wireVacuumPopup();
+      _refreshVacuumPopup();
     });
     return;
   }
@@ -14924,10 +15316,11 @@ function closePopup(e) {
   document.getElementById("popup-overlay").classList.remove("open");
   _openAccordionRoomId = null;
   _gardenPopupOpen = false;
+  _vacuumPopupOpen = false;
   _popupCtrl = null;
   _stopRunForTick();
   // Reset popup size modifiers for next open
-  document.getElementById("popup")?.classList.remove("popup--compact", "popup--expanded", "popup--narrow", "popup--scene", "popup--garden");
+  document.getElementById("popup")?.classList.remove("popup--compact", "popup--expanded", "popup--narrow", "popup--scene", "popup--garden", "popup--vacuum");
 }
 
 /* ─── ALARMO SECURITY LOGIC ─────────────────────────────────────────────────
@@ -15799,6 +16192,7 @@ function refreshAllUI() {
     refreshOpenRunFor();
     // Irrigation popup — keep plant moisture + toggle states live while open.
     if (_gardenPopupOpen) _refreshGardenPopup();
+    if (_vacuumPopupOpen) _refreshVacuumPopup();
   }
   refreshMusic();
   // Keep overview 2 in sync whenever it has been built (regardless of active screen)
@@ -19835,7 +20229,7 @@ function _ensureOv2Built() {
 function _buildOv2Controls() {
   const list = document.getElementById("ov2-controls-list");
   if (!list) return;
-  const hasPopup = c => c.subEntities || c.subGroups;
+  const hasPopup = chipOpensPopup;
   list.innerHTML = activeControls.map((c, i) => `
     <button class="ov2-ctrl-btn${c.on ? " on" : ""}" id="ov2-ctrl-${i}"
       onclick="${hasPopup(c) ? `openPopup(${i})` : `toggleControl(${i})`}">
@@ -20001,7 +20395,7 @@ function _buildOv3SidebarControls() {
     return icons[domain] || `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M4 12H2M22 12h-2M12 4V2M12 22v-2"/></svg>`;
   }
 
-  const hasPopup = c => c.subEntities || c.subGroups;
+  const hasPopup = chipOpensPopup;
   const _sbDomain = c => {
     const parentDomain = c.entity ? c.entity.split(".")[0] : "";
     const firstSub = c.subGroups
