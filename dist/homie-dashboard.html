@@ -26,7 +26,7 @@
 <head>
 <meta charset="UTF-8">
 <!-- DASHBOARD VERSION — update this when releasing a new version -->
-<script>const DASHBOARD_VERSION = "5.3.0";</script>
+<script>const DASHBOARD_VERSION = "5.3.1";</script>
 <!-- GITHUB REPO — used only to check for the latest tagged release in Settings -->
 <script>const GITHUB_REPO = "shimon88/homie-dashboard";</script>
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
@@ -5596,17 +5596,23 @@
     width: 220px;
     flex-shrink: 0;
     height: 100%;
+    box-sizing: border-box;
     background: transparent;
     border-right: none;
     display: flex;
     flex-direction: column;
+    justify-content: center;
+    justify-content: safe center;
     padding: 0;
-    padding-top: calc(var(--top-bar-h, 115px) * 1.5);
+    /* Keep the list between the top bar and the sensor strip, then center it. */
+    padding-top: var(--top-bar-h, 115px);
+    padding-bottom: 5.5rem;
     overflow-y: auto;
     overflow-x: visible;
     scrollbar-width: none;
   }
   .ov2-sidebar::-webkit-scrollbar { display: none; }
+  #ov2-controls-list { flex-shrink: 0; }
 
   /* Sidebar section label */
   .ov2-section-label {
