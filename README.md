@@ -198,6 +198,9 @@ Remember to clear the cache/hard refresh so the new file changes apply in the br
 <details>
 <summary>View version history</summary>
 
+New in v5.2.0
+- Floor temperature readings can show a trend arrow from a `trendEntity` sensor (e.g. a derivative helper). Red up when warming, blue down when cooling. Hidden when flat
+
 New in v5.1.2
 - Alarm status counts every armed mode, including night. Armed uses the high-visibility pill. Disarmed stays plain
 

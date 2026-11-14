@@ -1,5 +1,5 @@
 /* ═══════════════════════════════════════════════════════════════════════════
- * HOMIE DASHBOARD CONFIGURATION v5.1.2
+ * HOMIE DASHBOARD CONFIGURATION v5.2.0
  * ═══════════════════════════════════════════════════════════════════════════
  * This is the main configuration file. Edit the sections below to customise the dashboard for your home.
  * Both homie-dashboard.html and config.js must be in the same folder.
@@ -236,6 +236,9 @@ const CONFIG = {
    *   below cold → blue, below warm → orange, warm and above → red.
    *   cold and warm are temperatures in the sensor's own unit.
    *   Example: tempBands: { cold: 40, warm: 55 }
+   * trendEntity — optional. A derivative (or similar) sensor for this reading.
+   *   Positive paints a red up arrow, negative a blue down arrow, zero hides it.
+   *   Example: trendEntity: "sensor.YOUR_BOILER_TEMP_RATE_ENTITY"
    * ─────────────────────────────────────────────────────────────────────────── */
   floorSensors: [
    {

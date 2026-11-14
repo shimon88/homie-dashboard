@@ -26,7 +26,7 @@
 <head>
 <meta charset="UTF-8">
 <!-- DASHBOARD VERSION — update this when releasing a new version -->
-<script>const DASHBOARD_VERSION = "5.1.2";</script>
+<script>const DASHBOARD_VERSION = "5.2.0";</script>
 <!-- GITHUB REPO — used only to check for the latest tagged release in Settings -->
 <script>const GITHUB_REPO = "shimon88/homie-dashboard";</script>
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
@@ -707,6 +707,16 @@
   .ov2-floor-reading.temp-cold .ov2-floor-reading-icon,
   .ov2-floor-reading.temp-warm .ov2-floor-reading-icon,
   .ov2-floor-reading.temp-hot .ov2-floor-reading-icon { opacity: 1; }
+  /* trend: true on a floor sensor. Red up = warming, blue down = cooling. */
+  .temp-trend {
+    display: inline-block;
+    margin-inline-start: 0.3em;
+    font-size: 0.72em;
+    line-height: 1;
+    vertical-align: 0.05em;
+  }
+  .temp-trend-up { color: #ff5c5c; }
+  .temp-trend-down { color: #60a5fa; }
   .floor-reading-sep {
     width: 1px;
     height: 10px;
@@ -12427,6 +12437,34 @@ function paintSensorTemp(valEl, sensor, raw) {
   if (svg) svg.style.stroke = band ? SENSOR_TEMP_STROKE[band] : "var(--accent)";
 }
 
+/** Direction from a derivative (or similar) sensor. "" when flat or missing. */
+function sensorTrendDir(sensor) {
+  if (!sensor || !sensor.trendEntity) return "";
+  const d = haGetCached(sensor.trendEntity);
+  if (!d) return "";
+  const n = parseFloat(d.state);
+  if (isNaN(n) || n === 0) return "";
+  return n > 0 ? "up" : "down";
+}
+
+/** Red up when warming, blue down when cooling. Call after the value text is set. */
+function paintSensorTrend(valEl, sensor) {
+  if (!valEl) return;
+  const dir = sensorTrendDir(sensor);
+  let mark = valEl.querySelector(".temp-trend");
+  if (!dir) {
+    if (mark) mark.remove();
+    return;
+  }
+  if (!mark) {
+    mark = document.createElement("span");
+    mark.setAttribute("aria-hidden", "true");
+    valEl.appendChild(mark);
+  }
+  mark.className = "temp-trend temp-trend-" + dir;
+  mark.textContent = dir === "up" ? "▲" : "▼";
+}
+
 /**
  * refreshSensors — updates the bottom sensor pill bar values from cache.
  * Skipped when not on the overview (sensor-row is not in the DOM).
@@ -12461,6 +12499,7 @@ function refreshSensors() {
         el.textContent = fmt(s.entity, s.decimal) + (s.unit ? " " + s.unit : "");
       }
       paintSensorTemp(el, s, raw);
+      paintSensorTrend(el, s);
     });
   });
 }
@@ -19868,6 +19907,7 @@ function _refreshOv2() {
       const raw = d ? parseFloat(d.state) : NaN;
       el.textContent = fmt(s.entity, s.decimal) + (s.unit ? " " + s.unit : "");
       paintSensorTemp(el, s, raw);
+      paintSensorTrend(el, s);
     });
   });
 
